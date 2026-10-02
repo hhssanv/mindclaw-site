@@ -1,0 +1,68 @@
+[
+  {
+    "id": "ia",
+    "ordem": 1,
+    "area": "IA aplicada",
+    "itens": [
+      "Classificação e resumo de conversas",
+      "Extração de pendências",
+      "Transcrição de mídia",
+      "Sugestão de resposta com aprovação humana"
+    ]
+  },
+  {
+    "id": "integracao",
+    "ordem": 2,
+    "area": "Integração e automação",
+    "itens": [
+      "Integração entre sistemas sem API comum",
+      "Automação de desktop",
+      "Normalização de dados entre sistemas",
+      "Gate de aprovação antes de ação externa"
+    ]
+  },
+  {
+    "id": "visao",
+    "ordem": 3,
+    "area": "Visão computacional",
+    "itens": [
+      "Leitura de tela",
+      "Reconhecimento de texto",
+      "Comparação por regras explícitas",
+      "Alerta durante a operação"
+    ]
+  },
+  {
+    "id": "dados",
+    "ordem": 4,
+    "area": "Dados e reporting",
+    "itens": [
+      "Reconciliação de bases",
+      "Regras de validação",
+      "Modelagem financeira",
+      "Rastreio do indicador até a origem"
+    ]
+  },
+  {
+    "id": "infra",
+    "ordem": 5,
+    "area": "Infraestrutura e operação",
+    "itens": [
+      "Serviços isolados por responsabilidade",
+      "Logs e auditoria",
+      "Health checks",
+      "Backup e rollback"
+    ]
+  },
+  {
+    "id": "governanca",
+    "ordem": 6,
+    "area": "Governança",
+    "itens": [
+      "Inventário de sistemas",
+      "Revisão de acessos",
+      "Registro de achados com responsável",
+      "Plano de continuidade"
+    ]
+  }
+]

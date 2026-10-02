@@ -1,0 +1,63 @@
+---
+import { rotuloTipo, descricaoTipo } from '../lib/site';
+
+interface Props {
+  tipo: 'producao' | 'demonstracao';
+  /** Mostra a descrição longa ("Sistema real em operação") ao lado do rótulo. */
+  completo?: boolean;
+}
+
+const { tipo, completo = false } = Astro.props;
+---
+
+<span class:list={['tipo', `tipo--${tipo}`]}>
+  <span class="tipo__marca" aria-hidden="true"></span>
+  <span>
+    {rotuloTipo[tipo]}{completo && <span class="tipo__descricao"> · {descricaoTipo[tipo]}</span>}
+  </span>
+</span>
+
+<style>
+  .tipo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 11px 4px 9px;
+    border: 1px solid var(--linha-forte);
+    border-radius: 999px;
+    color: var(--tinta);
+    font-family: var(--fonte-mono);
+    font-size: var(--texto-xs);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .tipo__marca {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .tipo--producao .tipo__marca {
+    background: var(--ok);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 22%, transparent);
+  }
+
+  .tipo--demonstracao .tipo__marca {
+    border: 1.5px dashed var(--tinta-fraca);
+  }
+
+  .tipo__descricao {
+    color: var(--tinta-fraca);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  :global(.faixa) .tipo--producao .tipo__marca {
+    background: #5fd99a;
+    box-shadow: 0 0 0 3px rgb(95 217 154 / 0.2);
+  }
+</style>

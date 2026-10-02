@@ -1,0 +1,121 @@
+---
+import Base from '../../layouts/Base.astro';
+import CaseHero from '../../components/CaseHero.astro';
+import FaixaDisclaimer from '../../components/FaixaDisclaimer.astro';
+import SplitDiagnostico from '../../components/SplitDiagnostico.astro';
+import NotaEscopo from '../../components/NotaEscopo.astro';
+import MetodoFases from '../../components/MetodoFases.astro';
+import ProvaTabela from '../../components/ProvaTabela.astro';
+import ProvaComparativo from '../../components/ProvaComparativo.astro';
+import PrincipiosGrid from '../../components/PrincipiosGrid.astro';
+import TiersEntrega from '../../components/TiersEntrega.astro';
+import ChipsEncaixe from '../../components/ChipsEncaixe.astro';
+import CTAContato from '../../components/CTAContato.astro';
+import NavegacaoCases from '../../components/NavegacaoCases.astro';
+import { casesPublicados, vizinhos } from '../../lib/cases';
+import { jsonLdBreadcrumb, jsonLdCase } from '../../lib/jsonld';
+
+/**
+ * Template único de case: oito blocos, sempre na mesma ordem.
+ * Nenhum case tem layout próprio.
+ */
+export async function getStaticPaths() {
+  const lista = await casesPublicados();
+  return lista.map((c) => ({
+    params: { slug: c.id },
+    props: { c, ...vizinhos(lista, c.id) },
+  }));
+}
+
+const { c, anterior, proximo } = Astro.props;
+const d = c.data;
+
+// Numeração dos blocos depois do hero (o bloco de princípios só existe em produção).
+let bloco = 0;
+const n = () => ++bloco;
+const numeros = {
+  diagnostico: n(),
+  escopo: n(),
+  metodo: n(),
+  prova: n(),
+  principios: d.principios ? n() : undefined,
+  entrega: n(),
+  encaixe: n(),
+};
+---
+
+<Base
+  title={d.seo.title}
+  description={d.seo.description}
+  ogImage={d.seo.ogImage}
+  ogType="article"
+  jsonLd={[jsonLdCase(c), jsonLdBreadcrumb(c)]}
+  noindex={d.rascunho}
+>
+  <CaseHero
+    eyebrow={d.eyebrow}
+    titulo={d.titulo}
+    subtitulo={d.subtitulo}
+    tipo={d.tipo}
+    capacidades={d.capacidades}
+    metricas={d.metricas}
+    rascunho={d.rascunho}
+  />
+  <FaixaDisclaimer texto={d.disclaimer} variante="hero" />
+
+  <SplitDiagnostico numero={numeros.diagnostico} problemas={d.problemas} construido={d.construido} />
+
+  <NotaEscopo numero={numeros.escopo} texto={d.limiteEscopo} />
+
+  <MetodoFases numero={numeros.metodo} fases={d.metodo.fases} teste={d.metodo.teste} />
+
+  {
+    d.prova.tipo === 'comparativo' ? (
+      <ProvaComparativo
+        numero={numeros.prova}
+        titulo={d.prova.titulo}
+        lead={d.prova.lead}
+        colunas={d.prova.colunas}
+        linhas={d.prova.linhas}
+        nota={d.prova.nota}
+      />
+    ) : (
+      <ProvaTabela
+        numero={numeros.prova}
+        variante={d.prova.tipo}
+        titulo={d.prova.titulo}
+        lead={d.prova.lead}
+        colunas={d.prova.colunas}
+        linhas={d.prova.linhas}
+        nota={d.prova.nota}
+      />
+    )
+  }
+
+  {d.principios && <PrincipiosGrid numero={numeros.principios} principios={d.principios} />}
+
+  <TiersEntrega numero={numeros.entrega} tiers={d.entregaveis} />
+
+  <section class="secao" aria-labelledby="titulo-encaixe">
+    <div class="container encaixe-bloco">
+      <ChipsEncaixe numero={numeros.encaixe} itens={d.melhorEncaixe} />
+      <FaixaDisclaimer texto={d.disclaimer} variante="fim" />
+    </div>
+  </section>
+
+  <CTAContato
+    titulo="Tem um problema parecido?"
+    texto="Conte o que está travando, na linguagem de quem vive o problema. Eu respondo com uma primeira leitura e, se fizer sentido, uma proposta de diagnóstico com escopo fechado."
+    rotuloBotao="Falar sobre um projeto"
+    href={`/contato/?caso=${c.id}`}
+  />
+
+  <NavegacaoCases anterior={anterior} proximo={proximo} />
+</Base>
+
+<style>
+  .encaixe-bloco {
+    display: grid;
+    gap: clamp(32px, 4vw, 48px);
+  }
+</style>

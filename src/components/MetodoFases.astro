@@ -1,0 +1,169 @@
+---
+import SecaoTitulo from './SecaoTitulo.astro';
+import type { Case } from '../lib/schema';
+
+interface Props {
+  fases: Case['metodo']['fases'];
+  teste: string;
+  numero?: number;
+}
+
+const { fases, teste, numero } = Astro.props;
+
+// Numeração contínua das etapas através das fases (01, 02, 03…).
+let contador = 0;
+const fasesNumeradas = fases.map((fase) => ({
+  ...fase,
+  etapas: fase.etapas.map((etapa) => ({ ...etapa, n: String(++contador).padStart(2, '0') })),
+}));
+---
+
+<section class="secao" aria-labelledby="titulo-metodo">
+  <div class="container">
+    <SecaoTitulo
+      id="titulo-metodo"
+      numero={numero}
+      rotulo="Método"
+      titulo="Como o trabalho foi feito"
+      lead="Cada etapa nomeia um entregável, não uma técnica."
+    />
+    <ol class="fases" role="list">
+      {
+        fasesNumeradas.map((fase, i) => (
+          <li class="fase">
+            <p class="eyebrow fase__rotulo">Fase {i + 1}</p>
+            <h3 class="fase__nome">{fase.nome}</h3>
+            <ol class="etapas" role="list">
+              {fase.etapas.map((etapa) => (
+                <li class="etapa">
+                  <span class="etapa__numero mono" aria-hidden="true">
+                    {etapa.n}
+                  </span>
+                  <div>
+                    <p class="etapa__titulo">{etapa.titulo}</p>
+                    <p class="etapa__detalhe">{etapa.detalhe}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </li>
+        ))
+      }
+    </ol>
+
+    <figure class="teste">
+      <figcaption class="eyebrow eyebrow--acento">Pergunta de validação</figcaption>
+      <blockquote>
+        <p>{teste}</p>
+      </blockquote>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .fases {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    margin: 0;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-3);
+    overflow: hidden;
+  }
+
+  .fase {
+    padding: clamp(20px, 2.5vw, 32px);
+  }
+
+  .fase + .fase {
+    border-left: 1px solid var(--linha);
+  }
+
+  .fase__rotulo {
+    margin-bottom: 6px;
+  }
+
+  .fase__nome {
+    margin-bottom: 18px;
+    font-size: var(--texto-xl);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .etapas {
+    display: grid;
+    gap: 16px;
+    margin: 0;
+  }
+
+  .etapa {
+    display: grid;
+    grid-template-columns: 2.25rem 1fr;
+    gap: 4px;
+  }
+
+  .etapa__numero {
+    padding-top: 3px;
+    color: var(--acento);
+    font-size: var(--texto-sm);
+  }
+
+  .etapa__titulo {
+    font-weight: 650;
+    line-height: 1.4;
+  }
+
+  .etapa__detalhe {
+    margin-top: 2px;
+    color: var(--tinta-media);
+    font-size: 0.9875rem;
+    line-height: 1.55;
+  }
+
+  .teste {
+    display: grid;
+    gap: 14px;
+    max-width: 52rem;
+    margin: clamp(40px, 5vw, 64px) 0 0;
+  }
+
+  .teste blockquote {
+    margin: 0;
+  }
+
+  .teste blockquote p {
+    font-size: var(--texto-2xl);
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
+  .teste blockquote p::before {
+    content: '“';
+    margin-left: -0.45em;
+    color: var(--acento);
+  }
+
+  .teste blockquote p::after {
+    content: '”';
+    color: var(--acento);
+  }
+
+  @media (max-width: 900px) {
+    .fases {
+      grid-template-columns: 1fr;
+    }
+
+    .fase + .fase {
+      border-left: 0;
+      border-top: 1px solid var(--linha);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .teste blockquote p::before {
+      margin-left: 0;
+    }
+  }
+</style>

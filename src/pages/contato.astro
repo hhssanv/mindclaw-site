@@ -1,0 +1,362 @@
+---
+import Base from '../layouts/Base.astro';
+import Icone from '../components/Icone.astro';
+import { casesPublicados, categoriasDeProblema } from '../lib/cases';
+import { site, linkWhatsApp } from '../lib/site';
+
+const cases = await casesPublicados();
+const categorias = categoriasDeProblema(cases);
+const titulosCases = Object.fromEntries(cases.map((c) => [c.id, c.data.titulo]));
+---
+
+<Base
+  title={`Contato · ${site.nome}`}
+  description="Conte o problema do jeito que ele aparece no dia a dia. Formulário curto, sem cadastro, e canais diretos por e-mail e WhatsApp para a primeira conversa."
+>
+  <section class="contato" aria-labelledby="titulo-contato">
+    <div class="container contato__interno">
+      <div class="contato__intro entrada">
+        <p class="eyebrow">Contato</p>
+        <h1 id="titulo-contato">Conte o que está travando</h1>
+        <p class="lead">
+          Na linguagem de quem vive o problema, sem precisar saber a solução. Eu respondo com uma primeira leitura e, se
+          fizer sentido, uma proposta de diagnóstico com escopo fechado.
+        </p>
+
+        <div class="canais">
+          <h2 class="eyebrow">Canais diretos</h2>
+          <ul role="list">
+            <li>
+              <a class="canal" href={`mailto:${site.email}`}>
+                <Icone nome="email" />
+                <span>
+                  <span class="canal__rotulo">E-mail</span>
+                  <span class="canal__valor">{site.email}</span>
+                </span>
+              </a>
+            </li>
+            <li>
+              <a class="canal" href={linkWhatsApp()} rel="noopener">
+                <Icone nome="conversa" />
+                <span>
+                  <span class="canal__rotulo">WhatsApp</span>
+                  <span class="canal__valor">{site.whatsapp.exibicao}</span>
+                </span>
+              </a>
+            </li>
+          </ul>
+          <p class="canais__nota">{site.confidencialidade}</p>
+        </div>
+      </div>
+
+      <form class="form" data-contato data-email={site.email} data-whatsapp={site.whatsapp.numero} novalidate>
+        <h2 class="visualmente-oculto">Formulário de contato</h2>
+        <input type="hidden" name="caso" value="" data-casos={JSON.stringify(titulosCases)} />
+
+        <div class="campo">
+          <label for="nome">Nome <span class="campo__opcional">opcional</span></label>
+          <input id="nome" name="nome" type="text" autocomplete="name" />
+        </div>
+
+        <div class="campo">
+          <label for="retorno">Como prefere receber a resposta?</label>
+          <input
+            id="retorno"
+            name="retorno"
+            type="text"
+            autocomplete="email"
+            required
+            aria-describedby="retorno-ajuda retorno-erro"
+          />
+          <p class="campo__ajuda" id="retorno-ajuda">E-mail ou telefone com DDD.</p>
+          <p class="campo__erro" id="retorno-erro" hidden>Informe um e-mail ou telefone para a resposta.</p>
+        </div>
+
+        <div class="campo">
+          <label for="tipo">Tipo de problema <span class="campo__opcional">opcional</span></label>
+          <select id="tipo" name="tipo">
+            <option value="">Escolha a opção mais próxima</option>
+            {categorias.map((c) => <option value={c}>{c}</option>)}
+            <option value="Outro">Outro / ainda não sei</option>
+          </select>
+        </div>
+
+        <div class="campo">
+          <label for="descricao">O que está acontecendo?</label>
+          <textarea
+            id="descricao"
+            name="descricao"
+            rows="6"
+            required
+            aria-describedby="descricao-ajuda descricao-erro"></textarea>
+          <p class="campo__ajuda" id="descricao-ajuda">
+            Quem sofre com o problema, com que frequência e o que já foi tentado. Não inclua dados sensíveis.
+          </p>
+          <p class="campo__erro" id="descricao-erro" hidden>Descreva o problema em poucas linhas.</p>
+        </div>
+
+        <div class="form__acoes">
+          <button class="botao" type="submit" data-canal="email">
+            Enviar por e-mail
+            <Icone nome="seta" />
+          </button>
+          <button class="botao botao--secundario" type="submit" data-canal="whatsapp">
+            <Icone nome="conversa" />
+            Enviar pelo WhatsApp
+          </button>
+        </div>
+        <p class="form__nota">
+          O formulário não guarda nada: ele abre o seu e-mail ou o WhatsApp com a mensagem pronta, e você decide se envia.{' '}
+          <a href="/privacidade/">Privacidade</a>.
+        </p>
+        <noscript>
+          <p class="form__nota form__nota--aviso">
+            Com o JavaScript desligado o formulário não monta a mensagem. Use os canais diretos ao lado.
+          </p>
+        </noscript>
+      </form>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-contato]');
+
+  if (form) {
+    const campo = (nome: string) => form.elements.namedItem(nome) as HTMLInputElement | HTMLTextAreaElement;
+    const params = new URLSearchParams(location.search);
+
+    // Pré-seleção vinda dos chips e do CTA de um case.
+    const tipo = params.get('tipo');
+    const select = form.querySelector<HTMLSelectElement>('#tipo');
+    if (tipo && select && [...select.options].some((o) => o.value === tipo)) select.value = tipo;
+
+    const caso = params.get('caso');
+    const hidden = form.querySelector<HTMLInputElement>('[data-casos]');
+    const casos = JSON.parse(hidden?.dataset.casos ?? '{}') as Record<string, string>;
+    if (caso && hidden && casos[caso]) hidden.value = casos[caso];
+
+    const validar = (el: HTMLInputElement | HTMLTextAreaElement) => {
+      const ok = el.value.trim().length > 0;
+      el.setAttribute('aria-invalid', String(!ok));
+      const erro = document.getElementById(`${el.id}-erro`);
+      if (erro) erro.hidden = ok;
+      return ok;
+    };
+
+    // Revalida enquanto a pessoa digita (e não no blur): o erro some antes do clique
+    // em "Enviar", sem deslocar o botão debaixo do cursor.
+    for (const nome of ['retorno', 'descricao']) {
+      campo(nome).addEventListener('input', (e) => {
+        const el = e.currentTarget as HTMLInputElement;
+        if (el.getAttribute('aria-invalid') !== null) validar(el);
+      });
+    }
+
+    form.addEventListener('submit', (evento) => {
+      evento.preventDefault();
+      const obrigatorios = [campo('retorno'), campo('descricao')];
+      const invalidos = obrigatorios.filter((el) => !validar(el));
+      if (invalidos.length) {
+        invalidos[0].focus();
+        return;
+      }
+
+      const valor = (nome: string) => campo(nome).value.trim();
+      const linhas: string[] = [];
+      if (valor('nome')) linhas.push(`Nome: ${valor('nome')}`);
+      linhas.push(`Resposta por: ${valor('retorno')}`);
+      if (valor('tipo')) linhas.push(`Tipo de problema: ${valor('tipo')}`);
+      if (valor('caso')) linhas.push(`Vi o case: ${valor('caso')}`);
+      linhas.push('', valor('descricao'));
+      const corpo = linhas.join('\n');
+
+      const canal = (evento.submitter as HTMLButtonElement | null)?.dataset.canal ?? 'email';
+      if (canal === 'whatsapp') {
+        window.open(`https://wa.me/${form.dataset.whatsapp}?text=${encodeURIComponent(corpo)}`, '_blank', 'noopener');
+      } else {
+        const assunto = valor('tipo') ? `Contato pelo site: ${valor('tipo')}` : 'Contato pelo site';
+        location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpo)}`;
+      }
+    });
+  }
+</script>
+
+<style>
+  .contato {
+    padding-block: clamp(48px, 6vw, 96px);
+  }
+
+  .contato__interno {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: 48px clamp(40px, 6vw, 96px);
+    align-items: start;
+  }
+
+  .contato__intro {
+    display: grid;
+    gap: 18px;
+  }
+
+  .canais {
+    display: grid;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 24px;
+    border-top: 1px solid var(--linha);
+  }
+
+  .canais ul {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .canal {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 56px;
+    padding: 10px 16px;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-2);
+    text-decoration: none;
+    transition: border-color var(--transicao), background-color var(--transicao);
+  }
+
+  .canal:hover {
+    border-color: var(--linha-forte);
+    background: var(--superficie);
+  }
+
+  .canal :global(svg) {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    color: var(--acento);
+  }
+
+  .canal > span {
+    display: grid;
+  }
+
+  .canal__rotulo {
+    color: var(--tinta-fraca);
+    font-size: var(--texto-xs);
+    font-family: var(--fonte-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .canal__valor {
+    font-weight: 600;
+  }
+
+  .canais__nota {
+    color: var(--tinta-fraca);
+    font-size: var(--texto-sm);
+    line-height: 1.5;
+  }
+
+  .form {
+    display: grid;
+    gap: 22px;
+    padding: clamp(22px, 3vw, 36px);
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-3);
+    background: var(--superficie);
+  }
+
+  .campo {
+    display: grid;
+    gap: 8px;
+  }
+
+  .campo label {
+    font-weight: 600;
+  }
+
+  .campo__opcional {
+    margin-left: 6px;
+    color: var(--tinta-fraca);
+    font-size: var(--texto-sm);
+    font-weight: 400;
+  }
+
+  .campo input,
+  .campo select,
+  .campo textarea {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    border: 1px solid var(--linha-forte);
+    border-radius: var(--raio-1);
+    background: var(--fundo);
+    color: var(--tinta);
+    line-height: 1.4;
+    transition: border-color var(--transicao), box-shadow var(--transicao);
+  }
+
+  .campo textarea {
+    resize: vertical;
+    min-height: 140px;
+  }
+
+  .campo input:hover,
+  .campo select:hover,
+  .campo textarea:hover {
+    border-color: var(--tinta-fraca);
+  }
+
+  .campo input:focus-visible,
+  .campo select:focus-visible,
+  .campo textarea:focus-visible {
+    border-color: var(--acento);
+    outline: 2px solid var(--acento);
+    outline-offset: 1px;
+  }
+
+  .campo [aria-invalid='true'] {
+    border-color: var(--alerta);
+  }
+
+  .campo__ajuda {
+    color: var(--tinta-fraca);
+    font-size: var(--texto-sm);
+  }
+
+  .campo__erro {
+    color: var(--alerta);
+    font-size: var(--texto-sm);
+    font-weight: 600;
+  }
+
+  .form__acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .form__nota {
+    color: var(--tinta-fraca);
+    font-size: var(--texto-sm);
+    line-height: 1.5;
+  }
+
+  .form__nota--aviso {
+    color: var(--alerta);
+  }
+
+  @media (max-width: 900px) {
+    .contato__interno {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .form__acoes .botao {
+      width: 100%;
+    }
+  }
+</style>

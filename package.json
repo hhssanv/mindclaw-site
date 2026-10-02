@@ -1,0 +1,23 @@
+{
+  "name": "mindclaw-site",
+  "type": "module",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "rascunhos": "MOSTRAR_RASCUNHOS=1 astro build"
+  },
+  "dependencies": {
+    "@fontsource/inter": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "astro": "^7.3.5",
+    "satori": "^0.35.0"
+  },
+  "description": "Site da Hans MindClaw: cases, serviços e contato.",
+  "engines": {
+    "node": ">=22.12"
+  }
+}

@@ -1,0 +1,129 @@
+---
+import SecaoTitulo from './SecaoTitulo.astro';
+import Icone from './Icone.astro';
+import type { Case } from '../lib/schema';
+
+interface Props {
+  tiers: Case['entregaveis'];
+  numero?: number;
+}
+
+const { tiers, numero } = Astro.props;
+---
+
+<section class="secao" aria-labelledby="titulo-entrega">
+  <div class="container">
+    <SecaoTitulo
+      id="titulo-entrega"
+      numero={numero}
+      rotulo="Entrega"
+      titulo="O que você recebe"
+      lead="Do mais básico ao mais completo. Cada camada pode ser contratada sozinha."
+    />
+    <ol class="tiers" role="list">
+      {
+        tiers.map((tier, i) => (
+          <li class="tier">
+            <p class="tier__nivel mono" aria-hidden="true">
+              {Array.from({ length: 3 }, (_, n) => (
+                <span class:list={['tier__barra', n <= i && 'tier__barra--ativa']} />
+              ))}
+            </p>
+            <h3 class="tier__rotulo">{tier.rotulo}</h3>
+            <p class="tier__nome">{tier.nome}</p>
+            <ul role="list" class="tier__itens">
+              {tier.itens.map((item) => (
+                <li>
+                  <Icone nome="check" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .tiers {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin: 0;
+  }
+
+  .tier {
+    display: grid;
+    grid-template-rows: auto auto auto 1fr;
+    gap: 6px;
+    padding: clamp(22px, 2.5vw, 30px);
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-3);
+  }
+
+  .tier:last-child {
+    border-color: var(--linha-forte);
+    box-shadow: var(--sombra);
+  }
+
+  .tier__nivel {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 10px;
+  }
+
+  .tier__barra {
+    width: 22px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--linha-forte);
+  }
+
+  .tier__barra--ativa {
+    background: var(--acento);
+  }
+
+  .tier__rotulo {
+    font-size: var(--texto-xl);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .tier__nome {
+    color: var(--tinta-fraca);
+    font-size: var(--texto-sm);
+  }
+
+  .tier__itens {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    margin: 18px 0 0;
+    padding-top: 18px;
+    border-top: 1px solid var(--linha);
+  }
+
+  .tier__itens li {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 10px;
+    color: var(--tinta-media);
+    font-size: 0.9875rem;
+    line-height: 1.45;
+  }
+
+  .tier__itens :global(svg) {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    color: var(--acento);
+  }
+
+  @media (max-width: 900px) {
+    .tiers {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

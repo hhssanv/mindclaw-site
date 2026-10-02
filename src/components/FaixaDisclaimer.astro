@@ -1,0 +1,52 @@
+---
+import Icone from './Icone.astro';
+
+interface Props {
+  texto: string;
+  /** "hero": faixa colada sob o hero. "fim": bloco antes do CTA. */
+  variante?: 'hero' | 'fim';
+}
+
+const { texto, variante = 'hero' } = Astro.props;
+---
+
+<div class:list={['disclaimer', `disclaimer--${variante}`]} role="note" aria-label="Nota sobre os dados exibidos">
+  <div class:list={[variante === 'hero' && 'container', 'disclaimer__interno']}>
+    <Icone nome="info" class="disclaimer__icone" />
+    <p>{texto}</p>
+  </div>
+</div>
+
+<style>
+  .disclaimer {
+    color: var(--tinta-media);
+    font-size: var(--texto-sm);
+    line-height: 1.5;
+  }
+
+  .disclaimer__interno {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .disclaimer :global(.disclaimer__icone) {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    color: var(--tinta-fraca);
+  }
+
+  .disclaimer--hero {
+    padding-block: 14px;
+    border-bottom: 1px solid var(--linha);
+    background: var(--superficie);
+  }
+
+  .disclaimer--fim .disclaimer__interno {
+    padding: 16px 18px;
+    border: 1px dashed var(--linha-forte);
+    border-radius: var(--raio-2);
+  }
+</style>

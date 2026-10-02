@@ -1,0 +1,74 @@
+[
+  {
+    "id": "ia-aplicada",
+    "ordem": 1,
+    "nome": "IA aplicada",
+    "descricao": "Classificação, resumo, extração de pendências e sugestão de resposta, com aprovação humana antes de qualquer ação externa.",
+    "icone": "ia",
+    "casesRelacionados": [
+      "plataforma-mensagens-ia"
+    ]
+  },
+  {
+    "id": "arquitetura",
+    "ordem": 2,
+    "nome": "Arquitetura de sistemas",
+    "descricao": "Responsabilidades separadas em camadas, cada uma com uma restrição que não pode violar.",
+    "icone": "camadas",
+    "casesRelacionados": [
+      "plataforma-mensagens-ia"
+    ]
+  },
+  {
+    "id": "automacao-integracao",
+    "ordem": 3,
+    "nome": "Automação e integração",
+    "descricao": "Sistemas que não conversam passam a conversar, mesmo sem API, e o trabalho repetitivo sai da rotina.",
+    "icone": "automacao",
+    "casesRelacionados": [
+      "validacao-visual-sistemas",
+      "plataforma-mensagens-ia"
+    ]
+  },
+  {
+    "id": "visao-computacional",
+    "ordem": 4,
+    "nome": "Visão computacional",
+    "descricao": "Leitura do que está em tela para conferir, comparar e alertar enquanto a operação acontece.",
+    "icone": "visao",
+    "casesRelacionados": [
+      "validacao-visual-sistemas"
+    ]
+  },
+  {
+    "id": "dados-reporting",
+    "ordem": 5,
+    "nome": "Engenharia de dados e reporting",
+    "descricao": "Cadeias de dados rastreáveis da origem ao indicador, com validação que falha visivelmente.",
+    "icone": "dados",
+    "casesRelacionados": [
+      "reporting-executivo",
+      "consolidacao-dados-rh"
+    ]
+  },
+  {
+    "id": "governanca",
+    "ordem": 6,
+    "nome": "Governança de TI e acessos",
+    "descricao": "Inventário, revisão de acessos e continuidade, com cada achado atribuído a um responsável.",
+    "icone": "governanca",
+    "casesRelacionados": [
+      "governanca-ti-acessos"
+    ]
+  },
+  {
+    "id": "planejamento",
+    "ordem": 7,
+    "nome": "Planejamento operacional",
+    "descricao": "Modelagem de demanda e auditoria de escala para antecipar falta de cobertura.",
+    "icone": "planejamento",
+    "casesRelacionados": [
+      "planejamento-capacidade"
+    ]
+  }
+]

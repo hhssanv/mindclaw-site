@@ -1,0 +1,225 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import SecaoTitulo from '../components/SecaoTitulo.astro';
+import Confidencialidade from '../components/Confidencialidade.astro';
+import CTAContato from '../components/CTAContato.astro';
+import { jsonLdPessoa } from '../lib/jsonld';
+import { site } from '../lib/site';
+
+const stack = (await getCollection('stack')).map((s) => s.data).sort((a, b) => a.ordem - b.ordem);
+const etapas = (await getCollection('trabalho')).map((e) => e.data).sort((a, b) => a.numero - b.numero);
+const areas = (await getCollection('competencias'))
+  .sort((a, b) => a.data.ordem - b.data.ordem)
+  .map((c) => c.data.nome);
+---
+
+<Base
+  title={`Sobre · ${site.nome}`}
+  description="Perfil técnico, áreas de atuação e o modelo de trabalho em oito etapas: do problema na linguagem de quem o vive até a passagem documentada."
+  jsonLd={[jsonLdPessoa(areas)]}
+>
+  <section class="perfil" aria-labelledby="titulo-sobre">
+    <div class="container perfil__interno">
+      <div class="perfil__texto entrada">
+        <p class="eyebrow">Sobre</p>
+        <h1 id="titulo-sobre">{site.pessoa}</h1>
+        <div class="prosa perfil__prosa">
+          <p>
+            Trabalho na fronteira entre operação e tecnologia: onde um processo depende de alguém copiando dados entre
+            sistemas, conferindo duas telas ou lembrando de um combinado feito por mensagem. É ali que automação,
+            integração e IA aplicada fazem diferença de verdade, e é ali que um erro silencioso custa mais caro.
+          </p>
+          <p>
+            O método começa pelo problema, não pela ferramenta. Antes de construir, mapeio sistemas, dados e riscos,
+            escrevo o que o trabalho não vai fazer e defino a pergunta que vai dizer se deu certo. Depois construo em
+            camadas, cada uma com uma responsabilidade e uma restrição que ela não pode violar.
+          </p>
+          <p>
+            Os sistemas que entrego seguem os mesmos princípios: aprovação humana antes de ação externa, privilégio
+            mínimo, registro do que acontece e caminho de volta quando algo dá errado. É o que permite colocar automação e
+            IA em operação sem perder o controle sobre ela.
+          </p>
+        </div>
+      </div>
+      <figure class="perfil__marca">
+        <picture>
+          <source type="image/avif" srcset="/marca/isotipo-480.avif 480w, /marca/isotipo-960.avif 960w" sizes="300px" />
+          <img
+            src="/marca/isotipo-480.webp"
+            srcset="/marca/isotipo-480.webp 480w, /marca/isotipo-960.webp 960w"
+            sizes="300px"
+            width="480"
+            height="480"
+            alt="Isotipo da marca Hans MindClaw: ilustração de um rosto com cabelo e barba em degradê vermelho e óculos de lentes iluminadas."
+          />
+        </picture>
+      </figure>
+    </div>
+  </section>
+
+  <section class="secao secao--superficie" aria-labelledby="titulo-stack">
+    <div class="container">
+      <SecaoTitulo
+        id="titulo-stack"
+        rotulo="Stack"
+        titulo="Áreas e capacidades técnicas"
+        lead="Organizado por área, do jeito que aparece nos projetos."
+      />
+      <dl class="stack">
+        {
+          stack.map((area) => (
+            <div class="stack__area">
+              <dt>{area.area}</dt>
+              {area.itens.map((item) => (
+                <dd>{item}</dd>
+              ))}
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <section class="secao" id="modelo-de-trabalho" aria-labelledby="titulo-modelo">
+    <div class="container">
+      <SecaoTitulo
+        id="titulo-modelo"
+        rotulo="Modelo de trabalho"
+        titulo="Oito etapas, do problema à passagem"
+        lead="A mesma sequência em todo projeto, do diagnóstico de uma semana à construção de vários meses."
+      />
+      <ol class="modelo" role="list">
+        {
+          etapas.map((e) => (
+            <li class="modelo__etapa">
+              <span class="modelo__numero mono" aria-hidden="true">
+                {String(e.numero).padStart(2, '0')}
+              </span>
+              <h3>{e.nome}</h3>
+              <p>{e.descricao}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <Confidencialidade />
+
+  <CTAContato
+    titulo="Quer conversar sobre um processo específico?"
+    texto="A primeira conversa é para entender o problema. Se fizer sentido, o próximo passo é um diagnóstico com escopo fechado."
+    rotuloBotao="Falar sobre um projeto"
+  />
+</Base>
+
+<style>
+  .perfil {
+    padding-block: clamp(48px, 6vw, 96px);
+  }
+
+  .perfil__interno {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 40px clamp(40px, 6vw, 96px);
+    align-items: center;
+  }
+
+  .perfil__texto {
+    display: grid;
+    gap: 18px;
+  }
+
+  .perfil__prosa {
+    margin-top: 8px;
+    font-size: var(--texto-md);
+    line-height: 1.65;
+  }
+
+  .perfil__marca {
+    width: clamp(200px, 24vw, 300px);
+    margin: 0;
+  }
+
+  @media (max-width: 860px) {
+    .perfil__interno {
+      grid-template-columns: 1fr;
+    }
+
+    .perfil__marca {
+      order: -1;
+      width: 160px;
+    }
+  }
+
+  .stack {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+    gap: 0;
+    margin: 0;
+    border-top: 1px solid var(--linha);
+    border-left: 1px solid var(--linha);
+    background: var(--fundo);
+  }
+
+  .stack__area {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    padding: 22px 24px;
+    border-right: 1px solid var(--linha);
+    border-bottom: 1px solid var(--linha);
+  }
+
+  .stack dt {
+    margin-bottom: 6px;
+    color: var(--acento);
+    font-family: var(--fonte-mono);
+    font-size: var(--texto-xs);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .stack dd {
+    margin: 0;
+    color: var(--tinta-media);
+    font-size: 0.9375rem;
+    line-height: 1.45;
+  }
+
+  .modelo {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 clamp(32px, 4vw, 56px);
+    margin: 0;
+  }
+
+  .modelo__etapa {
+    display: grid;
+    align-content: start;
+    grid-template-columns: 3rem 1fr;
+    grid-template-rows: auto auto;
+    gap: 4px 0;
+    padding-block: 22px;
+    border-top: 1px solid var(--linha);
+  }
+
+  .modelo__numero {
+    grid-row: 1 / span 2;
+    color: var(--acento);
+    font-size: var(--texto-sm);
+    padding-top: 3px;
+  }
+
+  .modelo__etapa p {
+    color: var(--tinta-media);
+  }
+
+  @media (max-width: 760px) {
+    .modelo {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

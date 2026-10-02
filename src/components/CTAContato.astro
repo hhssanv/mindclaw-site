@@ -1,0 +1,66 @@
+---
+import Icone from './Icone.astro';
+
+interface Props {
+  titulo: string;
+  texto: string;
+  rotuloBotao: string;
+  href?: string;
+  id?: string;
+}
+
+const { titulo, texto, rotuloBotao, href = '/contato/', id = 'titulo-cta' } = Astro.props;
+---
+
+<section class="cta faixa" aria-labelledby={id}>
+  <div class="container cta__interno">
+    <div>
+      <span class="traco" aria-hidden="true"></span>
+      <h2 id={id}>{titulo}</h2>
+      <p class="cta__texto">{texto}</p>
+    </div>
+    <a class="botao cta__botao" href={href}>
+      {rotuloBotao}
+      <Icone nome="seta" />
+    </a>
+  </div>
+</section>
+
+<style>
+  .cta {
+    padding-block: clamp(56px, 7vw, 96px);
+  }
+
+  .cta__interno {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 28px 48px;
+    align-items: end;
+  }
+
+  .traco {
+    margin-bottom: 22px;
+  }
+
+  h2 {
+    max-width: 22ch;
+  }
+
+  .cta__texto {
+    max-width: 58ch;
+    margin-top: 14px;
+    color: var(--tinta-media);
+    font-size: var(--texto-lg);
+    line-height: 1.55;
+  }
+
+  @media (max-width: 760px) {
+    .cta__interno {
+      grid-template-columns: 1fr;
+    }
+
+    .cta__botao {
+      justify-self: start;
+    }
+  }
+</style>

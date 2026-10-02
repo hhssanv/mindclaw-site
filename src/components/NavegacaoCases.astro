@@ -1,0 +1,101 @@
+---
+import Icone from './Icone.astro';
+import { hrefCase, type CaseEntry } from '../lib/cases';
+
+interface Props {
+  anterior?: CaseEntry;
+  proximo?: CaseEntry;
+}
+
+const { anterior, proximo } = Astro.props;
+---
+
+{
+  (anterior || proximo) && (
+    <nav class="navcases container" aria-label="Outros cases">
+      {anterior && (
+        <a class="navcases__link navcases__link--anterior" href={hrefCase(anterior.id)} rel="prev">
+          <span class="navcases__rotulo eyebrow">
+            <Icone nome="seta-esquerda" />
+            Case anterior
+          </span>
+          <span class="navcases__titulo">{anterior.data.titulo}</span>
+        </a>
+      )}
+      {proximo && (
+        <a class="navcases__link navcases__link--proximo" href={hrefCase(proximo.id)} rel="next">
+          <span class="navcases__rotulo eyebrow">
+            Próximo case
+            <Icone nome="seta" />
+          </span>
+          <span class="navcases__titulo">{proximo.data.titulo}</span>
+        </a>
+      )}
+    </nav>
+  )
+}
+
+<style>
+  .navcases {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding-block: clamp(40px, 5vw, 64px);
+  }
+
+  .navcases__link {
+    display: grid;
+    gap: 8px;
+    padding: 22px 24px;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-2);
+    text-decoration: none;
+    transition: border-color var(--transicao), background-color var(--transicao);
+  }
+
+  .navcases__link:hover {
+    border-color: var(--linha-forte);
+    background: var(--superficie);
+  }
+
+  .navcases__link--proximo {
+    text-align: right;
+  }
+
+  .navcases__link--proximo .navcases__rotulo {
+    justify-content: flex-end;
+  }
+
+  .navcases__rotulo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .navcases__rotulo :global(svg) {
+    width: 16px;
+    height: 16px;
+    color: var(--acento);
+  }
+
+  .navcases__titulo {
+    font-size: var(--texto-md);
+    font-weight: 650;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  @media (max-width: 640px) {
+    .navcases {
+      grid-template-columns: 1fr;
+    }
+
+    .navcases__link--proximo {
+      text-align: left;
+    }
+
+    .navcases__link--proximo .navcases__rotulo {
+      justify-content: flex-start;
+    }
+  }
+</style>

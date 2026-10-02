@@ -1,0 +1,142 @@
+/*
+ * Tokens de design.
+ * Cores derivadas do logo (tinta #141414, degradê #ff001e → #782747) e do
+ * vermelho sólido da assinatura de e-mail (#da0b29). Todo par texto/fundo
+ * usado no site passa em WCAG AA nas duas variações de tema.
+ */
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('/fonts/inter-latin-var.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url('/fonts/jetbrains-mono-latin-500.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: light dark;
+
+  /* Marca */
+  --marca-vermelho: #ff001e;
+  --marca-vinho: #782747;
+  --marca-gradiente: linear-gradient(90deg, var(--marca-vermelho) 0%, var(--marca-vinho) 100%);
+
+  /* Superfícies */
+  --fundo: #ffffff;
+  --superficie: #f6f6f7;
+  --superficie-acento: #fcedef;
+  --linha: #e5e5e8;
+  --linha-forte: #cfcfd6;
+
+  /* Texto */
+  --tinta: #141414;
+  --tinta-media: #45454d;
+  --tinta-fraca: #676772;
+
+  /* Acento */
+  --acento: #da0b29;
+  --acento-forte: #a8102a;
+  --botao: #da0b29;
+  --botao-hover: #b30d28;
+  --botao-texto: #ffffff;
+
+  /* Faixa escura (hero de case, CTA, rodapé) */
+  --faixa: #121214;
+  --faixa-elevada: #1c1c20;
+  --faixa-linha: #303036;
+  --faixa-tinta: #f4f4f5;
+  --faixa-tinta-media: #cacad0;
+  --faixa-tinta-fraca: #a2a2ac;
+  --faixa-acento: #ff5468;
+
+  /* Estados (sempre acompanhados de rótulo em texto) */
+  --alerta: #b42318;
+  --alerta-fundo: #fef3f2;
+  --atencao: #93370d;
+  --atencao-fundo: #fffaeb;
+  --ok: #067647;
+  --ok-fundo: #ecfdf3;
+
+  /* Tipografia */
+  --fonte: 'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --fonte-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+
+  --texto-xs: 0.75rem;
+  --texto-sm: 0.875rem;
+  --texto-base: 1.0625rem;
+  --texto-md: 1.1875rem;
+  --texto-lg: clamp(1.1875rem, 1.05rem + 0.5vw, 1.375rem);
+  --texto-xl: clamp(1.375rem, 1.15rem + 0.9vw, 1.75rem);
+  --texto-2xl: clamp(1.625rem, 1.3rem + 1.4vw, 2.25rem);
+  --texto-3xl: clamp(2rem, 1.45rem + 2.4vw, 3.25rem);
+
+  /* Espaço e forma */
+  --largura: 1200px;
+  --largura-texto: 68ch;
+  --gutter: clamp(16px, 4vw, 40px);
+  --secao: clamp(56px, 7vw, 104px);
+  --raio-1: 6px;
+  --raio-2: 10px;
+  --raio-3: 16px;
+  --sombra: 0 1px 2px rgb(20 20 20 / 0.04), 0 4px 16px rgb(20 20 20 / 0.06);
+  --transicao: 160ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fundo: #0d0d0f;
+    --superficie: #17171a;
+    --superficie-acento: #2b1218;
+    --linha: #28282e;
+    --linha-forte: #3c3c44;
+
+    --tinta: #f2f2f4;
+    --tinta-media: #c4c4cb;
+    --tinta-fraca: #9d9da8;
+
+    --acento: #ff5468;
+    --acento-forte: #ff8593;
+    --botao: #da0b29;
+    --botao-hover: #ef1a39;
+
+    --faixa: #151518;
+    --faixa-elevada: #1f1f23;
+    --faixa-linha: #33333a;
+
+    --alerta: #fd8a80;
+    --alerta-fundo: #2c1412;
+    --atencao: #fdc04a;
+    --atencao-fundo: #2a1f0a;
+    --ok: #5fd99a;
+    --ok-fundo: #0c2619;
+
+    --sombra: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 16px rgb(0 0 0 / 0.25);
+  }
+}
+
+/* Dentro de uma faixa escura, os tokens de texto e linha se remapeiam. */
+.faixa {
+  --tinta: var(--faixa-tinta);
+  --tinta-media: var(--faixa-tinta-media);
+  --tinta-fraca: var(--faixa-tinta-fraca);
+  --acento: var(--faixa-acento);
+  --acento-forte: #ff8593;
+  --linha: var(--faixa-linha);
+  --linha-forte: #45454d;
+  --superficie: var(--faixa-elevada);
+  --superficie-acento: #2b1218;
+  background: var(--faixa);
+  color: var(--tinta);
+}

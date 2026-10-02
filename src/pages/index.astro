@@ -1,0 +1,468 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import SecaoTitulo from '../components/SecaoTitulo.astro';
+import CaseCard from '../components/CaseCard.astro';
+import CTAContato from '../components/CTAContato.astro';
+import Icone from '../components/Icone.astro';
+import { casesEmDestaque, casesPublicados, hrefCase } from '../lib/cases';
+import { jsonLdPessoa } from '../lib/jsonld';
+import { site } from '../lib/site';
+
+const destaques = await casesEmDestaque();
+const publicados = await casesPublicados();
+const porId = new Map(publicados.map((c) => [c.id, c]));
+
+const competencias = (await getCollection('competencias'))
+  .sort((a, b) => a.data.ordem - b.data.ordem)
+  .map((comp) => ({
+  ...comp.data,
+  cases: comp.data.casesRelacionados.map((id) => porId.get(id)).filter((c) => c !== undefined),
+}));
+
+const etapas = (await getCollection('trabalho')).map((e) => e.data).sort((a, b) => a.numero - b.numero);
+
+const naoFaco = [
+  { titulo: 'Produto pronto ou licença de software', texto: 'Cada entrega é construída para o seu processo, não vendida de prateleira.' },
+  {
+    titulo: 'Teste de invasão ou auditoria de certificação',
+    texto: 'Governança, revisão de acessos e documentação, sim. Pentest e certificação formal, não.',
+  },
+  {
+    titulo: 'Automação que age sozinha onde o erro custa caro',
+    texto: 'Ação externa com impacto real passa por aprovação humana, sempre.',
+  },
+  { titulo: 'Entrega sem documentação', texto: 'Sistema que só funciona enquanto quem construiu está por perto não é entrega.' },
+];
+
+const [principal, ...outros] = destaques;
+const titulo = `${site.nome} · Automação, integração e IA aplicada`;
+---
+
+<Base title={titulo} description={site.descricao} jsonLd={[jsonLdPessoa(competencias.map((c) => c.nome))]}>
+  <!-- 1. Hero -->
+  <section class="hero-home" aria-labelledby="titulo-home">
+    <div class="container hero-home__interno">
+      <div class="hero-home__texto entrada">
+        <p class="eyebrow">{site.pessoa} · Automação, integração e IA aplicada</p>
+        <span class="traco" aria-hidden="true"></span>
+        <h1 id="titulo-home">
+          Transformo processos complexos, sistemas desconectados e trabalho manual em <span class="hero-home__destaque"
+            >automações, integrações, sistemas inteligentes e operações auditáveis.</span
+          >
+        </h1>
+        <p class="lead">
+          Para operações que dependem de trabalho manual e de sistemas que não conversam. Escopo escrito antes de começar,
+          aprovação humana onde importa e registro de tudo o que acontece.
+        </p>
+        <div>
+          <a class="botao" href="/cases/">
+            Ver os cases
+            <Icone nome="seta" />
+          </a>
+        </div>
+      </div>
+      <div class="hero-home__marca" aria-hidden="true">
+        <picture>
+          <source type="image/avif" srcset="/marca/isotipo-480.avif 480w, /marca/isotipo-960.avif 960w" sizes="340px" />
+          <img
+            src="/marca/isotipo-480.webp"
+            srcset="/marca/isotipo-480.webp 480w, /marca/isotipo-960.webp 960w"
+            sizes="340px"
+            width="480"
+            height="480"
+            alt=""
+            fetchpriority="high"
+          />
+        </picture>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Cases em destaque -->
+  <section class="secao secao--superficie" aria-labelledby="titulo-destaques">
+    <div class="container">
+      <div class="cabecalho-com-link">
+        <SecaoTitulo
+          id="titulo-destaques"
+          rotulo="Cases"
+          titulo="Trabalho que dá para verificar"
+          lead="Produção é sistema real em operação. Demonstração é modelo com dados sintéticos. Todo case diz qual dos dois ele é."
+        />
+        <a class="link-seta" href="/cases/">
+          Todos os cases
+          <Icone nome="seta" />
+        </a>
+      </div>
+      <div class="destaques">
+        {principal && <CaseCard case={principal} variante="destaque" largo />}
+        {outros.map((c) => <CaseCard case={c} variante="destaque" />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Competências -->
+  <section class="secao" aria-labelledby="titulo-competencias">
+    <div class="container">
+      <SecaoTitulo
+        id="titulo-competencias"
+        rotulo="Competências"
+        titulo="Cada área com um case que a comprova"
+      />
+      <ul class="competencias" role="list">
+        {
+          competencias.map((comp) => (
+            <li class="competencia">
+              <Icone nome={comp.icone} class="competencia__icone" />
+              <h3>{comp.nome}</h3>
+              <p>{comp.descricao}</p>
+              {comp.cases.length > 0 && (
+                <ul class="competencia__cases" role="list" aria-label={`Cases de ${comp.nome}`}>
+                  {comp.cases.map((c) => (
+                    <li>
+                      <a href={hrefCase(c.id)}>{c.data.titulo}</a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4. Modelo de trabalho -->
+  <section class="secao secao--superficie" aria-labelledby="titulo-trabalho">
+    <div class="container">
+      <div class="cabecalho-com-link">
+        <SecaoTitulo id="titulo-trabalho" rotulo="Como trabalho" titulo="Oito etapas, do problema à passagem" />
+        <a class="link-seta" href="/sobre/#modelo-de-trabalho">
+          Etapas em detalhe
+          <Icone nome="seta" />
+        </a>
+      </div>
+      <ol class="etapas-home" role="list">
+        {
+          etapas.map((e) => (
+            <li>
+              <span class="etapas-home__numero mono" aria-hidden="true">
+                {String(e.numero).padStart(2, '0')}
+              </span>
+              <h3>{e.nome}</h3>
+              <p>{e.resumo}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- 5. O que não é oferecido -->
+  <section class="secao" aria-labelledby="titulo-nao-faco">
+    <div class="container nao-faco">
+      <SecaoTitulo
+        id="titulo-nao-faco"
+        rotulo="Limite de escopo"
+        titulo="O que eu não faço"
+        lead="Dizer o que fica de fora é parte do trabalho. Vale para cada case e vale para o site inteiro."
+      />
+      <ul class="nao-faco__lista" role="list">
+        {
+          naoFaco.map((item) => (
+            <li>
+              <h3>{item.titulo}</h3>
+              <p>{item.texto}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- 6. Contato -->
+  <CTAContato
+    titulo="Tem um processo que depende de alguém copiando, conferindo ou lembrando?"
+    texto="Conte o problema do jeito que ele aparece no dia a dia. A primeira conversa serve para entender se faz sentido trabalharmos juntos."
+    rotuloBotao="Falar sobre um projeto"
+  />
+</Base>
+
+<style>
+  /* Hero */
+  .hero-home {
+    overflow: hidden;
+    padding-block: clamp(48px, 7vw, 104px) clamp(48px, 6vw, 88px);
+  }
+
+  .hero-home__interno {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 40px clamp(32px, 5vw, 80px);
+  }
+
+  .hero-home__texto {
+    display: grid;
+    gap: 22px;
+    max-width: 50rem;
+  }
+
+  .hero-home h1 {
+    font-size: clamp(2rem, 1.35rem + 2.3vw, 3.125rem);
+    line-height: 1.1;
+    text-wrap: pretty;
+  }
+
+  .hero-home__destaque {
+    background: linear-gradient(90deg, #da0b29, #782747);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .hero-home__destaque {
+      background-image: linear-gradient(90deg, #ff5468, #e0698a);
+    }
+  }
+
+  .hero-home .lead {
+    max-width: 60ch;
+  }
+
+  .hero-home__marca {
+    position: relative;
+    width: clamp(220px, 26vw, 340px);
+  }
+
+  .hero-home__marca::before {
+    content: '';
+    position: absolute;
+    inset: 8% 4% 2%;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--marca-vermelho) 14%, transparent), transparent);
+  }
+
+  .hero-home__marca img {
+    position: relative;
+    width: 100%;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-home__marca {
+      animation: entrada 900ms 160ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .hero-home__interno {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-home__marca {
+      display: none;
+    }
+  }
+
+  /* Cabeçalho de seção com link à direita */
+  .cabecalho-com-link {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0 32px;
+  }
+
+  .cabecalho-com-link .link-seta {
+    margin-bottom: clamp(28px, 4vw, 48px);
+  }
+
+  /* Destaques */
+  .destaques {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .destaques > :global(.card--largo) {
+    grid-column: 1 / -1;
+  }
+
+  @media (max-width: 760px) {
+    .destaques {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Competências */
+  .competencias {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+    gap: 0;
+    margin: 0;
+    border-top: 1px solid var(--linha);
+    border-left: 1px solid var(--linha);
+  }
+
+  .competencia {
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: 10px;
+    padding: 24px;
+    border-right: 1px solid var(--linha);
+    border-bottom: 1px solid var(--linha);
+  }
+
+  .competencia :global(.competencia__icone) {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 6px;
+    color: var(--acento);
+  }
+
+  .competencia p {
+    color: var(--tinta-media);
+    font-size: 0.9875rem;
+    line-height: 1.55;
+  }
+
+  .competencia__cases {
+    display: grid;
+    gap: 4px;
+    margin: 6px 0 0;
+    padding-top: 12px;
+    border-top: 1px dashed var(--linha-forte);
+    font-size: var(--texto-sm);
+  }
+
+  .competencia__cases a {
+    display: inline-block;
+    padding-block: 4px;
+    color: var(--acento);
+    font-weight: 550;
+    text-decoration: none;
+  }
+
+  .competencia__cases a::before {
+    content: '→ ';
+  }
+
+  .competencia__cases a:hover {
+    text-decoration: underline;
+  }
+
+  /* Etapas (versão condensada) */
+  .etapas-home {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+    margin: 0;
+    counter-reset: etapa;
+  }
+
+  .etapas-home li {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    padding: 22px 22px 26px 0;
+    border-top: 2px solid var(--linha-forte);
+  }
+
+  .etapas-home li:nth-child(-n + 4) {
+    border-top-color: var(--tinta);
+  }
+
+  .etapas-home__numero {
+    color: var(--acento);
+    font-size: var(--texto-sm);
+  }
+
+  .etapas-home h3 {
+    font-size: var(--texto-base);
+  }
+
+  .etapas-home p {
+    color: var(--tinta-media);
+    font-size: var(--texto-sm);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 900px) {
+    .etapas-home {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .etapas-home li:nth-child(-n + 4) {
+      border-top-color: var(--linha-forte);
+    }
+
+    .etapas-home li:nth-child(-n + 2) {
+      border-top-color: var(--tinta);
+    }
+  }
+
+  @media (max-width: 520px) {
+    .etapas-home {
+      grid-template-columns: 1fr;
+    }
+
+    .etapas-home li {
+      padding-right: 0;
+    }
+  }
+
+  /* O que não faço */
+  .nao-faco {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 24px clamp(32px, 5vw, 72px);
+    align-items: start;
+  }
+
+  .nao-faco :global(.secao-titulo) {
+    margin-bottom: 0;
+  }
+
+  .nao-faco__lista {
+    display: grid;
+    gap: 0;
+    margin: 0;
+  }
+
+  .nao-faco__lista li {
+    position: relative;
+    display: grid;
+    gap: 4px;
+    padding: 18px 0 18px 36px;
+    border-bottom: 1px solid var(--linha);
+  }
+
+  .nao-faco__lista li:first-child {
+    padding-top: 0;
+  }
+
+  .nao-faco__lista li::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 27px;
+    width: 14px;
+    height: 2px;
+    background: var(--acento);
+  }
+
+  .nao-faco__lista li:first-child::before {
+    top: 9px;
+  }
+
+  .nao-faco__lista p {
+    color: var(--tinta-media);
+  }
+
+  @media (max-width: 860px) {
+    .nao-faco {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

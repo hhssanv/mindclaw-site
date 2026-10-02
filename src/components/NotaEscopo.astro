@@ -1,0 +1,55 @@
+---
+import SecaoTitulo from './SecaoTitulo.astro';
+
+interface Props {
+  texto: string;
+  numero?: number;
+}
+
+const { texto, numero } = Astro.props;
+---
+
+<section class="secao secao--superficie" aria-labelledby="titulo-escopo">
+  <div class="container escopo">
+    <SecaoTitulo id="titulo-escopo" numero={numero} rotulo="Limite de escopo" titulo="O que este trabalho não é" />
+    <p class="escopo__texto">{texto}</p>
+  </div>
+</section>
+
+<style>
+  .escopo {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 24px clamp(32px, 5vw, 72px);
+    align-items: start;
+  }
+
+  .escopo :global(.secao-titulo) {
+    margin-bottom: 0;
+  }
+
+  .escopo__texto {
+    position: relative;
+    padding-left: 24px;
+    color: var(--tinta);
+    font-size: var(--texto-lg);
+    line-height: 1.6;
+  }
+
+  .escopo__texto::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 6px;
+    bottom: 6px;
+    width: 3px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, var(--marca-vermelho), var(--marca-vinho));
+  }
+
+  @media (max-width: 860px) {
+    .escopo {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,72 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../lib/site';
+---
+
+<Base
+  title={`Privacidade · ${site.nome}`}
+  description="Como este site trata dados: sem cookies, sem ferramentas de análise de terceiros, e um formulário de contato que não guarda nada em servidor."
+>
+  <article class="container privacidade">
+    <p class="eyebrow">Privacidade</p>
+    <h1>Privacidade</h1>
+    <div class="prosa">
+      <p class="lead">Este site foi feito para coletar o mínimo possível. Na prática, isso significa o seguinte.</p>
+
+      <h2>O que o site não faz</h2>
+      <p>
+        Não usa cookies, não tem ferramentas de análise ou publicidade de terceiros e não registra quem visita. As fontes
+        e imagens são servidas pelo próprio site, sem chamadas a serviços externos.
+      </p>
+
+      <h2>Hospedagem</h2>
+      <p>
+        O site é hospedado no GitHub Pages. Como qualquer servidor, o GitHub pode registrar dados técnicos de acesso, como
+        endereço IP, conforme a política de privacidade dele.
+      </p>
+
+      <h2>Formulário de contato</h2>
+      <p>
+        O formulário não envia nada para um servidor. Ele monta a mensagem e abre o seu aplicativo de e-mail ou o WhatsApp
+        com o texto pronto; você decide se envia. A partir daí, a mensagem segue as regras do serviço que você escolheu.
+      </p>
+
+      <h2>Uso das mensagens</h2>
+      <p>
+        O que você enviar é usado só para responder ao seu contato e conduzir uma eventual conversa de trabalho. Não é
+        compartilhado com terceiros nem usado em portfólio.
+      </p>
+
+      <h2>Seus dados</h2>
+      <p>
+        Para pedir acesso, correção ou exclusão de qualquer mensagem que você tenha enviado, escreva para
+        <a href={`mailto:${site.email}`}>{site.email}</a>.
+      </p>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .privacidade {
+    display: grid;
+    gap: 16px;
+    padding-block: clamp(48px, 6vw, 96px);
+  }
+
+  .prosa {
+    margin-top: 8px;
+  }
+
+  .prosa h2 {
+    margin-top: 2em;
+    font-size: var(--texto-lg);
+  }
+
+  .prosa .lead {
+    color: var(--tinta-media);
+  }
+
+  .prosa a {
+    color: var(--acento);
+  }
+</style>

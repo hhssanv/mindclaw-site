@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+import Icone from '../components/Icone.astro';
+import { site } from '../lib/site';
+---
+
+<Base title={`Página não encontrada · ${site.nome}`} description="A página procurada não existe ou mudou de endereço." noindex>
+  <section class="container nao-encontrada">
+    <p class="eyebrow eyebrow--acento">Erro 404</p>
+    <h1>Esta página não existe</h1>
+    <p class="lead">O endereço pode ter mudado, ou o link estava incompleto.</p>
+    <div class="acoes">
+      <a class="botao" href="/cases/">
+        Ver os cases
+        <Icone nome="seta" />
+      </a>
+      <a class="botao botao--secundario" href="/">Voltar ao início</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nao-encontrada {
+    display: grid;
+    gap: 18px;
+    justify-items: start;
+    padding-block: clamp(72px, 12vw, 160px);
+  }
+
+  .acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+  }
+</style>

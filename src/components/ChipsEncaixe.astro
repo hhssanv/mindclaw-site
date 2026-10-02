@@ -1,0 +1,63 @@
+---
+import SecaoTitulo from './SecaoTitulo.astro';
+
+interface Props {
+  itens: string[];
+  /** Cada chip vira link para o contato com o tipo de problema já selecionado. */
+  comoLink?: boolean;
+  numero?: number;
+}
+
+const { itens, comoLink = false, numero } = Astro.props;
+const href = (item: string) => `/contato/?tipo=${encodeURIComponent(item)}`;
+---
+
+<div class="encaixe">
+  <SecaoTitulo
+    id="titulo-encaixe"
+    numero={numero}
+    rotulo="Encaixe"
+    titulo="Melhor encaixe"
+    lead="Problemas em que este tipo de trabalho rende mais."
+  />
+  <ul class="chips encaixe__chips" role="list">
+    {
+      itens.map((item) => (
+        <li>
+          {comoLink ? (
+            <a class="chip encaixe__chip encaixe__chip--link" href={href(item)}>
+              {item}
+            </a>
+          ) : (
+            <span class="chip encaixe__chip">{item}</span>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .encaixe__chips {
+    gap: 10px;
+  }
+
+  .encaixe__chip {
+    min-height: 40px;
+    padding: 8px 16px;
+    border-color: var(--linha-forte);
+    background: var(--fundo);
+    color: var(--tinta);
+    font-size: 0.9375rem;
+  }
+
+  .encaixe__chip--link {
+    text-decoration: none;
+    transition: border-color var(--transicao), color var(--transicao);
+  }
+
+  .encaixe__chip--link:hover {
+    border-color: var(--acento);
+    color: var(--acento);
+  }
+</style>
