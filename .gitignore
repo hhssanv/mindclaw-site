@@ -1,0 +1,52 @@
+# --- Segredos: NUNCA versionar ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+id_rsa*
+id_ed25519*
+secrets/
+credentials*.json
+service-account*.json
+
+# --- Dependências ---
+node_modules/
+.pnpm-store/
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+
+# --- Builds e caches ---
+dist/
+build/
+out/
+.next/
+.nuxt/
+.astro/
+.svelte-kit/
+.vercel/
+.netlify/
+.cache/
+.turbo/
+coverage/
+*.tsbuildinfo
+
+# --- Logs ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- Sistema operacional / editores ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp

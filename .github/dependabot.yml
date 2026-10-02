@@ -1,0 +1,16 @@
+version: 2
+updates:
+  # Mantém as actions dos workflows atualizadas (inclusive os SHAs fixados).
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+
+  # Descomente quando o projeto tiver package.json.
+  # - package-ecosystem: npm
+  #   directory: /
+  #   schedule:
+  #     interval: weekly
+  #   groups:
+  #     dependencias:
+  #       patterns: ["*"]
