@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
-    "rascunhos": "MOSTRAR_RASCUNHOS=1 astro build"
+    "preview": "astro preview"
   },
   "dependencies": {
     "@fontsource/inter": "^5.3.0",
@@ -16,7 +15,7 @@
     "astro": "^7.3.5",
     "satori": "^0.35.0"
   },
-  "description": "Site da Hans MindClaw: cases, serviços e contato.",
+  "description": "Site da Hans MindClaw: soluções, projetos e contato.",
   "engines": {
     "node": ">=22.12"
   }

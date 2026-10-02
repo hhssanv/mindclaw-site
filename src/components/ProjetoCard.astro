@@ -1,0 +1,179 @@
+---
+import { hrefSolucao, type ProjetoEntry } from '../lib/conteudo';
+
+interface Props {
+  projeto: ProjetoEntry;
+  /** Rótulos curtos das áreas, por id. */
+  areas: Map<string, string>;
+  /** Versão curta para a home: sem atuação e sem tecnologias. */
+  compacto?: boolean;
+  nivel?: 2 | 3;
+}
+
+const { projeto, areas, compacto = false, nivel = 3 } = Astro.props;
+const d = projeto.data;
+const Titulo = `h${nivel}` as 'h2' | 'h3';
+---
+
+<article class:list={['proj', compacto && 'proj--compacto']} id={compacto ? undefined : projeto.id}>
+  <div class="proj__topo">
+    <ul class="proj__areas" role="list" aria-label="Áreas">
+      {
+        d.areas.map((a) => (
+          <li>
+            <a class="etiqueta proj__area" href={hrefSolucao(a)}>
+              {areas.get(a) ?? a}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    {d.demonstracao && <span class="proj__demo">Modelo de demonstração</span>}
+  </div>
+
+  <Titulo class="proj__titulo">{d.titulo}</Titulo>
+
+  <dl class="proj__corpo">
+    <div>
+      <dt>Contexto</dt>
+      <dd>{d.contexto}</dd>
+    </div>
+    {
+      !compacto && (
+        <div>
+          <dt>Atuação</dt>
+          <dd>{d.atuacao}</dd>
+        </div>
+      )
+    }
+    <div class="proj__resultado">
+      <dt>Resultado</dt>
+      <dd>{d.resultado}</dd>
+    </div>
+  </dl>
+
+  {
+    !compacto && (
+      <ul class="proj__tecnologias" role="list" aria-label="Tecnologias e métodos">
+        {d.tecnologias.map((t) => (
+          <li>{t}</li>
+        ))}
+      </ul>
+    )
+  }
+</article>
+
+<style>
+  .proj {
+    display: grid;
+    align-content: start;
+    gap: 14px;
+    padding: clamp(22px, 2.6vw, 30px);
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-3);
+    background: var(--fundo);
+    scroll-margin-top: 96px;
+  }
+
+  .proj:target {
+    border-color: var(--acento);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--acento) 18%, transparent);
+  }
+
+  .proj__topo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .proj__areas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+  }
+
+  .proj__area {
+    text-decoration: none;
+    transition: color var(--transicao), background-color var(--transicao);
+  }
+
+  .proj__area:hover {
+    background: var(--superficie-acento);
+    color: var(--tinta);
+  }
+
+  .proj__demo {
+    padding: 3px 10px;
+    border: 1px dashed var(--linha-forte);
+    border-radius: 999px;
+    color: var(--tinta-media);
+    font-size: 0.8125rem;
+    font-weight: 500;
+  }
+
+  .proj__titulo {
+    font-family: var(--fonte-display);
+    font-size: var(--t-xl);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+
+  .proj__corpo {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+  }
+
+  .proj__corpo dt {
+    margin-bottom: 2px;
+    color: var(--tinta-fraca);
+    font-family: var(--fonte-display);
+    font-size: 0.75rem;
+    font-stretch: 112.5%;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .proj__corpo dd {
+    margin: 0;
+    color: var(--tinta-media);
+    font-size: var(--t-sm);
+    line-height: 1.55;
+  }
+
+  .proj__resultado {
+    padding: 12px 14px;
+    border-left: 3px solid var(--acento);
+    border-radius: 0 var(--raio-1) var(--raio-1) 0;
+    background: var(--superficie);
+  }
+
+  .proj__resultado dd {
+    color: var(--tinta);
+    font-weight: 500;
+  }
+
+  .proj__tecnologias {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    margin: 2px 0 0;
+    padding-top: 14px;
+    border-top: 1px solid var(--linha);
+    color: var(--tinta-media);
+    font-size: 0.8125rem;
+    font-weight: 500;
+  }
+
+  .proj__tecnologias li + li::before {
+    content: '·';
+    margin-right: 14px;
+    margin-left: -7px;
+    color: var(--tinta-fraca);
+  }
+</style>

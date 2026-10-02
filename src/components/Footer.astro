@@ -2,9 +2,9 @@
 import Logo from './Logo.astro';
 import Icone from './Icone.astro';
 import { site, linkWhatsApp } from '../lib/site';
-import { casesPublicados, hrefCase } from '../lib/cases';
+import { solucoes, hrefSolucao } from '../lib/conteudo';
 
-const cases = await casesPublicados();
+const areas = await solucoes();
 const ano = new Date().getFullYear();
 
 const mapa = [
@@ -38,13 +38,13 @@ const mapa = [
         </ul>
       </nav>
 
-      <nav aria-label="Cases">
-        <h2 class="eyebrow">Cases</h2>
+      <nav aria-label="Soluções">
+        <h2 class="eyebrow">Soluções</h2>
         <ul role="list">
           {
-            cases.map((c) => (
+            areas.map((a) => (
               <li>
-                <a href={hrefCase(c.id)}>{c.data.titulo}</a>
+                <a href={hrefSolucao(a.id)}>{a.data.titulo}</a>
               </li>
             ))
           }

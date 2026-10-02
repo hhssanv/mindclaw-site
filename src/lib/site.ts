@@ -12,7 +12,10 @@ export const site = {
   posicionamento:
     'Processos complexos, sistemas desconectados e trabalho manual transformados em automações, integrações, sistemas inteligentes e operações auditáveis.',
   descricao:
-    'Automação, integração e IA aplicada para operações que dependem de trabalho manual e sistemas que não conversam, sempre com controle humano e registro do que acontece.',
+    'Capacity e forecast, BI, automação, IA aplicada, segurança e infraestrutura para operações que dependem de trabalho manual, com controle humano e registro do que acontece.',
+  /** Linha de credencial, vinda do dossiê profissional. */
+  trajetoria: 'Mais de uma década em ambientes corporativos',
+  areasResumo: 'Infraestrutura, dados, automação, segurança e IA aplicada',
 
   email: 'hans@hansmindclaw.com',
   /** Preencha para exibir no Sobre e no rodapé (ex.: 'https://www.linkedin.com/in/...'). */
@@ -25,8 +28,8 @@ export const site = {
   },
 
   navegacao: [
-    { rotulo: 'Cases', href: '/cases/' },
-    { rotulo: 'Serviços', href: '/servicos/' },
+    { rotulo: 'Soluções', href: '/solucoes/' },
+    { rotulo: 'Projetos', href: '/projetos/' },
     { rotulo: 'Sobre', href: '/sobre/' },
   ],
   contato: { rotulo: 'Contato', href: '/contato/' },
@@ -35,15 +38,12 @@ export const site = {
     'Nenhum nome de cliente, dado real ou detalhe de implementação é publicado aqui. O seu projeto recebe o mesmo tratamento.',
 } as const;
 
-export const rotuloTipo = {
-  producao: 'Produção',
-  demonstracao: 'Demonstração',
-} as const;
-
-export const descricaoTipo = {
-  producao: 'Sistema real em operação',
-  demonstracao: 'Modelo com dados sintéticos',
-} as const;
+/**
+ * O ganho é proporcional a cada ambiente. Nenhum percentual é prometido no site:
+ * o diagnóstico mede a situação atual e define como o resultado vai ser medido.
+ */
+export const notaGanho =
+  'Quanto cada ponto melhora depende do ambiente: volume, estrutura e maturidade dos dados. Por isso nenhum percentual é prometido aqui. O diagnóstico mede a situação atual e define, antes de começar, como o ganho vai ser medido.';
 
 export function urlAbsoluta(caminho: string): string {
   return new URL(caminho, site.url).href;

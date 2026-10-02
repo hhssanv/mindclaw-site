@@ -1,12 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
 import Icone from '../components/Icone.astro';
-import { casesPublicados, categoriasDeProblema } from '../lib/cases';
+import { solucoes } from '../lib/conteudo';
 import { site, linkWhatsApp } from '../lib/site';
 
-const cases = await casesPublicados();
-const categorias = categoriasDeProblema(cases);
-const titulosCases = Object.fromEntries(cases.map((c) => [c.id, c.data.titulo]));
+const areas = await solucoes();
 ---
 
 <Base
@@ -51,7 +49,6 @@ const titulosCases = Object.fromEntries(cases.map((c) => [c.id, c.data.titulo]))
 
       <form class="form" data-contato data-email={site.email} data-whatsapp={site.whatsapp.numero} novalidate>
         <h2 class="visualmente-oculto">Formulário de contato</h2>
-        <input type="hidden" name="caso" value="" data-casos={JSON.stringify(titulosCases)} />
 
         <div class="campo">
           <label for="nome">Nome <span class="campo__opcional">opcional</span></label>
@@ -73,10 +70,10 @@ const titulosCases = Object.fromEntries(cases.map((c) => [c.id, c.data.titulo]))
         </div>
 
         <div class="campo">
-          <label for="tipo">Tipo de problema <span class="campo__opcional">opcional</span></label>
+          <label for="tipo">Área mais próxima <span class="campo__opcional">opcional</span></label>
           <select id="tipo" name="tipo">
             <option value="">Escolha a opção mais próxima</option>
-            {categorias.map((c) => <option value={c}>{c}</option>)}
+            {areas.map((a) => <option value={a.data.titulo} data-area={a.id}>{a.data.titulo}</option>)}
             <option value="Outro">Outro / ainda não sei</option>
           </select>
         </div>
@@ -126,15 +123,11 @@ const titulosCases = Object.fromEntries(cases.map((c) => [c.id, c.data.titulo]))
     const campo = (nome: string) => form.elements.namedItem(nome) as HTMLInputElement | HTMLTextAreaElement;
     const params = new URLSearchParams(location.search);
 
-    // Pré-seleção vinda dos chips e do CTA de um case.
-    const tipo = params.get('tipo');
+    // Pré-seleção vinda do botão "Falar sobre isso" de uma solução (?area=id).
+    const area = params.get('area');
     const select = form.querySelector<HTMLSelectElement>('#tipo');
-    if (tipo && select && [...select.options].some((o) => o.value === tipo)) select.value = tipo;
-
-    const caso = params.get('caso');
-    const hidden = form.querySelector<HTMLInputElement>('[data-casos]');
-    const casos = JSON.parse(hidden?.dataset.casos ?? '{}') as Record<string, string>;
-    if (caso && hidden && casos[caso]) hidden.value = casos[caso];
+    const opcao = select && [...select.options].find((o) => o.dataset.area === area);
+    if (select && opcao) select.value = opcao.value;
 
     const validar = (el: HTMLInputElement | HTMLTextAreaElement) => {
       const ok = el.value.trim().length > 0;
@@ -166,8 +159,7 @@ const titulosCases = Object.fromEntries(cases.map((c) => [c.id, c.data.titulo]))
       const linhas: string[] = [];
       if (valor('nome')) linhas.push(`Nome: ${valor('nome')}`);
       linhas.push(`Resposta por: ${valor('retorno')}`);
-      if (valor('tipo')) linhas.push(`Tipo de problema: ${valor('tipo')}`);
-      if (valor('caso')) linhas.push(`Vi o case: ${valor('caso')}`);
+      if (valor('tipo')) linhas.push(`Área: ${valor('tipo')}`);
       linhas.push('', valor('descricao'));
       const corpo = linhas.join('\n');
 

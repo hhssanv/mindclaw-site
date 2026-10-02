@@ -3,15 +3,16 @@ import Icone from './Icone.astro';
 
 interface Props {
   texto: string;
-  /** "hero": faixa colada sob o hero. "fim": bloco antes do CTA. */
-  variante?: 'hero' | 'fim';
+  /** "faixa": faixa de largura total. "bloco": caixa dentro do conteúdo. */
+  variante?: 'faixa' | 'bloco';
+  rotulo?: string;
 }
 
-const { texto, variante = 'hero' } = Astro.props;
+const { texto, variante = 'faixa', rotulo = 'Nota' } = Astro.props;
 ---
 
-<div class:list={['disclaimer', `disclaimer--${variante}`]} role="note" aria-label="Nota sobre os dados exibidos">
-  <div class:list={[variante === 'hero' && 'container', 'disclaimer__interno']}>
+<div class:list={['disclaimer', `disclaimer--${variante}`]} role="note" aria-label={rotulo}>
+  <div class:list={[variante === 'faixa' && 'container', 'disclaimer__interno']}>
     <Icone nome="info" class="disclaimer__icone" />
     <p>{texto}</p>
   </div>
@@ -38,13 +39,13 @@ const { texto, variante = 'hero' } = Astro.props;
     color: var(--tinta-fraca);
   }
 
-  .disclaimer--hero {
+  .disclaimer--faixa {
     padding-block: 14px;
     border-bottom: 1px solid var(--linha);
     background: var(--superficie);
   }
 
-  .disclaimer--fim .disclaimer__interno {
+  .disclaimer--bloco .disclaimer__interno {
     padding: 16px 18px;
     border: 1px dashed var(--linha-forte);
     border-radius: var(--raio-2);

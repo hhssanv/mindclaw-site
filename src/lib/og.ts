@@ -3,8 +3,7 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
-import type { Case } from './schema';
-import { site, rotuloTipo, descricaoTipo } from './site';
+import type { Solucao } from './schema';
 
 /**
  * Imagens Open Graph (1200×630) geradas no build, no mesmo visual do hero.
@@ -68,8 +67,8 @@ async function renderizar(arvore: No): Promise<Buffer> {
   return new Resvg(svg, { fitTo: { mode: 'width', value: 1200 } }).render().asPng();
 }
 
-export async function ogCase(d: Case): Promise<Buffer> {
-  const titulo = d.titulo.length > 52 ? 54 : 62;
+export async function ogSolucao(d: Solucao): Promise<Buffer> {
+  const tamanhoTitulo = d.titulo.length > 36 ? 58 : 66;
   const arvore = h(
     'div',
     {
@@ -89,59 +88,41 @@ export async function ogCase(d: Case): Promise<Buffer> {
       h(
         'div',
         {
-          alignItems: 'center',
-          gap: 12,
           padding: '8px 18px',
           border: `1px solid ${cor.linha}`,
           borderRadius: 999,
-          fontFamily: 'Saira', fontWeight: 600,
+          fontFamily: 'Saira',
+          fontWeight: 600,
           fontSize: 18,
-          letterSpacing: 1,
+          letterSpacing: 2,
           color: cor.media,
         },
-        h('div', {
-          width: 12,
-          height: 12,
-          borderRadius: 999,
-          backgroundColor: d.tipo === 'producao' ? cor.ok : 'transparent',
-          border: d.tipo === 'producao' ? 'none' : `2px dashed ${cor.fraca}`,
-        }),
-        `${rotuloTipo[d.tipo].toUpperCase()} · ${descricaoTipo[d.tipo]}`,
+        'SOLUÇÃO',
       ),
     ),
     h(
       'div',
-      { marginTop: 52, fontFamily: 'Saira', fontWeight: 600, fontSize: 19, letterSpacing: 2, color: cor.acento },
-      d.eyebrow.join('  ·  ').toUpperCase(),
-    ),
-    h(
-      'div',
       {
-        marginTop: 18,
+        marginTop: 64,
         maxWidth: 1000,
         fontFamily: 'Saira',
-        fontSize: titulo,
+        fontSize: tamanhoTitulo,
         fontWeight: 700,
         lineHeight: 1.04,
         letterSpacing: -0.5,
       },
       d.titulo,
     ),
+    h('div', { marginTop: 22, maxWidth: 960, fontSize: 25, lineHeight: 1.4, color: cor.media }, d.resumo),
     h(
       'div',
-      { marginTop: 'auto', borderTop: `1px solid ${cor.linha}`, paddingTop: 26 },
-      ...d.metricas.map((m, i) =>
+      { marginTop: 'auto', gap: 28, borderTop: `1px solid ${cor.linha}`, paddingTop: 24 },
+      ...d.ganhos.slice(0, 3).map((g) =>
         h(
           'div',
-          {
-            flex: 1,
-            flexDirection: 'column',
-            gap: 8,
-            paddingLeft: i === 0 ? 0 : 28,
-            borderLeft: i === 0 ? 'none' : `1px solid ${cor.linha}`,
-          },
-          h('div', { fontFamily: 'Saira', fontSize: 54, fontWeight: 700, color: cor.acento, lineHeight: 1 }, m.valor),
-          h('div', { fontSize: 21, color: cor.fraca, lineHeight: 1.3, maxWidth: 300 }, m.rotulo),
+          { flex: 1, gap: 12, alignItems: 'flex-start' },
+          h('div', { width: 10, height: 10, marginTop: 9, flexShrink: 0, backgroundColor: cor.acento }),
+          h('div', { fontSize: 21, fontWeight: 500, lineHeight: 1.35, color: cor.tinta }, g),
         ),
       ),
     ),

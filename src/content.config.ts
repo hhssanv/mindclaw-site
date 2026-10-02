@@ -1,20 +1,20 @@
 import { defineCollection } from 'astro:content';
 import { file, glob } from 'astro/loaders';
-import { caseSchema, competenciaSchema, etapaSchema, servicoSchema, stackSchema } from './lib/schema';
+import { principioSchema, projetoSchema, servicoSchema, solucaoSchema, stackSchema } from './lib/schema';
 
-const cases = defineCollection({
-  loader: glob({ pattern: '*.md', base: './content/cases' }),
-  schema: caseSchema,
+const solucoes = defineCollection({
+  loader: glob({ pattern: '*.md', base: './content/solucoes' }),
+  schema: solucaoSchema,
 });
 
-const competencias = defineCollection({
-  loader: file('./content/competencias.json'),
-  schema: competenciaSchema,
+const projetos = defineCollection({
+  loader: file('./content/projetos.json'),
+  schema: projetoSchema,
 });
 
-const trabalho = defineCollection({
-  loader: file('./content/trabalho.json'),
-  schema: etapaSchema,
+const principios = defineCollection({
+  loader: file('./content/forma-de-trabalhar.json'),
+  schema: principioSchema,
 });
 
 const servicos = defineCollection({
@@ -27,4 +27,4 @@ const stack = defineCollection({
   schema: stackSchema,
 });
 
-export const collections = { cases, competencias, trabalho, servicos, stack };
+export const collections = { solucoes, projetos, principios, servicos, stack };

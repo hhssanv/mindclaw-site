@@ -5,19 +5,18 @@ import SecaoTitulo from '../components/SecaoTitulo.astro';
 import Confidencialidade from '../components/Confidencialidade.astro';
 import CTAContato from '../components/CTAContato.astro';
 import Icone from '../components/Icone.astro';
+import { solucoes } from '../lib/conteudo';
 import { jsonLdPessoa } from '../lib/jsonld';
 import { site } from '../lib/site';
 
 const stack = (await getCollection('stack')).map((s) => s.data).sort((a, b) => a.ordem - b.ordem);
-const etapas = (await getCollection('trabalho')).map((e) => e.data).sort((a, b) => a.numero - b.numero);
-const areas = (await getCollection('competencias'))
-  .sort((a, b) => a.data.ordem - b.data.ordem)
-  .map((c) => c.data.nome);
+const principios = (await getCollection('principios')).map((p) => p.data).sort((a, b) => a.numero - b.numero);
+const areas = (await solucoes()).map((s) => s.data.titulo);
 ---
 
 <Base
   title={`Sobre · ${site.nome}`}
-  description="Perfil técnico, áreas de atuação e o modelo de trabalho em oito etapas: do problema na linguagem de quem o vive até a passagem documentada."
+  description="Mais de uma década em ambientes corporativos, unindo infraestrutura, segurança, dados, automação e IA aplicada em projetos de ponta a ponta."
   jsonLd={[jsonLdPessoa(areas)]}
 >
   <section class="perfil" aria-labelledby="titulo-sobre">
@@ -26,23 +25,24 @@ const areas = (await getCollection('competencias'))
         <p class="eyebrow eyebrow--traco">Sobre</p>
         <h1 id="titulo-sobre">{site.pessoa}</h1>
         <p class="perfil__cargo">
-          Automação, integração e IA aplicada{site.localizacao && <span> · {site.localizacao}</span>}
+          {site.trajetoria}{site.localizacao && <span> · {site.localizacao}</span>}
         </p>
         <div class="prosa perfil__prosa">
           <p>
-            Hans Spiller trabalha na fronteira entre operação e tecnologia: onde um processo depende de alguém copiando
-            dados entre sistemas, conferindo duas telas ou lembrando de um combinado feito por mensagem. É ali que
-            automação, integração e IA aplicada fazem diferença de verdade, e é ali que um erro silencioso custa mais caro.
+            Hans Spiller reúne competências que normalmente ficam em áreas separadas de TI: infraestrutura, segurança, dados,
+            automação, governança e IA aplicada. Em vez de tratar só a ferramenta, o trabalho olha o processo completo:
+            origem do dado, regra de negócio, infraestrutura, segurança, usuário, automação, evidência e sustentação.
           </p>
           <p>
-            O método começa pelo problema, não pela ferramenta. Antes de qualquer construção vêm o mapa de sistemas, dados
-            e riscos, o registro escrito do que o trabalho não vai fazer e a pergunta que vai dizer se deu certo. A
-            construção acontece em camadas, cada uma com uma responsabilidade e uma restrição que não pode violar.
+            Esse perfil faz diferença onde a causa de um problema não está em um único sistema. Boa parte dos projetos
+            cruza tecnologia, operação, RH, banco de dados, planilhas, redes e integrações: entender a operação, investigar
+            o problema, organizar os dados, construir a solução, ajustar acessos, validar o resultado e documentar o novo
+            processo.
           </p>
           <p>
-            Todo sistema entregue segue os mesmos princípios: aprovação humana antes de ação externa, privilégio mínimo,
-            registro do que acontece e caminho de volta quando algo dá errado. É o que permite colocar automação e IA em
-            operação sem perder o controle sobre elas.
+            A abordagem é prática e orientada a evidência: localizar o gargalo real, reduzir trabalho manual, proteger os
+            pontos críticos e deixar rastreabilidade. Mudanças são pequenas e reversíveis em ambiente crítico, e a validação
+            humana permanece onde o risco exige.
           </p>
         </div>
         {
@@ -72,11 +72,7 @@ const areas = (await getCollection('competencias'))
 
   <section class="secao secao--superficie" aria-labelledby="titulo-stack">
     <div class="container">
-      <SecaoTitulo
-        id="titulo-stack"
-        rotulo="Stack"
-        titulo="Capacidades técnicas por área"
-      />
+      <SecaoTitulo id="titulo-stack" rotulo="Stack" titulo="Tecnologias e conhecimentos por área" />
       <dl class="stack">
         {
           stack.map((area) => (
@@ -92,23 +88,23 @@ const areas = (await getCollection('competencias'))
     </div>
   </section>
 
-  <section class="secao" id="modelo-de-trabalho" aria-labelledby="titulo-modelo">
+  <section class="secao" id="forma-de-trabalhar" aria-labelledby="titulo-forma">
     <div class="container">
       <SecaoTitulo
-        id="titulo-modelo"
-        rotulo="Modelo de trabalho"
-        titulo="Oito etapas, do problema à passagem"
-        lead="A mesma sequência em todo projeto, do diagnóstico curto à construção de vários meses."
+        id="titulo-forma"
+        rotulo="Forma de trabalhar"
+        titulo="Oito princípios em todo projeto"
+        lead="Do diagnóstico ao desenho da solução, implementação, validação, documentação e sustentação."
       />
-      <ol class="modelo" role="list">
+      <ol class="forma" role="list">
         {
-          etapas.map((e) => (
-            <li class="modelo__etapa">
-              <span class="modelo__numero numeral" aria-hidden="true">
-                {String(e.numero).padStart(2, '0')}
+          principios.map((p) => (
+            <li class="forma__item">
+              <span class="forma__numero numeral" aria-hidden="true">
+                {String(p.numero).padStart(2, '0')}
               </span>
-              <h3>{e.nome}</h3>
-              <p>{e.descricao}</p>
+              <h3>{p.nome}</h3>
+              <p>{p.descricao}</p>
             </li>
           ))
         }
@@ -144,9 +140,10 @@ const areas = (await getCollection('competencias'))
 
   .perfil__cargo {
     margin-top: -6px;
-    color: var(--tinta-media);
-    font-size: var(--t-md);
-    font-weight: 500;
+    color: var(--tinta);
+    font-family: var(--fonte-display);
+    font-size: var(--t-lg);
+    font-weight: 600;
   }
 
   .perfil__prosa {
@@ -173,7 +170,7 @@ const areas = (await getCollection('competencias'))
 
   .stack {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0;
     margin: 0;
     border-top: 1px solid var(--linha);
@@ -208,36 +205,48 @@ const areas = (await getCollection('competencias'))
     line-height: 1.45;
   }
 
-  .modelo {
+  @media (max-width: 960px) {
+    .stack {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 560px) {
+    .stack {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .forma {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0 clamp(32px, 4vw, 56px);
     margin: 0;
   }
 
-  .modelo__etapa {
+  .forma__item {
     display: grid;
-    align-content: start;
     grid-template-columns: 3rem 1fr;
     grid-template-rows: auto auto;
+    align-content: start;
     gap: 4px 0;
     padding-block: 22px;
     border-top: 1px solid var(--linha);
   }
 
-  .modelo__numero {
+  .forma__numero {
     grid-row: 1 / span 2;
     color: var(--tinta-fraca);
     font-size: var(--t-sm);
     padding-top: 3px;
   }
 
-  .modelo__etapa p {
+  .forma__item p {
     color: var(--tinta-media);
   }
 
   @media (max-width: 760px) {
-    .modelo {
+    .forma {
       grid-template-columns: 1fr;
     }
   }

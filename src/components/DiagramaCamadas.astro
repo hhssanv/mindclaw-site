@@ -3,52 +3,51 @@ import SecaoTitulo from './SecaoTitulo.astro';
 import Icone from './Icone.astro';
 
 /**
- * Prova em fluxo: cada linha é uma camada do sistema, na ordem em que o dado passa.
- * Colunas: [camada, responsabilidade, restrição]. Mostra decisão de arquitetura
- * sem nenhum detalhe de implementação.
+ * Diagrama de camadas: cada item é uma camada do sistema, na ordem em que o dado passa,
+ * com a responsabilidade e a restrição que ela não pode violar. Mostra decisão de
+ * arquitetura sem nenhum detalhe de implementação.
  */
 interface Props {
   titulo: string;
   lead: string;
-  colunas: string[];
-  linhas: string[][];
-  nota?: string;
-  numero?: number;
+  regra?: string;
+  camadas: [string, string, string][];
+  rotulo?: string;
+  id?: string;
 }
 
-const { titulo, lead, colunas, linhas, nota, numero } = Astro.props;
-const [, rotuloResponsabilidade, rotuloRestricao] = colunas;
+const { titulo, lead, regra, camadas, rotulo = 'Arquitetura', id = 'titulo-arquitetura' } = Astro.props;
 ---
 
-<section class="secao" aria-labelledby="titulo-prova">
+<section class="secao" aria-labelledby={id}>
   <div class="container">
-    <SecaoTitulo id="titulo-prova" numero={numero} rotulo="Prova" titulo={titulo} lead={lead} />
+    <SecaoTitulo id={id} rotulo={rotulo} titulo={titulo} lead={lead} />
 
     {
-      nota && (
+      regra && (
         <p class="fluxo__regra">
           <span class="eyebrow eyebrow--acento">Regra que decide o desenho</span>
-          <span>{nota}</span>
+          <span>{regra}</span>
         </p>
       )
     }
 
-    <ol class="fluxo" role="list" style={`--colunas: ${linhas.length}`}>
+    <ol class="fluxo" role="list" style={`--colunas: ${camadas.length}`}>
       {
-        linhas.map(([camada, responsabilidade, restricao], i) => (
+        camadas.map(([camada, responsabilidade, restricao], i) => (
           <li class="camada">
             <p class="camada__indice numeral" aria-hidden="true">
               {String(i + 1).padStart(2, '0')}
             </p>
             <h3 class="camada__nome">{camada}</h3>
             <p class="camada__responsabilidade">
-              <span class="visualmente-oculto">{rotuloResponsabilidade}: </span>
+              <span class="visualmente-oculto">Responsabilidade: </span>
               {responsabilidade}
             </p>
             <p class="camada__restricao">
               <span class="camada__restricao-rotulo eyebrow">
                 <Icone nome="trava" />
-                {rotuloRestricao}
+                Restrição
               </span>
               <span>{restricao}</span>
             </p>

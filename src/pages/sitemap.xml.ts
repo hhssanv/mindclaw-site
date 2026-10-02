@@ -1,15 +1,15 @@
 import type { APIRoute } from 'astro';
-import { casesPublicados, hrefCase } from '../lib/cases';
+import { solucoes, hrefSolucao } from '../lib/conteudo';
 import { urlAbsoluta } from '../lib/site';
 
-/** Sitemap com todas as rotas públicas. Rascunhos ficam de fora. */
+/** Sitemap com todas as rotas públicas. */
 export const GET: APIRoute = async () => {
-  const cases = await casesPublicados();
+  const areas = await solucoes();
   const rotas = [
     '/',
-    '/cases/',
-    ...cases.filter((c) => !c.data.rascunho).map((c) => hrefCase(c.id)),
-    '/servicos/',
+    '/solucoes/',
+    ...areas.map((a) => hrefSolucao(a.id)),
+    '/projetos/',
     '/sobre/',
     '/contato/',
     '/privacidade/',

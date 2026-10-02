@@ -1,6 +1,6 @@
 # hansmindclaw.com
 
-Site da Hans MindClaw: cases, serviços e contato. É um site estático gerado com [Astro](https://astro.build) e publicado no GitHub Pages. Não tem banco de dados nem CMS. O conteúdo fica em arquivos neste repositório.
+Site da Hans MindClaw: soluções, projetos e contato. É um site estático gerado com [Astro](https://astro.build) e publicado no GitHub Pages. Não tem banco de dados nem CMS. O conteúdo fica em arquivos neste repositório.
 
 ## Rodar localmente
 
@@ -8,54 +8,44 @@ Precisa de Node 22.12 ou mais recente.
 
 ```bash
 npm install
-npm run dev        # http://localhost:4321, com os rascunhos visíveis
+npm run dev        # http://localhost:4321
 npm run build      # gera dist/ exatamente como vai para o ar
 npm run preview    # serve o dist/ gerado
-npm run rascunhos  # build de produção incluindo os rascunhos (para revisão)
 ```
 
 ## Onde fica cada coisa
 
 ```
-content/cases/*.md           os cases, um arquivo por case (só frontmatter)
-content/competencias.json    as áreas de competência da home
-content/trabalho.json        o modelo de trabalho em oito etapas
-content/servicos.json        as quatro formas de contratação
-content/stack.json           áreas e capacidades da página Sobre
-src/lib/site.ts              nome, contato, navegação, texto de confidencialidade
-src/lib/schema.ts            regras que todo conteúdo precisa cumprir
-src/lib/og.ts                imagens de compartilhamento (Open Graph)
-src/styles/tokens.css        cores, tipografia e espaçamentos
-src/components/              os componentes do site
-src/pages/                   as rotas
-public/marca/                logo e isotipo (vindos do Drive)
+content/solucoes/*.md          as sete áreas de solução (só frontmatter)
+content/projetos.json          projetos anonimizados (contexto, atuação, resultado)
+content/forma-de-trabalhar.json os oito princípios de trabalho
+content/servicos.json          as quatro formas de contratação
+content/stack.json             tecnologias por área (página Sobre)
+src/lib/site.ts                nome, contato, LinkedIn, navegação, nota sobre ganhos
+src/lib/schema.ts              regras que todo conteúdo precisa cumprir
+src/lib/og.ts                  imagens de compartilhamento (Open Graph)
+src/styles/tokens.css          cores, tipografia e espaçamentos
+src/components/                componentes
+src/pages/                     rotas
+public/marca/                  logo e isotipo (vindos do Drive)
 ```
 
-## Editar um case
+## Editar uma solução
 
-Cada case é um arquivo em `content/cases/<slug>.md`. Todo o conteúdo fica no frontmatter e o corpo fica vazio. O build confere o arquivo contra `src/lib/schema.ts` e **falha** se algo estiver fora do padrão, por exemplo:
+Cada área é um arquivo em `content/solucoes/<id>.md`, com todo o conteúdo no frontmatter. Os campos principais são:
 
-- menos ou mais de 4 problemas, 4 itens construídos e 3 métricas;
-- `limiteEscopo` vazio;
-- subtítulo acima de 160 caracteres ou resumo acima de 140;
-- `seo.description` fora da faixa de 140 a 160 caracteres;
-- case de produção sem princípios, ou case de demonstração com princípios.
+- `sinais`: de 3 a 6 frases descrevendo o problema como quem o vive.
+- `entregas`: de 3 a 5 itens com o que é feito.
+- `ganhos`: de 3 a 5 itens com o que costuma melhorar, **sem percentual**. O ganho depende de cada ambiente, e o site diz isso explicitamente (`notaGanho` em `src/lib/site.ts`).
+- `ferramentas`: as tecnologias mais usadas.
+- `projetos`: ids de `content/projetos.json` que aparecem na página.
+- `arquitetura` (opcional): diagrama de camadas, usado hoje só em IA aplicada.
 
-A mensagem de erro diz o campo e o motivo.
+O build confere tudo contra `src/lib/schema.ts` e **falha** com uma mensagem clara se algo estiver fora do padrão, inclusive se uma solução citar um projeto que não existe ou um projeto citar uma área que não existe.
 
-### Rascunhos
+## Adicionar um projeto
 
-Um case com `rascunho: true` aparece no `npm run dev`, com um selo amarelo de rascunho, mas **não vai para o build de produção**: não gera página, não entra no índice, no sitemap nem no rodapé. Para publicar, troque para `rascunho: false` ou remova a linha.
-
-Hoje estão como rascunho os três cases que vêm dos decks em inglês (`governanca-ti-acessos`, `consolidacao-dados-rh`, `planejamento-capacidade`). Eles têm uma estrutura provisória com as métricas da especificação. O restante do texto deve ser substituído pela tradução do deck, com o limite de escopo traduzido ao pé da letra.
-
-### Tipos de prova
-
-O campo `prova.tipo` escolhe o formato da tabela:
-
-- `tabela`: tabela comum. A primeira coluna é o cabeçalho da linha.
-- `comparativo`: exatamente três colunas (aspecto, antes, depois).
-- `faixas`: a segunda coluna é um estado (`ok`, `atencao` ou `alerta`) e aparece como selo com texto ("Coberto", "No limite", "Descoberto").
+Acrescente um item em `content/projetos.json` com `contexto`, `atuacao`, `resultado`, `tecnologias` e as `areas` (ids das soluções). `destaque: true` coloca o projeto na home (os três primeiros). `demonstracao: true` marca um modelo com dados sintéticos. Nenhum nome de cliente, empresa ou sistema proprietário: o projeto é descrito pelo tipo de problema.
 
 ## Publicação
 
@@ -65,27 +55,26 @@ Configuração única no GitHub: **Settings → Pages → Build and deployment �
 
 ## Guia de voz
 
-- **Sem primeira pessoa.** Nada de "eu faço", "eu construí", "transformo". O texto fala do problema, do resultado e do leitor: "O que foi construído", "O que você recebe", "A resposta traz uma primeira leitura".
+- **Sem primeira pessoa.** Nada de "eu faço", "eu construí", "transformo". O texto fala do problema, do resultado e do leitor: "O que é feito", "O que costuma melhorar", "A resposta traz uma primeira leitura".
+- **Ganho sem percentual.** O que melhora é descrito em termos qualitativos; o quanto depende de cada ambiente e é medido no diagnóstico.
 - **Bio em terceira pessoa**, só na página Sobre: "Hans Spiller trabalha…".
 - **Português antes de anglicismo** quando existe termo corrente: "aprovação obrigatória" (não "gate"), "reversão" (não "rollback"), "intuição" (não "feeling"). Termos já consagrados no mercado ficam: backup, logs, case.
 - **Frase curta, verbo concreto, número com rótulo específico.** "18 sistemas inventariados", nunca "muita experiência".
 
-## Checklist antes de publicar um case
+## Checklist antes de publicar conteúdo novo
 
 - [ ] Nenhum nome próprio de empresa, cliente ou produto proprietário no texto, nos `alt` das imagens ou nos metadados
-- [ ] Capturas de tela revisadas pixel a pixel, com dados fictícios e sem barra de endereço, caminho ou nome de host
-- [ ] Nenhum número apresentado como resultado de cliente sem o rótulo de tipo correspondente
-- [ ] Limite de escopo específico desse case, e não um texto genérico reaproveitado
-- [ ] Faixa de disclaimer presente (o template já coloca no hero e antes do CTA)
+- [ ] Nenhum percentual de ganho apresentado como promessa
+- [ ] Capturas de tela, se houver, com dados fictícios e sem barra de endereço, caminho ou nome de host
 - [ ] Nenhum repositório, trecho de código ou arquivo de projeto publicado ou linkado
 - [ ] Imagens sem metadados (EXIF) e com nome de arquivo neutro
-- [ ] Case lido assumindo o pior leitor: um concorrente tentando reconstruir a solução, e um cliente antigo procurando o que reconhece
+- [ ] Texto lido assumindo o pior leitor: um concorrente tentando reconstruir a solução, e um cliente antigo procurando o que reconhece
 
 Este repositório é público ou pode vir a ser. Nenhum arquivo de projeto, captura não higienizada ou rascunho com nome real pode entrar nele, nem em um commit revertido depois.
 
 ## Decisões de implementação
 
-- **Arquivos `.md`, não `.mdx`.** Os cases só têm frontmatter, então o MDX não acrescentava nada e enchia o build de avisos. Se um dia o corpo do case precisar de componentes, basta instalar `@astrojs/mdx` e trocar a extensão.
+- **Organizado por área, não por estudo de caso.** O site mostra onde dá para ajudar e o que costuma melhorar, com projetos anonimizados curtos como prova. Passo a passo de implementação não é publicado.
 - **Duas fontes, as duas servidas pelo próprio site.** Saira (variável, recortada para latim, pesos 500–800 e larguras 100–112,5%, 53 KB) nos títulos, números e rótulos: o desenho quadrado dela é o mesmo do "Hans" e do "MINDCLAW" do logo. Inter (variável, 48 KB) no texto corrido. A escala tipográfica é fixa (13 · 15 · 17 · 19 · 22 · 28 · 40 · 56 px) e está em `src/styles/tokens.css`.
 - **Vermelho com parcimônia.** O acento aparece em ação (botões e links), nos números de destaque e nos elementos de marca. Índices, ícones e marcadores ficam em cinza.
 - **Cores do logo.** Tinta `#141414`, degradê `#ff001e → #782747` e o vermelho sólido `#da0b29` da assinatura de e-mail. Todos os pares de texto e fundo passam em WCAG AA nos temas claro e escuro.

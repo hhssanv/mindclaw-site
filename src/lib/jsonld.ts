@@ -1,7 +1,9 @@
 import { site, urlAbsoluta } from './site';
-import { hrefCase, type CaseEntry } from './cases';
+import { hrefSolucao, type SolucaoEntry } from './conteudo';
 
-/** Dados estruturados mínimos: Person, CreativeWork e BreadcrumbList. Nada além disso. */
+/** Dados estruturados mínimos: Person, Service e BreadcrumbList. */
+
+const autor = () => ({ '@type': 'Person', name: site.pessoa, url: site.url });
 
 export function jsonLdPessoa(areas: string[]) {
   return {
@@ -12,34 +14,26 @@ export function jsonLdPessoa(areas: string[]) {
     url: site.url,
     email: `mailto:${site.email}`,
     image: urlAbsoluta('/marca/isotipo-480.webp'),
-    description: site.posicionamento,
+    description: `${site.trajetoria}. ${site.posicionamento}`,
     knowsAbout: areas,
+    ...(site.linkedin ? { sameAs: [site.linkedin] } : {}),
   };
 }
 
-export function jsonLdCase(c: CaseEntry) {
-  const d = c.data;
+export function jsonLdServico(s: SolucaoEntry) {
   return {
     '@context': 'https://schema.org',
-    '@type': 'CreativeWork',
-    name: d.titulo,
-    headline: d.titulo,
-    abstract: d.subtitulo,
-    about: d.eyebrow.map((name) => ({ '@type': 'Thing', name })),
-    keywords: d.melhorEncaixe.join(', '),
-    inLanguage: site.idioma,
-    url: urlAbsoluta(hrefCase(c.id)),
-    image: urlAbsoluta(d.seo.ogImage),
-    author: { '@type': 'Person', name: site.pessoa, url: site.url },
+    '@type': 'Service',
+    name: s.data.titulo,
+    description: s.data.chamada,
+    serviceType: s.data.titulo,
+    url: urlAbsoluta(hrefSolucao(s.id)),
+    areaServed: { '@type': 'Country', name: 'Brasil' },
+    provider: autor(),
   };
 }
 
-export function jsonLdBreadcrumb(c: CaseEntry) {
-  const itens = [
-    { nome: 'Início', href: '/' },
-    { nome: 'Cases', href: '/cases/' },
-    { nome: c.data.titulo, href: hrefCase(c.id) },
-  ];
+export function jsonLdBreadcrumb(itens: { nome: string; href: string }[]) {
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',

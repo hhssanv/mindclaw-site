@@ -1,0 +1,106 @@
+[
+  {
+    "id": "central-comunicacao",
+    "ordem": 1,
+    "titulo": "Central de comunicação com IA e aprovação humana",
+    "areas": ["ia-agentes", "automacao"],
+    "destaque": true,
+    "contexto": "Conversas, pedidos e combinados de um canal de mensagens inteiro ficavam presos no histórico, sem triagem, sem registro e sem como encontrar o contexto de uma decisão antiga.",
+    "atuacao": "Coleta das mensagens em base própria, histórico contextual, triagem com filtros e tags, busca de tarefas e pendências, sugestão de resposta por IA e aprovação manual antes de qualquer envio.",
+    "resultado": "Comunicação organizada em um único painel, com contexto encontrável e nenhum envio sem confirmação humana.",
+    "tecnologias": ["Linux", "Node.js", "LLMs", "APIs locais", "Autenticação", "Logs"]
+  },
+  {
+    "id": "planejamento-capacidade",
+    "ordem": 2,
+    "titulo": "Planejamento de capacidade e validação de escalas",
+    "areas": ["capacidade-forecast"],
+    "destaque": true,
+    "contexto": "A operação precisava dimensionar a equipe de forma mais aderente à demanda real, sem depender apenas de percepção ou de média simples.",
+    "atuacao": "Análise de meses de volume por dia e por horário, tratamento de dias atípicos, cálculo de representatividade, forecast, dimensionamento e validação da escala.",
+    "resultado": "Planejamento justificável e replicável, com previsão, capacidade e escala separadas e critérios documentados.",
+    "tecnologias": ["Excel", "Power BI", "Python", "Séries históricas", "Workforce management"]
+  },
+  {
+    "id": "conferencia-ocr",
+    "ordem": 3,
+    "titulo": "Conferência automática entre sistemas com OCR",
+    "areas": ["automacao", "ia-agentes"],
+    "destaque": true,
+    "contexto": "Decisões e identificadores exibidos em sistemas diferentes, sem integração entre si, precisavam ser comparados rapidamente para detectar divergências.",
+    "atuacao": "Captura do conteúdo da tela por OCR, normalização de identificadores, comparação por regras e sinalização das inconsistências durante a operação.",
+    "resultado": "Verificação mais rápida e uma camada objetiva de conferência, com tipos de divergência classificados para reduzir falsos alertas.",
+    "tecnologias": ["OCR", "Python", "Automação de interface", "Regras de negócio"]
+  },
+  {
+    "id": "horas-extras",
+    "ordem": 4,
+    "titulo": "Análise de horas extras e componentes de folha",
+    "areas": ["auditoria-rh", "dados-bi"],
+    "contexto": "Era preciso explicar a origem de um total consolidado de horas extras e depois decompor os valores por pessoa.",
+    "atuacao": "Reconstrução do total a partir dos lançamentos, validação de cada componente e distribuição por colaborador em ordem de impacto.",
+    "resultado": "Um número agregado transformado em análise auditável, com rastreabilidade entre total geral, rubricas e pessoa.",
+    "tecnologias": ["Excel", "Power Query", "Python", "Reconciliação de totais"]
+  },
+  {
+    "id": "reconciliacao-pessoas",
+    "ordem": 5,
+    "titulo": "Auditoria e reconciliação de bases de pessoas",
+    "areas": ["auditoria-rh", "automacao"],
+    "contexto": "Duas bases operacionais tinham diferenças de nomes e de presença de registros, e não era possível confirmar se todas as pessoas estavam nos dois lados.",
+    "atuacao": "Comparação completa das listas, normalização de dados, matching exato e aproximado por nome e geração de um arquivo de auditoria.",
+    "resultado": "Diferença real separada de variação de grafia, menos checagem manual e uma base reutilizável para as próximas auditorias.",
+    "tecnologias": ["Excel", "Python", "pandas", "openpyxl", "Regras de matching"]
+  },
+  {
+    "id": "governanca-acessos",
+    "ordem": 6,
+    "titulo": "Governança de acessos e desligamentos",
+    "areas": ["seguranca-acessos"],
+    "contexto": "Contas e permissões precisavam ser revisadas para reduzir acessos desnecessários e o risco operacional.",
+    "atuacao": "Levantamento de usuários, grupos, permissões e uso, identificação de contas sem atividade e definição de critérios para baixa e revisão.",
+    "resultado": "Menor exposição a acessos obsoletos e um processo de desligamento mais controlado, com etapas repetitivas automatizadas.",
+    "tecnologias": ["Active Directory", "GPO", "Scripts", "Logs", "Inventário"]
+  },
+  {
+    "id": "reporting-executivo",
+    "ordem": 7,
+    "titulo": "Modelo de reporting executivo",
+    "areas": ["dados-bi"],
+    "demonstracao": true,
+    "contexto": "Relatório de diretoria montado à mão todo mês, com números sem origem rastreável e desvios percebidos só depois do fechamento.",
+    "atuacao": "Cadeia única de 9 tabelas de origem até 12 páginas de relatório, com cálculo isolado da apresentação, validação que impede publicar um total que não fecha e painel de alerta antecipado.",
+    "resultado": "Nenhum número digitado à mão e qualquer indicador da diretoria rastreável até a linha que o gerou.",
+    "tecnologias": ["Modelagem de dados", "Indicadores", "Validação de totais", "Dashboards executivos"]
+  },
+  {
+    "id": "radar-tecnologia",
+    "ordem": 8,
+    "titulo": "Radar automatizado de atualizações técnicas",
+    "areas": ["ia-agentes", "automacao"],
+    "contexto": "Acompanhar manualmente várias áreas de tecnologia gerava excesso de fontes e o risco de perder atualizações relevantes.",
+    "atuacao": "Pipeline de coleta, deduplicação, classificação, embeddings e pontuação de relevância, com relatórios diários e semanais gerados por modelo local.",
+    "resultado": "Acompanhamento disperso transformado em um processo estruturado de inteligência técnica, isolado e validado antes de rodar sozinho.",
+    "tecnologias": ["Python", "SQLite", "RSS e APIs", "Embeddings", "Modelo local"]
+  },
+  {
+    "id": "publicacao-git",
+    "ordem": 9,
+    "titulo": "Publicação com Git, ambiente de teste e domínio próprio",
+    "areas": ["infraestrutura"],
+    "contexto": "Era preciso desenvolver e publicar um site de forma segura, preservando versões e sem mudanças diretas em produção.",
+    "atuacao": "Repositório com branches, pull requests, ambiente de teste, publicação estática e configuração de domínio via DNS.",
+    "resultado": "Desenvolvimento, validação e produção separados, com histórico de mudanças e possibilidade de reversão.",
+    "tecnologias": ["Git", "GitHub", "GitHub Pages", "DNS"]
+  },
+  {
+    "id": "auditoria-seo",
+    "ordem": 10,
+    "titulo": "Auditoria técnica de SEO, semântica e acessibilidade",
+    "areas": ["infraestrutura"],
+    "contexto": "Um site precisava ser preparado para lançamento com melhor indexação, estrutura semântica e consistência técnica.",
+    "atuacao": "Revisão de headings, metadados, robots.txt, sitemap, Search Console, indexabilidade, texto alternativo e elementos semânticos.",
+    "resultado": "Menos risco técnico de indexação, estrutura melhor para buscadores e tecnologias assistivas, e um checklist de lançamento reutilizável.",
+    "tecnologias": ["SEO técnico", "HTML semântico", "Acessibilidade", "Search Console"]
+  }
+]

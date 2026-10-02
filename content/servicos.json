@@ -10,8 +10,10 @@
       "Matriz de risco técnico",
       "Recomendação priorizada, com o que não fazer"
     ],
-    "naoEntra": ["Implementação das recomendações", "Compra ou licenciamento de software"],
-    "cases": ["plataforma-mensagens-ia", "governanca-ti-acessos"]
+    "naoEntra": [
+      "Implementação das recomendações",
+      "Compra ou licenciamento de software"
+    ]
   },
   {
     "id": "construcao",
@@ -27,8 +29,7 @@
     "naoEntra": [
       "Alteração de sistemas de terceiros sem autorização",
       "Operação contínua depois da entrega (ver acompanhamento)"
-    ],
-    "cases": ["plataforma-mensagens-ia", "validacao-visual-sistemas"]
+    ]
   },
   {
     "id": "auditoria",
@@ -41,8 +42,10 @@
       "Registro de achados com responsável e prazo",
       "Documentação dos procedimentos críticos"
     ],
-    "naoEntra": ["Teste de invasão", "Auditoria de certificação ou avaliação formal de segurança"],
-    "cases": ["governanca-ti-acessos", "consolidacao-dados-rh", "reporting-executivo"]
+    "naoEntra": [
+      "Teste de invasão",
+      "Auditoria de certificação ou avaliação formal de segurança"
+    ]
   },
   {
     "id": "acompanhamento",
@@ -55,7 +58,9 @@
       "Revisão periódica de acessos, regras e backups",
       "Atualização da documentação"
     ],
-    "naoEntra": ["Suporte 24 horas", "Atendimento direto a usuários finais"],
-    "cases": ["plataforma-mensagens-ia", "reporting-executivo"]
+    "naoEntra": [
+      "Suporte 24 horas",
+      "Atendimento direto a usuários finais"
+    ]
   }
 ]

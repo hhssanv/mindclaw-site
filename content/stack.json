@@ -1,68 +1,56 @@
 [
   {
-    "id": "ia",
-    "ordem": 1,
-    "area": "IA aplicada",
-    "itens": [
-      "Classificação e resumo de conversas",
-      "Extração de pendências",
-      "Transcrição de mídia",
-      "Sugestão de resposta com aprovação humana"
-    ]
-  },
-  {
-    "id": "integracao",
-    "ordem": 2,
-    "area": "Integração e automação",
-    "itens": [
-      "Integração entre sistemas sem API comum",
-      "Automação de desktop",
-      "Normalização de dados entre sistemas",
-      "Aprovação humana antes de ação externa"
-    ]
-  },
-  {
-    "id": "visao",
-    "ordem": 3,
-    "area": "Visão computacional",
-    "itens": [
-      "Leitura de tela",
-      "Reconhecimento de texto",
-      "Comparação por regras explícitas",
-      "Alerta durante a operação"
-    ]
-  },
-  {
     "id": "dados",
-    "ordem": 4,
-    "area": "Dados e reporting",
-    "itens": [
-      "Reconciliação de bases",
-      "Regras de validação",
-      "Modelagem financeira",
-      "Rastreio do indicador até a origem"
-    ]
+    "ordem": 1,
+    "area": "Dados e BI",
+    "itens": ["Excel avançado", "Power Query", "Power BI e DAX", "Python, pandas e openpyxl", "SQL", "Modelagem de KPIs"]
+  },
+  {
+    "id": "automacao",
+    "ordem": 2,
+    "area": "Automação",
+    "itens": ["Python", "PowerShell", "VBA", "RPA e Selenium", "Jobs agendados", "Automação de e-mails e arquivos"]
+  },
+  {
+    "id": "ia",
+    "ordem": 3,
+    "area": "IA e conhecimento",
+    "itens": ["LLMs e agentes", "OCR", "RAG e embeddings", "Busca semântica", "Classificação e sumarização", "Modelos locais"]
   },
   {
     "id": "infra",
-    "ordem": 5,
-    "area": "Infraestrutura e operação",
-    "itens": [
-      "Serviços isolados por responsabilidade",
-      "Logs e auditoria",
-      "Monitoramento de serviços",
-      "Backup e reversão"
-    ]
+    "ordem": 4,
+    "area": "Infraestrutura",
+    "itens": ["Windows Server", "Linux e systemd", "Active Directory e GPO", "DNS, VPN e SSH", "Backups", "Monitoramento"]
   },
   {
-    "id": "governanca",
+    "id": "seguranca",
+    "ordem": 5,
+    "area": "Segurança",
+    "itens": ["Hardening", "Firewall e web filtering", "DLP e criptografia", "Endpoint", "Revisão de acessos", "Logs e governança"]
+  },
+  {
+    "id": "redes",
     "ordem": 6,
-    "area": "Governança",
-    "itens": [
-      "Inventário de sistemas",
-      "Revisão de acessos",
-      "Registro de achados com responsável",
-      "Plano de continuidade"
-    ]
+    "area": "Redes",
+    "itens": ["Switches e patch panels", "Segmentação e VLAN", "Controle por MAC", "Diagnóstico de conectividade"]
+  },
+  {
+    "id": "versionamento",
+    "ordem": 7,
+    "area": "Desenvolvimento e versionamento",
+    "itens": ["Git e GitHub", "Branches e pull requests", "Ambiente de teste", "GitHub Pages e DNS"]
+  },
+  {
+    "id": "web",
+    "ordem": 8,
+    "area": "Web técnico",
+    "itens": ["SEO técnico", "HTML semântico", "Acessibilidade", "robots.txt, sitemap e Search Console"]
+  },
+  {
+    "id": "documentacao",
+    "ordem": 9,
+    "area": "Documentação e QA",
+    "itens": ["Procedimentos e manuais", "Relatórios de auditoria", "Planos de ação", "Checklists e evidências", "Controle de mudanças"]
   }
 ]
