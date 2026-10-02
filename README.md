@@ -63,6 +63,13 @@ Todo push na `main` dispara `.github/workflows/publicar.yml`, que valida o conte
 
 Configuração única no GitHub: **Settings → Pages → Build and deployment → Source: GitHub Actions**. O domínio `hansmindclaw.com` continua configurado na mesma tela.
 
+## Guia de voz
+
+- **Sem primeira pessoa.** Nada de "eu faço", "eu construí", "transformo". O texto fala do problema, do resultado e do leitor: "O que foi construído", "O que você recebe", "A resposta traz uma primeira leitura".
+- **Bio em terceira pessoa**, só na página Sobre: "Hans Spiller trabalha…".
+- **Português antes de anglicismo** quando existe termo corrente: "aprovação obrigatória" (não "gate"), "reversão" (não "rollback"), "intuição" (não "feeling"). Termos já consagrados no mercado ficam: backup, logs, case.
+- **Frase curta, verbo concreto, número com rótulo específico.** "18 sistemas inventariados", nunca "muita experiência".
+
 ## Checklist antes de publicar um case
 
 - [ ] Nenhum nome próprio de empresa, cliente ou produto proprietário no texto, nos `alt` das imagens ou nos metadados
@@ -79,6 +86,7 @@ Este repositório é público ou pode vir a ser. Nenhum arquivo de projeto, capt
 ## Decisões de implementação
 
 - **Arquivos `.md`, não `.mdx`.** Os cases só têm frontmatter, então o MDX não acrescentava nada e enchia o build de avisos. Se um dia o corpo do case precisar de componentes, basta instalar `@astrojs/mdx` e trocar a extensão.
-- **Duas fontes, as duas servidas pelo próprio site.** Inter (variável, 48 KB) para todo o texto e JetBrains Mono (um peso, 24 KB) só nos rótulos técnicos. A mono faz eco aos `< >` do logo.
+- **Duas fontes, as duas servidas pelo próprio site.** Saira (variável, recortada para latim, pesos 500–800 e larguras 100–112,5%, 53 KB) nos títulos, números e rótulos: o desenho quadrado dela é o mesmo do "Hans" e do "MINDCLAW" do logo. Inter (variável, 48 KB) no texto corrido. A escala tipográfica é fixa (13 · 15 · 17 · 19 · 22 · 28 · 40 · 56 px) e está em `src/styles/tokens.css`.
+- **Vermelho com parcimônia.** O acento aparece em ação (botões e links), nos números de destaque e nos elementos de marca. Índices, ícones e marcadores ficam em cinza.
 - **Cores do logo.** Tinta `#141414`, degradê `#ff001e → #782747` e o vermelho sólido `#da0b29` da assinatura de e-mail. Todos os pares de texto e fundo passam em WCAG AA nos temas claro e escuro.
 - **Formulário sem servidor.** O contato monta a mensagem e abre o e-mail ou o WhatsApp de quem está escrevendo. Não há serviço de terceiros nem dado guardado.

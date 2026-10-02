@@ -10,11 +10,15 @@ export const site = {
   locale: 'pt_BR',
 
   posicionamento:
-    'Transformo processos complexos, sistemas desconectados e trabalho manual em automações, integrações, sistemas inteligentes e operações auditáveis.',
+    'Processos complexos, sistemas desconectados e trabalho manual transformados em automações, integrações, sistemas inteligentes e operações auditáveis.',
   descricao:
     'Automação, integração e IA aplicada para operações que dependem de trabalho manual e sistemas que não conversam, sempre com controle humano e registro do que acontece.',
 
   email: 'hans@hansmindclaw.com',
+  /** Preencha para exibir no Sobre e no rodapé (ex.: 'https://www.linkedin.com/in/...'). */
+  linkedin: undefined as string | undefined,
+  /** Cidade e estado, se quiser exibir (ex.: 'Sorocaba, SP'). */
+  localizacao: undefined as string | undefined,
   whatsapp: {
     numero: '5515998349373',
     exibicao: '+55 15 99834-9373',

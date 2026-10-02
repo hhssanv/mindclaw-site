@@ -15,7 +15,7 @@ const { titulo, texto, rotuloBotao, href = '/contato/', id = 'titulo-cta' } = As
 <section class="cta faixa" aria-labelledby={id}>
   <div class="container cta__interno">
     <div>
-      <span class="traco" aria-hidden="true"></span>
+      <p class="eyebrow eyebrow--traco cta__rotulo">Contato</p>
       <h2 id={id}>{titulo}</h2>
       <p class="cta__texto">{texto}</p>
     </div>
@@ -38,8 +38,8 @@ const { titulo, texto, rotuloBotao, href = '/contato/', id = 'titulo-cta' } = As
     align-items: end;
   }
 
-  .traco {
-    margin-bottom: 22px;
+  .cta__rotulo {
+    margin-bottom: 18px;
   }
 
   h2 {
@@ -50,7 +50,7 @@ const { titulo, texto, rotuloBotao, href = '/contato/', id = 'titulo-cta' } = As
     max-width: 58ch;
     margin-top: 14px;
     color: var(--tinta-media);
-    font-size: var(--texto-lg);
+    font-size: var(--t-lg);
     line-height: 1.55;
   }
 

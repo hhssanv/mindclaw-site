@@ -1,5 +1,6 @@
 ---
 import TipoBadge from './TipoBadge.astro';
+import Icone from './Icone.astro';
 import type { Case } from '../lib/schema';
 
 interface Props {
@@ -17,31 +18,45 @@ const { eyebrow, titulo, subtitulo, tipo, capacidades, metricas, rascunho } = As
 
 <section class="hero faixa" aria-labelledby="titulo-case">
   <div class="container hero__interno entrada">
-    <div class="hero__topo">
-      <TipoBadge tipo={tipo} completo />
-      {rascunho && <span class="hero__rascunho">Rascunho · não publicado</span>}
+    <div class="hero__texto">
+      <div class="hero__topo">
+        <TipoBadge tipo={tipo} completo />
+        {rascunho && <span class="hero__rascunho">Rascunho · não publicado</span>}
+      </div>
+      <p class="eyebrow eyebrow--acento hero__eyebrow">
+        {
+          eyebrow.map((item, i) => (
+            <>
+              {i > 0 && <span aria-hidden="true">·</span>}
+              <span>{item}</span>
+            </>
+          ))
+        }
+      </p>
+      <h1 id="titulo-case">{titulo}</h1>
+      <p class="hero__subtitulo">{subtitulo}</p>
     </div>
-    <p class="eyebrow eyebrow--acento hero__eyebrow">
-      {
-        eyebrow.map((item, i) => (
-          <>
-            {i > 0 && <span aria-hidden="true">·</span>}
-            <span>{item}</span>
-          </>
-        ))
-      }
-    </p>
-    <h1 id="titulo-case">{titulo}</h1>
-    <p class="hero__subtitulo">{subtitulo}</p>
-    <ul class="chips hero__chips" aria-label="Capacidades demonstradas">
-      {capacidades.map((c) => <li class="chip">{c}</li>)}
-    </ul>
+
+    <div class="hero__capacidades">
+      <p class="eyebrow">Capacidades demonstradas</p>
+      <ul role="list">
+        {
+          capacidades.map((c) => (
+            <li>
+              <Icone nome="check" />
+              <span>{c}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
     <dl class="hero__metricas">
       {
         metricas.map((m) => (
           <div class="metrica">
             <dt>{m.rotulo}</dt>
-            <dd>{m.valor}</dd>
+            <dd class="numeral">{m.valor}</dd>
           </div>
         ))
       }
@@ -54,7 +69,7 @@ const { eyebrow, titulo, subtitulo, tipo, capacidades, metricas, rascunho } = As
   .hero {
     position: relative;
     overflow: hidden;
-    padding-block: clamp(36px, 5vw, 64px) clamp(32px, 4vw, 48px);
+    padding-block: clamp(40px, 5vw, 72px) clamp(32px, 4vw, 48px);
   }
 
   .hero__traco {
@@ -64,7 +79,6 @@ const { eyebrow, titulo, subtitulo, tipo, capacidades, metricas, rascunho } = As
     width: 100%;
     height: 3px;
     border-radius: 0;
-    opacity: 0.9;
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -74,6 +88,17 @@ const { eyebrow, titulo, subtitulo, tipo, capacidades, metricas, rascunho } = As
   }
 
   .hero__interno {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+    grid-template-areas:
+      'texto capacidades'
+      'metricas metricas';
+    gap: 32px clamp(32px, 6vw, 96px);
+    align-items: end;
+  }
+
+  .hero__texto {
+    grid-area: texto;
     display: grid;
     gap: 18px;
   }
@@ -90,9 +115,10 @@ const { eyebrow, titulo, subtitulo, tipo, capacidades, metricas, rascunho } = As
     border-radius: 999px;
     background: #fdc04a;
     color: #141414;
-    font-family: var(--fonte-mono);
-    font-size: var(--texto-xs);
-    font-weight: 500;
+    font-family: var(--fonte-display);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
   }
 
@@ -104,29 +130,54 @@ const { eyebrow, titulo, subtitulo, tipo, capacidades, metricas, rascunho } = As
   }
 
   h1 {
-    max-width: 21ch;
+    max-width: 18ch;
   }
 
   .hero__subtitulo {
-    max-width: 62ch;
+    max-width: 58ch;
     color: var(--tinta-media);
-    font-size: var(--texto-lg);
+    font-size: var(--t-lg);
     line-height: 1.55;
   }
 
-  .hero__chips {
-    margin-top: 2px;
+  .hero__capacidades {
+    grid-area: capacidades;
+    display: grid;
+    gap: 14px;
+    padding: 22px 24px;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-3);
+    background: var(--faixa-elevada);
   }
 
-  .hero__chips .chip {
-    border-color: var(--linha-forte);
+  .hero__capacidades ul {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+  }
+
+  .hero__capacidades li {
+    display: grid;
+    grid-template-columns: 18px 1fr;
+    gap: 10px;
     color: var(--tinta);
+    font-size: var(--t-sm);
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .hero__capacidades :global(svg) {
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    color: var(--acento);
   }
 
   .hero__metricas {
+    grid-area: metricas;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    margin-top: clamp(12px, 2vw, 20px);
+    margin-top: 8px;
     border-top: 1px solid var(--linha);
   }
 
@@ -134,30 +185,40 @@ const { eyebrow, titulo, subtitulo, tipo, capacidades, metricas, rascunho } = As
     display: flex;
     flex-direction: column-reverse;
     justify-content: flex-end;
-    gap: 6px;
-    padding: 20px 24px 4px 0;
+    gap: 8px;
+    padding: 22px 24px 4px 0;
   }
 
   .metrica + .metrica {
-    padding-left: 24px;
+    padding-left: 28px;
     border-left: 1px solid var(--linha);
   }
 
   .metrica dd {
     margin: 0;
     color: var(--acento);
-    font-size: clamp(2rem, 1.5rem + 2vw, 2.875rem);
-    font-weight: 750;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.03em;
+    font-size: var(--t-numero);
+    font-weight: 700;
+    letter-spacing: -0.01em;
     line-height: 1;
   }
 
   .metrica dt {
-    max-width: 22ch;
+    max-width: 24ch;
     color: var(--tinta-media);
-    font-size: var(--texto-sm);
+    font-size: var(--t-sm);
     line-height: 1.45;
+  }
+
+  @media (max-width: 900px) {
+    .hero__interno {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        'texto'
+        'capacidades'
+        'metricas';
+      align-items: start;
+    }
   }
 
   @media (max-width: 640px) {
@@ -181,8 +242,8 @@ const { eyebrow, titulo, subtitulo, tipo, capacidades, metricas, rascunho } = As
 
     .metrica dd {
       flex: none;
-      min-width: 3.2ch;
-      font-size: 1.875rem;
+      min-width: 3.4ch;
+      font-size: 2rem;
     }
   }
 </style>

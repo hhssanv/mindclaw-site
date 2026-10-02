@@ -24,7 +24,7 @@ problemas:
   - titulo: Número sem origem
     texto: Ninguém conseguia dizer de onde vinha um número da página de diretoria, então discutir o número virava discutir a planilha.
   - titulo: Previsão por sensação
-    texto: A projeção era feita no feeling, sem cenário explícito nem premissa escrita que alguém pudesse questionar.
+    texto: A projeção era feita por intuição, sem cenário explícito nem premissa escrita que alguém pudesse questionar.
   - titulo: Problema percebido tarde demais
     texto: O desvio só aparecia depois de fechado o mês, quando já não dava para agir.
 construido:

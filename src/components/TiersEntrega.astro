@@ -18,13 +18,13 @@ const { tiers, numero } = Astro.props;
       numero={numero}
       rotulo="Entrega"
       titulo="O que você recebe"
-      lead="Do mais básico ao mais completo. Cada camada pode ser contratada sozinha."
+      lead="Do mais básico ao mais completo."
     />
     <ol class="tiers" role="list">
       {
         tiers.map((tier, i) => (
           <li class="tier">
-            <p class="tier__nivel mono" aria-hidden="true">
+            <p class="tier__nivel numeral" aria-hidden="true">
               {Array.from({ length: 3 }, (_, n) => (
                 <span class:list={['tier__barra', n <= i && 'tier__barra--ativa']} />
               ))}
@@ -86,14 +86,15 @@ const { tiers, numero } = Astro.props;
   }
 
   .tier__rotulo {
-    font-size: var(--texto-xl);
+    font-family: var(--fonte-display);
+    font-size: var(--t-xl);
     font-weight: 700;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
   }
 
   .tier__nome {
     color: var(--tinta-fraca);
-    font-size: var(--texto-sm);
+    font-size: var(--t-sm);
   }
 
   .tier__itens {
@@ -110,7 +111,7 @@ const { tiers, numero } = Astro.props;
     grid-template-columns: 20px 1fr;
     gap: 10px;
     color: var(--tinta-media);
-    font-size: 0.9875rem;
+    font-size: var(--t-sm);
     line-height: 1.45;
   }
 
@@ -118,7 +119,7 @@ const { tiers, numero } = Astro.props;
     width: 18px;
     height: 18px;
     margin-top: 2px;
-    color: var(--acento);
+    color: var(--tinta-fraca);
   }
 
   @media (max-width: 900px) {

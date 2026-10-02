@@ -19,7 +19,7 @@ export const ESTADOS = ['ok', 'atencao', 'alerta'] as const;
 
 const prova = z
   .object({
-    tipo: z.enum(['tabela', 'comparativo', 'faixas']),
+    tipo: z.enum(['tabela', 'comparativo', 'faixas', 'fluxo']),
     titulo: texto('prova.titulo'),
     lead: texto('prova.lead'),
     colunas: z.array(texto('prova.colunas')).min(2),
@@ -41,6 +41,13 @@ const prova = z
         code: 'custom',
         path: ['colunas'],
         message: 'o comparativo usa exatamente três colunas: aspecto, antes e depois',
+      });
+    }
+    if (p.tipo === 'fluxo' && p.colunas.length !== 3) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['colunas'],
+        message: 'o fluxo usa exatamente três colunas: camada, responsabilidade e restrição',
       });
     }
     if (p.tipo === 'faixas') {

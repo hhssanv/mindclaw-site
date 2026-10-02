@@ -4,6 +4,7 @@ import Base from '../layouts/Base.astro';
 import SecaoTitulo from '../components/SecaoTitulo.astro';
 import Confidencialidade from '../components/Confidencialidade.astro';
 import CTAContato from '../components/CTAContato.astro';
+import Icone from '../components/Icone.astro';
 import { jsonLdPessoa } from '../lib/jsonld';
 import { site } from '../lib/site';
 
@@ -22,25 +23,36 @@ const areas = (await getCollection('competencias'))
   <section class="perfil" aria-labelledby="titulo-sobre">
     <div class="container perfil__interno">
       <div class="perfil__texto entrada">
-        <p class="eyebrow">Sobre</p>
+        <p class="eyebrow eyebrow--traco">Sobre</p>
         <h1 id="titulo-sobre">{site.pessoa}</h1>
+        <p class="perfil__cargo">
+          Automação, integração e IA aplicada{site.localizacao && <span> · {site.localizacao}</span>}
+        </p>
         <div class="prosa perfil__prosa">
           <p>
-            Trabalho na fronteira entre operação e tecnologia: onde um processo depende de alguém copiando dados entre
-            sistemas, conferindo duas telas ou lembrando de um combinado feito por mensagem. É ali que automação,
-            integração e IA aplicada fazem diferença de verdade, e é ali que um erro silencioso custa mais caro.
+            Hans Spiller trabalha na fronteira entre operação e tecnologia: onde um processo depende de alguém copiando
+            dados entre sistemas, conferindo duas telas ou lembrando de um combinado feito por mensagem. É ali que
+            automação, integração e IA aplicada fazem diferença de verdade, e é ali que um erro silencioso custa mais caro.
           </p>
           <p>
-            O método começa pelo problema, não pela ferramenta. Antes de construir, mapeio sistemas, dados e riscos,
-            escrevo o que o trabalho não vai fazer e defino a pergunta que vai dizer se deu certo. Depois construo em
-            camadas, cada uma com uma responsabilidade e uma restrição que ela não pode violar.
+            O método começa pelo problema, não pela ferramenta. Antes de qualquer construção vêm o mapa de sistemas, dados
+            e riscos, o registro escrito do que o trabalho não vai fazer e a pergunta que vai dizer se deu certo. A
+            construção acontece em camadas, cada uma com uma responsabilidade e uma restrição que não pode violar.
           </p>
           <p>
-            Os sistemas que entrego seguem os mesmos princípios: aprovação humana antes de ação externa, privilégio
-            mínimo, registro do que acontece e caminho de volta quando algo dá errado. É o que permite colocar automação e
-            IA em operação sem perder o controle sobre ela.
+            Todo sistema entregue segue os mesmos princípios: aprovação humana antes de ação externa, privilégio mínimo,
+            registro do que acontece e caminho de volta quando algo dá errado. É o que permite colocar automação e IA em
+            operação sem perder o controle sobre elas.
           </p>
         </div>
+        {
+          site.linkedin && (
+            <a class="link-seta" href={site.linkedin} rel="me noopener">
+              Perfil no LinkedIn
+              <Icone nome="seta" />
+            </a>
+          )
+        }
       </div>
       <figure class="perfil__marca">
         <picture>
@@ -63,8 +75,7 @@ const areas = (await getCollection('competencias'))
       <SecaoTitulo
         id="titulo-stack"
         rotulo="Stack"
-        titulo="Áreas e capacidades técnicas"
-        lead="Organizado por área, do jeito que aparece nos projetos."
+        titulo="Capacidades técnicas por área"
       />
       <dl class="stack">
         {
@@ -87,13 +98,13 @@ const areas = (await getCollection('competencias'))
         id="titulo-modelo"
         rotulo="Modelo de trabalho"
         titulo="Oito etapas, do problema à passagem"
-        lead="A mesma sequência em todo projeto, do diagnóstico de uma semana à construção de vários meses."
+        lead="A mesma sequência em todo projeto, do diagnóstico curto à construção de vários meses."
       />
       <ol class="modelo" role="list">
         {
           etapas.map((e) => (
             <li class="modelo__etapa">
-              <span class="modelo__numero mono" aria-hidden="true">
+              <span class="modelo__numero numeral" aria-hidden="true">
                 {String(e.numero).padStart(2, '0')}
               </span>
               <h3>{e.nome}</h3>
@@ -131,9 +142,16 @@ const areas = (await getCollection('competencias'))
     gap: 18px;
   }
 
+  .perfil__cargo {
+    margin-top: -6px;
+    color: var(--tinta-media);
+    font-size: var(--t-md);
+    font-weight: 500;
+  }
+
   .perfil__prosa {
     margin-top: 8px;
-    font-size: var(--texto-md);
+    font-size: var(--t-md);
     line-height: 1.65;
   }
 
@@ -173,19 +191,20 @@ const areas = (await getCollection('competencias'))
   }
 
   .stack dt {
-    margin-bottom: 6px;
-    color: var(--acento);
-    font-family: var(--fonte-mono);
-    font-size: var(--texto-xs);
-    font-weight: 500;
-    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+    color: var(--tinta);
+    font-family: var(--fonte-display);
+    font-size: var(--t-rotulo);
+    font-stretch: 112.5%;
+    font-weight: 600;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
   }
 
   .stack dd {
     margin: 0;
     color: var(--tinta-media);
-    font-size: 0.9375rem;
+    font-size: var(--t-sm);
     line-height: 1.45;
   }
 
@@ -208,8 +227,8 @@ const areas = (await getCollection('competencias'))
 
   .modelo__numero {
     grid-row: 1 / span 2;
-    color: var(--acento);
-    font-size: var(--texto-sm);
+    color: var(--tinta-fraca);
+    font-size: var(--t-sm);
     padding-top: 3px;
   }
 

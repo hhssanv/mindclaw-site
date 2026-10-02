@@ -11,7 +11,7 @@ interface Props {
 const { problemas, construido, numero } = Astro.props;
 const colunas = [
   { chave: 'problema', rotulo: 'O que estava quebrando', itens: problemas },
-  { chave: 'construido', rotulo: 'O que eu construí', itens: construido },
+  { chave: 'construido', rotulo: 'O que foi construído', itens: construido },
 ];
 ---
 
@@ -21,7 +21,7 @@ const colunas = [
       id="titulo-diagnostico"
       numero={numero}
       rotulo="Diagnóstico"
-      titulo="O que estava quebrando e o que eu construí"
+      titulo="O que estava quebrando e o que foi construído"
     />
     <div class="split">
       {
@@ -31,7 +31,7 @@ const colunas = [
             <ol class="split__lista" role="list" aria-label={coluna.rotulo}>
               {coluna.itens.map((item, i) => (
                 <li class="split__item">
-                  <span class="split__numero mono" aria-hidden="true">
+                  <span class="split__numero numeral" aria-hidden="true">
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   <div>
@@ -90,12 +90,9 @@ const colunas = [
   .split__numero {
     padding-top: 2px;
     color: var(--tinta-fraca);
-    font-size: var(--texto-sm);
+    font-size: var(--t-sm);
   }
 
-  .split__coluna--construido .split__numero {
-    color: var(--acento);
-  }
 
   .split__item h3 {
     margin-bottom: 6px;

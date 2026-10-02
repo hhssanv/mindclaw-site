@@ -18,7 +18,7 @@
       "Integração entre sistemas sem API comum",
       "Automação de desktop",
       "Normalização de dados entre sistemas",
-      "Gate de aprovação antes de ação externa"
+      "Aprovação humana antes de ação externa"
     ]
   },
   {
@@ -50,8 +50,8 @@
     "itens": [
       "Serviços isolados por responsabilidade",
       "Logs e auditoria",
-      "Health checks",
-      "Backup e rollback"
+      "Monitoramento de serviços",
+      "Backup e reversão"
     ]
   },
   {

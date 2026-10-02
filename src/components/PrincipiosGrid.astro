@@ -21,7 +21,7 @@ const { principios, numero } = Astro.props;
       {
         principios.map((p, i) => (
           <li class="principio">
-            <span class="principio__numero mono" aria-hidden="true">
+            <span class="principio__numero numeral" aria-hidden="true">
               P{i + 1}
             </span>
             <h3>{p.titulo}</h3>
@@ -65,8 +65,8 @@ const { principios, numero } = Astro.props;
   }
 
   .principio__numero {
-    color: var(--acento);
-    font-size: var(--texto-xs);
+    color: var(--tinta-fraca);
+    font-size: var(--t-sm);
   }
 
   .principio p {

@@ -19,13 +19,9 @@ const fonte = (pacote: string, arquivo: string) =>
 
 const fontes = [
   { name: 'Inter', data: fonte('@fontsource/inter', 'inter-latin-400-normal.woff'), weight: 400 as const },
-  { name: 'Inter', data: fonte('@fontsource/inter', 'inter-latin-600-normal.woff'), weight: 600 as const },
-  { name: 'Inter', data: fonte('@fontsource/inter', 'inter-latin-800-normal.woff'), weight: 800 as const },
-  {
-    name: 'JetBrains Mono',
-    data: fonte('@fontsource/jetbrains-mono', 'jetbrains-mono-latin-500-normal.woff'),
-    weight: 500 as const,
-  },
+  { name: 'Inter', data: fonte('@fontsource/inter', 'inter-latin-500-normal.woff'), weight: 500 as const },
+  { name: 'Saira', data: fonte('@fontsource/saira', 'saira-latin-600-normal.woff'), weight: 600 as const },
+  { name: 'Saira', data: fonte('@fontsource/saira', 'saira-latin-700-normal.woff'), weight: 700 as const },
 ];
 
 const dataUri = (arquivo: string, mime: string) =>
@@ -98,7 +94,7 @@ export async function ogCase(d: Case): Promise<Buffer> {
           padding: '8px 18px',
           border: `1px solid ${cor.linha}`,
           borderRadius: 999,
-          fontFamily: 'JetBrains Mono',
+          fontFamily: 'Saira', fontWeight: 600,
           fontSize: 18,
           letterSpacing: 1,
           color: cor.media,
@@ -115,7 +111,7 @@ export async function ogCase(d: Case): Promise<Buffer> {
     ),
     h(
       'div',
-      { marginTop: 52, fontFamily: 'JetBrains Mono', fontSize: 19, letterSpacing: 2, color: cor.acento },
+      { marginTop: 52, fontFamily: 'Saira', fontWeight: 600, fontSize: 19, letterSpacing: 2, color: cor.acento },
       d.eyebrow.join('  ·  ').toUpperCase(),
     ),
     h(
@@ -123,10 +119,11 @@ export async function ogCase(d: Case): Promise<Buffer> {
       {
         marginTop: 18,
         maxWidth: 1000,
+        fontFamily: 'Saira',
         fontSize: titulo,
-        fontWeight: 800,
-        lineHeight: 1.06,
-        letterSpacing: -2,
+        fontWeight: 700,
+        lineHeight: 1.04,
+        letterSpacing: -0.5,
       },
       d.titulo,
     ),
@@ -143,7 +140,7 @@ export async function ogCase(d: Case): Promise<Buffer> {
             paddingLeft: i === 0 ? 0 : 28,
             borderLeft: i === 0 ? 'none' : `1px solid ${cor.linha}`,
           },
-          h('div', { fontSize: 50, fontWeight: 800, letterSpacing: -1.5, color: cor.acento, lineHeight: 1 }, m.valor),
+          h('div', { fontFamily: 'Saira', fontSize: 54, fontWeight: 700, color: cor.acento, lineHeight: 1 }, m.valor),
           h('div', { fontSize: 21, color: cor.fraca, lineHeight: 1.3, maxWidth: 300 }, m.rotulo),
         ),
       ),
@@ -173,12 +170,12 @@ export async function ogPadrao(): Promise<Buffer> {
       img(logoNegativo, 262, 89),
       h(
         'div',
-        { marginTop: 'auto', fontSize: 40, fontWeight: 600, lineHeight: 1.22, letterSpacing: -1, color: cor.tinta },
-        site.posicionamento,
+        { marginTop: 'auto', fontFamily: 'Saira', fontSize: 44, fontWeight: 700, lineHeight: 1.12, color: cor.tinta },
+        'Do trabalho manual à operação automatizada e auditável.',
       ),
       h(
         'div',
-        { marginTop: 28, fontFamily: 'JetBrains Mono', fontSize: 20, letterSpacing: 1, color: cor.fraca },
+        { marginTop: 28, fontFamily: 'Saira', fontWeight: 600, fontSize: 20, letterSpacing: 1, color: cor.fraca },
         'hansmindclaw.com',
       ),
     ),

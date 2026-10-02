@@ -16,14 +16,17 @@ const porId = new Map(publicados.map((c) => [c.id, c]));
 const competencias = (await getCollection('competencias'))
   .sort((a, b) => a.data.ordem - b.data.ordem)
   .map((comp) => ({
-  ...comp.data,
-  cases: comp.data.casesRelacionados.map((id) => porId.get(id)).filter((c) => c !== undefined),
-}));
+    ...comp.data,
+    cases: comp.data.casesRelacionados.map((id) => porId.get(id)).filter((c) => c !== undefined),
+  }));
 
 const etapas = (await getCollection('trabalho')).map((e) => e.data).sort((a, b) => a.numero - b.numero);
 
-const naoFaco = [
-  { titulo: 'Produto pronto ou licença de software', texto: 'Cada entrega é construída para o seu processo, não vendida de prateleira.' },
+const foraDoEscopo = [
+  {
+    titulo: 'Produto pronto ou licença de software',
+    texto: 'Cada entrega é construída para o processo do cliente, não vendida de prateleira.',
+  },
   {
     titulo: 'Teste de invasão ou auditoria de certificação',
     texto: 'Governança, revisão de acessos e documentação, sim. Pentest e certificação formal, não.',
@@ -32,7 +35,10 @@ const naoFaco = [
     titulo: 'Automação que age sozinha onde o erro custa caro',
     texto: 'Ação externa com impacto real passa por aprovação humana, sempre.',
   },
-  { titulo: 'Entrega sem documentação', texto: 'Sistema que só funciona enquanto quem construiu está por perto não é entrega.' },
+  {
+    titulo: 'Entrega sem documentação',
+    texto: 'Um sistema que só funciona enquanto quem o construiu está por perto não é uma entrega.',
+  },
 ];
 
 const [principal, ...outros] = destaques;
@@ -44,18 +50,15 @@ const titulo = `${site.nome} · Automação, integração e IA aplicada`;
   <section class="hero-home" aria-labelledby="titulo-home">
     <div class="container hero-home__interno">
       <div class="hero-home__texto entrada">
-        <p class="eyebrow">{site.pessoa} · Automação, integração e IA aplicada</p>
-        <span class="traco" aria-hidden="true"></span>
+        <p class="eyebrow eyebrow--traco">{site.pessoa} · Automação, integração e IA aplicada</p>
         <h1 id="titulo-home">
-          Transformo processos complexos, sistemas desconectados e trabalho manual em <span class="hero-home__destaque"
-            >automações, integrações, sistemas inteligentes e operações auditáveis.</span
-          >
+          Do trabalho manual à <span class="hero-home__destaque">operação automatizada e auditável.</span>
         </h1>
-        <p class="lead">
-          Para operações que dependem de trabalho manual e de sistemas que não conversam. Escopo escrito antes de começar,
-          aprovação humana onde importa e registro de tudo o que acontece.
+        <p class="lead hero-home__lead">
+          Processos complexos, sistemas desconectados e trabalho manual transformados em automações, integrações e sistemas
+          inteligentes, com aprovação humana onde importa e registro de tudo o que acontece.
         </p>
-        <div>
+        <div class="hero-home__acao">
           <a class="botao" href="/cases/">
             Ver os cases
             <Icone nome="seta" />
@@ -86,7 +89,7 @@ const titulo = `${site.nome} · Automação, integração e IA aplicada`;
         <SecaoTitulo
           id="titulo-destaques"
           rotulo="Cases"
-          titulo="Trabalho que dá para verificar"
+          titulo="Trabalho verificável, do problema à prova"
           lead="Produção é sistema real em operação. Demonstração é modelo com dados sintéticos. Todo case diz qual dos dois ele é."
         />
         <a class="link-seta" href="/cases/">
@@ -107,7 +110,7 @@ const titulo = `${site.nome} · Automação, integração e IA aplicada`;
       <SecaoTitulo
         id="titulo-competencias"
         rotulo="Competências"
-        titulo="Cada área com um case que a comprova"
+        titulo="Áreas de atuação, cada uma ligada ao case que a comprova"
       />
       <ul class="competencias" role="list">
         {
@@ -116,18 +119,31 @@ const titulo = `${site.nome} · Automação, integração e IA aplicada`;
               <Icone nome={comp.icone} class="competencia__icone" />
               <h3>{comp.nome}</h3>
               <p>{comp.descricao}</p>
-              {comp.cases.length > 0 && (
+              {comp.cases.length > 0 ? (
                 <ul class="competencia__cases" role="list" aria-label={`Cases de ${comp.nome}`}>
                   {comp.cases.map((c) => (
                     <li>
-                      <a href={hrefCase(c.id)}>{c.data.titulo}</a>
+                      <a href={hrefCase(c.id)}>
+                        <Icone nome="seta" />
+                        <span>{c.data.titulo}</span>
+                      </a>
                     </li>
                   ))}
                 </ul>
+              ) : (
+                <p class="competencia__em-breve">Case em preparação</p>
               )}
             </li>
           ))
         }
+        <li class="competencia competencia--contato">
+          <h3>Não encontrou a sua área?</h3>
+          <p>Os cases mostram o método, não o limite do que dá para fazer.</p>
+          <a class="link-seta" href="/contato/">
+            Conte o problema
+            <Icone nome="seta" />
+          </a>
+        </li>
       </ul>
     </div>
   </section>
@@ -136,7 +152,7 @@ const titulo = `${site.nome} · Automação, integração e IA aplicada`;
   <section class="secao secao--superficie" aria-labelledby="titulo-trabalho">
     <div class="container">
       <div class="cabecalho-com-link">
-        <SecaoTitulo id="titulo-trabalho" rotulo="Como trabalho" titulo="Oito etapas, do problema à passagem" />
+        <SecaoTitulo id="titulo-trabalho" rotulo="Como funciona" titulo="Modelo de trabalho em oito etapas" />
         <a class="link-seta" href="/sobre/#modelo-de-trabalho">
           Etapas em detalhe
           <Icone nome="seta" />
@@ -146,7 +162,7 @@ const titulo = `${site.nome} · Automação, integração e IA aplicada`;
         {
           etapas.map((e) => (
             <li>
-              <span class="etapas-home__numero mono" aria-hidden="true">
+              <span class="etapas-home__numero numeral" aria-hidden="true">
                 {String(e.numero).padStart(2, '0')}
               </span>
               <h3>{e.nome}</h3>
@@ -158,18 +174,18 @@ const titulo = `${site.nome} · Automação, integração e IA aplicada`;
     </div>
   </section>
 
-  <!-- 5. O que não é oferecido -->
-  <section class="secao" aria-labelledby="titulo-nao-faco">
-    <div class="container nao-faco">
+  <!-- 5. O que fica de fora -->
+  <section class="secao" aria-labelledby="titulo-fora">
+    <div class="container fora">
       <SecaoTitulo
-        id="titulo-nao-faco"
+        id="titulo-fora"
         rotulo="Limite de escopo"
-        titulo="O que eu não faço"
-        lead="Dizer o que fica de fora é parte do trabalho. Vale para cada case e vale para o site inteiro."
+        titulo="O que fica de fora"
+        lead="Dizer o que não está incluído é parte do trabalho. Vale para cada case e vale para o site inteiro."
       />
-      <ul class="nao-faco__lista" role="list">
+      <ul class="fora__lista" role="list">
         {
-          naoFaco.map((item) => (
+          foraDoEscopo.map((item) => (
             <li>
               <h3>{item.titulo}</h3>
               <p>{item.texto}</p>
@@ -183,7 +199,7 @@ const titulo = `${site.nome} · Automação, integração e IA aplicada`;
   <!-- 6. Contato -->
   <CTAContato
     titulo="Tem um processo que depende de alguém copiando, conferindo ou lembrando?"
-    texto="Conte o problema do jeito que ele aparece no dia a dia. A primeira conversa serve para entender se faz sentido trabalharmos juntos."
+    texto="Conte o problema do jeito que ele aparece no dia a dia. A primeira conversa serve para entender se o trabalho faz sentido."
     rotuloBotao="Falar sobre um projeto"
   />
 </Base>
@@ -192,26 +208,26 @@ const titulo = `${site.nome} · Automação, integração e IA aplicada`;
   /* Hero */
   .hero-home {
     overflow: hidden;
-    padding-block: clamp(48px, 7vw, 104px) clamp(48px, 6vw, 88px);
+    padding-block: clamp(56px, 8vw, 120px) clamp(56px, 7vw, 104px);
   }
 
   .hero-home__interno {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    gap: 40px clamp(32px, 5vw, 80px);
+    gap: 40px clamp(32px, 6vw, 96px);
   }
 
   .hero-home__texto {
     display: grid;
-    gap: 22px;
-    max-width: 50rem;
+    gap: 24px;
+    max-width: 46rem;
   }
 
   .hero-home h1 {
-    font-size: clamp(2rem, 1.35rem + 2.3vw, 3.125rem);
-    line-height: 1.1;
-    text-wrap: pretty;
+    font-size: clamp(2.5rem, 1.6rem + 3.6vw, 4.25rem);
+    line-height: 1.02;
+    letter-spacing: -0.015em;
   }
 
   .hero-home__destaque {
@@ -227,13 +243,17 @@ const titulo = `${site.nome} · Automação, integração e IA aplicada`;
     }
   }
 
-  .hero-home .lead {
-    max-width: 60ch;
+  .hero-home__lead {
+    max-width: 56ch;
+  }
+
+  .hero-home__acao {
+    margin-top: 4px;
   }
 
   .hero-home__marca {
     position: relative;
-    width: clamp(220px, 26vw, 340px);
+    width: clamp(220px, 25vw, 330px);
   }
 
   .hero-home__marca::before {
@@ -241,7 +261,7 @@ const titulo = `${site.nome} · Automação, integração e IA aplicada`;
     position: absolute;
     inset: 8% 4% 2%;
     border-radius: 50%;
-    background: radial-gradient(closest-side, color-mix(in srgb, var(--marca-vermelho) 14%, transparent), transparent);
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--marca-vermelho) 12%, transparent), transparent);
   }
 
   .hero-home__marca img {
@@ -265,7 +285,7 @@ const titulo = `${site.nome} · Automação, integração e IA aplicada`;
     }
   }
 
-  /* Cabeçalho de seção com link à direita */
+  /* Cabeçalho de seção com link à direita, alinhado à base do título */
   .cabecalho-com-link {
     display: flex;
     flex-wrap: wrap;
@@ -275,14 +295,14 @@ const titulo = `${site.nome} · Automação, integração e IA aplicada`;
   }
 
   .cabecalho-com-link .link-seta {
-    margin-bottom: clamp(28px, 4vw, 48px);
+    margin-bottom: var(--titulo-secao);
   }
 
   /* Destaques */
   .destaques {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
+    gap: 20px;
   }
 
   .destaques > :global(.card--largo) {
@@ -295,10 +315,10 @@ const titulo = `${site.nome} · Automação, integração e IA aplicada`;
     }
   }
 
-  /* Competências */
+  /* Competências: 7 áreas + 1 célula de contato = grade sempre completa */
   .competencias {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0;
     margin: 0;
     border-top: 1px solid var(--linha);
@@ -309,82 +329,112 @@ const titulo = `${site.nome} · Automação, integração e IA aplicada`;
     display: grid;
     grid-template-rows: auto auto 1fr auto;
     gap: 10px;
-    padding: 24px;
+    padding: 28px 24px;
     border-right: 1px solid var(--linha);
     border-bottom: 1px solid var(--linha);
   }
 
   .competencia :global(.competencia__icone) {
-    width: 28px;
-    height: 28px;
-    margin-bottom: 6px;
-    color: var(--acento);
+    width: 26px;
+    height: 26px;
+    margin-bottom: 8px;
+    color: var(--tinta);
   }
 
   .competencia p {
     color: var(--tinta-media);
-    font-size: 0.9875rem;
+    font-size: var(--t-sm);
     line-height: 1.55;
   }
 
   .competencia__cases {
     display: grid;
-    gap: 4px;
-    margin: 6px 0 0;
-    padding-top: 12px;
-    border-top: 1px dashed var(--linha-forte);
-    font-size: var(--texto-sm);
+    gap: 6px;
+    margin: 8px 0 0;
+    padding-top: 14px;
+    border-top: 1px solid var(--linha);
+    font-size: var(--t-sm);
   }
 
   .competencia__cases a {
-    display: inline-block;
-    padding-block: 4px;
+    display: grid;
+    grid-template-columns: 16px 1fr;
+    gap: 8px;
     color: var(--acento);
-    font-weight: 550;
+    font-weight: 500;
+    line-height: 1.4;
     text-decoration: none;
   }
 
-  .competencia__cases a::before {
-    content: '→ ';
+  .competencia__cases a :global(svg) {
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
   }
 
-  .competencia__cases a:hover {
+  .competencia__cases a:hover span {
     text-decoration: underline;
+  }
+
+  .competencia__em-breve {
+    margin-top: 8px;
+    padding-top: 14px;
+    border-top: 1px solid var(--linha);
+    color: var(--tinta-fraca) !important;
+  }
+
+  .competencia--contato {
+    grid-template-rows: auto 1fr auto;
+    align-content: start;
+    background: var(--superficie);
+  }
+
+  .competencia--contato h3 {
+    font-family: var(--fonte-display);
+    font-size: var(--t-lg);
+    font-weight: 700;
+  }
+
+  @media (max-width: 1080px) {
+    .competencias {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 560px) {
+    .competencias {
+      grid-template-columns: 1fr;
+    }
   }
 
   /* Etapas (versão condensada) */
   .etapas-home {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0;
+    gap: 0 24px;
     margin: 0;
-    counter-reset: etapa;
   }
 
   .etapas-home li {
     display: grid;
     align-content: start;
     gap: 6px;
-    padding: 22px 22px 26px 0;
-    border-top: 2px solid var(--linha-forte);
-  }
-
-  .etapas-home li:nth-child(-n + 4) {
-    border-top-color: var(--tinta);
+    padding: 20px 0 28px;
+    border-top: 1px solid var(--linha-forte);
   }
 
   .etapas-home__numero {
-    color: var(--acento);
-    font-size: var(--texto-sm);
+    color: var(--tinta-fraca);
+    font-size: var(--t-sm);
   }
 
   .etapas-home h3 {
-    font-size: var(--texto-base);
+    font-size: var(--t-md);
   }
 
   .etapas-home p {
     color: var(--tinta-media);
-    font-size: var(--texto-sm);
+    font-size: var(--t-sm);
     line-height: 1.5;
   }
 
@@ -392,76 +442,55 @@ const titulo = `${site.nome} · Automação, integração e IA aplicada`;
     .etapas-home {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-
-    .etapas-home li:nth-child(-n + 4) {
-      border-top-color: var(--linha-forte);
-    }
-
-    .etapas-home li:nth-child(-n + 2) {
-      border-top-color: var(--tinta);
-    }
   }
 
   @media (max-width: 520px) {
     .etapas-home {
       grid-template-columns: 1fr;
     }
-
-    .etapas-home li {
-      padding-right: 0;
-    }
   }
 
-  /* O que não faço */
-  .nao-faco {
+  /* O que fica de fora */
+  .fora {
     display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     gap: 24px clamp(32px, 5vw, 72px);
     align-items: start;
   }
 
-  .nao-faco :global(.secao-titulo) {
+  .fora :global(.secao-titulo) {
     margin-bottom: 0;
   }
 
-  .nao-faco__lista {
+  .fora__lista {
     display: grid;
-    gap: 0;
     margin: 0;
+    border-top: 1px solid var(--linha-forte);
   }
 
-  .nao-faco__lista li {
-    position: relative;
+  .fora__lista li {
     display: grid;
-    gap: 4px;
-    padding: 18px 0 18px 36px;
+    grid-template-columns: 28px 1fr;
+    gap: 4px 0;
+    padding: 20px 0;
     border-bottom: 1px solid var(--linha);
   }
 
-  .nao-faco__lista li:first-child {
-    padding-top: 0;
-  }
-
-  .nao-faco__lista li::before {
+  .fora__lista li::before {
     content: '';
-    position: absolute;
-    left: 4px;
-    top: 27px;
-    width: 14px;
+    grid-row: 1 / span 2;
+    width: 12px;
     height: 2px;
-    background: var(--acento);
+    margin-top: 0.75em;
+    background: var(--tinta-fraca);
   }
 
-  .nao-faco__lista li:first-child::before {
-    top: 9px;
-  }
-
-  .nao-faco__lista p {
+  .fora__lista p {
     color: var(--tinta-media);
   }
 
   @media (max-width: 860px) {
-    .nao-faco {
+    .fora {
       grid-template-columns: 1fr;
     }
   }

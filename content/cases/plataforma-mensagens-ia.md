@@ -1,14 +1,14 @@
 ---
 slug: plataforma-mensagens-ia
 titulo: Plataforma privada de operação de mensagens
-subtitulo: Conversas, tarefas e compromissos financeiros de um canal de mensagens inteiro, num painel próprio, com aprovação humana obrigatória antes de qualquer envio.
+subtitulo: Conversas, tarefas e compromissos financeiros de um canal de mensagens inteiro, em painel próprio, com aprovação humana obrigatória antes de qualquer envio.
 eyebrow: [IA aplicada, Arquitetura de sistemas, Automação operacional]
 tipo: producao
 ordem: 1
 destaque: true
 resumo: "Canal de mensagens inteiro organizado em painel próprio: triagem, agenda e financeiro, com aprovação humana antes de qualquer envio."
 
-capacidades: [Triagem assistida por IA, Gate de aprovação humana, Infraestrutura própria]
+capacidades: [Triagem assistida por IA, Aprovação humana obrigatória, Infraestrutura própria]
 metricas:
   - valor: "5"
     rotulo: domínios operacionais em um painel
@@ -62,17 +62,17 @@ metodo:
       etapas:
         - titulo: Sugestão de resposta
           detalhe: Rascunhos em tons distintos, para a pessoa escolher, editar ou descartar.
-        - titulo: Gate de aprovação
+        - titulo: Trava de aprovação
           detalhe: Um serviço separado só envia com confirmação explícita, uma mensagem por vez.
-        - titulo: Auditoria, backup e rollback
+        - titulo: Auditoria, backup e reversão
           detalhe: Registro de antes e depois de cada ação, com recuperação prevista desde o desenho.
   teste: Se a camada de IA for desligada hoje, o sistema continua útil? E ligada, alguma coisa sai sem alguém ter aprovado?
 
 prova:
-  tipo: tabela
+  tipo: fluxo
   titulo: Camadas e restrições
   lead: Cada camada tem uma responsabilidade e, mais importante, uma restrição que não pode violar. É o desenho que garante o controle, não a boa vontade do código.
-  colunas: [Camada, Responsabilidade, Restrição de projeto]
+  colunas: [Camada, Responsabilidade, Restrição]
   linhas:
     - [Coleta, Captura e normaliza o que chega do canal, Não envia nada e não executa ação externa]
     - [Base local, Única fonte autoritativa de histórico e estado, Não aceita instrução vinda de mensagem]
@@ -91,7 +91,7 @@ principios:
   - titulo: Auditabilidade
     texto: Toda ação relevante deixa registro do estado antes e depois, para que qualquer mudança possa ser explicada.
   - titulo: Reversibilidade
-    texto: Backup e rollback fazem parte do desenho, e não são improvisados depois do primeiro incidente.
+    texto: Backup e reversão fazem parte do desenho, e não são improvisados depois do primeiro incidente.
   - titulo: Isolamento por provedor
     texto: O que vem de fora é normalizado na borda, antes de encostar no resto do sistema. Trocar de provedor não reescreve o núcleo.
 
@@ -101,10 +101,10 @@ entregaveis:
     itens: [Mapa de sistemas e dependências, Modelo de dados normalizado, Separação de camadas e responsabilidades, Matriz de risco técnico]
   - rotulo: Construção
     nome: Para colocar em operação
-    itens: [Integração com a origem dos dados, Camada de processamento e IA, Painel operacional, Gate de aprovação humana]
+    itens: [Integração com a origem dos dados, Camada de processamento e IA, Painel operacional, Aprovação humana obrigatória]
   - rotulo: Sustentação
     nome: Para manter funcionando
-    itens: [Logs e auditoria, Health checks, Rotina de backup e rollback, Documentação operacional]
+    itens: [Logs e auditoria, Monitoramento dos serviços, Rotina de backup e reversão, Documentação operacional]
 melhorEncaixe:
   - Agente de IA ligado a sistema interno
   - Automação com aprovação humana

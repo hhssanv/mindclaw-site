@@ -3,6 +3,9 @@
  * Cores derivadas do logo (tinta #141414, degradê #ff001e → #782747) e do
  * vermelho sólido da assinatura de e-mail (#da0b29). Todo par texto/fundo
  * usado no site passa em WCAG AA nas duas variações de tema.
+ *
+ * Tipografia: Saira (títulos, números e rótulos) ecoa o desenho quadrado do
+ * logo; Inter cuida do texto corrido. Escala fixa: não use tamanhos fora dela.
  */
 
 @font-face {
@@ -16,11 +19,12 @@
 }
 
 @font-face {
-  font-family: 'JetBrains Mono';
+  font-family: 'Saira Variable';
   font-style: normal;
   font-display: swap;
-  font-weight: 500;
-  src: url('/fonts/jetbrains-mono-latin-500.woff2') format('woff2');
+  font-weight: 500 800;
+  font-stretch: 100% 112.5%;
+  src: url('/fonts/saira-var.woff2') format('woff2-variations');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
     U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
@@ -43,9 +47,9 @@
   /* Texto */
   --tinta: #141414;
   --tinta-media: #45454d;
-  --tinta-fraca: #676772;
+  --tinta-fraca: #62626c;
 
-  /* Acento */
+  /* Acento: só em ação (botões, links), números de destaque e marca. */
   --acento: #da0b29;
   --acento-forte: #a8102a;
   --botao: #da0b29;
@@ -69,28 +73,31 @@
   --ok: #067647;
   --ok-fundo: #ecfdf3;
 
-  /* Tipografia */
+  /* Famílias */
   --fonte: 'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --fonte-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  --fonte-display: 'Saira Variable', Saira, 'Inter Variable', system-ui, sans-serif;
 
-  --texto-xs: 0.75rem;
-  --texto-sm: 0.875rem;
-  --texto-base: 1.0625rem;
-  --texto-md: 1.1875rem;
-  --texto-lg: clamp(1.1875rem, 1.05rem + 0.5vw, 1.375rem);
-  --texto-xl: clamp(1.375rem, 1.15rem + 0.9vw, 1.75rem);
-  --texto-2xl: clamp(1.625rem, 1.3rem + 1.4vw, 2.25rem);
-  --texto-3xl: clamp(2rem, 1.45rem + 2.4vw, 3.25rem);
+  /* Escala tipográfica (13 · 15 · 17 · 19 · 22 · 28 · 40 · 56) */
+  --t-rotulo: 0.8125rem;
+  --t-sm: 0.9375rem;
+  --t-base: 1.0625rem;
+  --t-md: 1.1875rem;
+  --t-lg: clamp(1.1875rem, 1.1rem + 0.35vw, 1.375rem);
+  --t-xl: clamp(1.375rem, 1.2rem + 0.7vw, 1.75rem);
+  --t-2xl: clamp(1.875rem, 1.5rem + 1.5vw, 2.5rem);
+  --t-3xl: clamp(2.375rem, 1.7rem + 2.8vw, 3.5rem);
+  --t-numero: clamp(2.25rem, 1.9rem + 1.4vw, 3rem);
 
-  /* Espaço e forma */
+  /* Ritmo */
   --largura: 1200px;
-  --largura-texto: 68ch;
+  --largura-texto: 66ch;
   --gutter: clamp(16px, 4vw, 40px);
-  --secao: clamp(56px, 7vw, 104px);
+  --secao: clamp(64px, 8vw, 112px);
+  --titulo-secao: clamp(32px, 4vw, 56px);
   --raio-1: 6px;
   --raio-2: 10px;
-  --raio-3: 16px;
-  --sombra: 0 1px 2px rgb(20 20 20 / 0.04), 0 4px 16px rgb(20 20 20 / 0.06);
+  --raio-3: 14px;
+  --sombra: 0 1px 2px rgb(20 20 20 / 0.04), 0 8px 24px rgb(20 20 20 / 0.06);
   --transicao: 160ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
@@ -104,7 +111,7 @@
 
     --tinta: #f2f2f4;
     --tinta-media: #c4c4cb;
-    --tinta-fraca: #9d9da8;
+    --tinta-fraca: #a0a0ab;
 
     --acento: #ff5468;
     --acento-forte: #ff8593;
@@ -122,7 +129,7 @@
     --ok: #5fd99a;
     --ok-fundo: #0c2619;
 
-    --sombra: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 16px rgb(0 0 0 / 0.25);
+    --sombra: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.25);
   }
 }
 

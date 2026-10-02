@@ -16,10 +16,10 @@ const titulosCases = Object.fromEntries(cases.map((c) => [c.id, c.data.titulo]))
   <section class="contato" aria-labelledby="titulo-contato">
     <div class="container contato__interno">
       <div class="contato__intro entrada">
-        <p class="eyebrow">Contato</p>
+        <p class="eyebrow eyebrow--traco">Contato</p>
         <h1 id="titulo-contato">Conte o que está travando</h1>
         <p class="lead">
-          Na linguagem de quem vive o problema, sem precisar saber a solução. Eu respondo com uma primeira leitura e, se
+          Na linguagem de quem vive o problema, sem precisar saber a solução. A resposta traz uma primeira leitura e, se
           fizer sentido, uma proposta de diagnóstico com escopo fechado.
         </p>
 
@@ -243,9 +243,11 @@ const titulosCases = Object.fromEntries(cases.map((c) => [c.id, c.data.titulo]))
 
   .canal__rotulo {
     color: var(--tinta-fraca);
-    font-size: var(--texto-xs);
-    font-family: var(--fonte-mono);
-    letter-spacing: 0.06em;
+    font-family: var(--fonte-display);
+    font-size: 0.75rem;
+    font-stretch: 112.5%;
+    font-weight: 600;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
   }
 
@@ -255,7 +257,7 @@ const titulosCases = Object.fromEntries(cases.map((c) => [c.id, c.data.titulo]))
 
   .canais__nota {
     color: var(--tinta-fraca);
-    font-size: var(--texto-sm);
+    font-size: var(--t-sm);
     line-height: 1.5;
   }
 
@@ -280,7 +282,7 @@ const titulosCases = Object.fromEntries(cases.map((c) => [c.id, c.data.titulo]))
   .campo__opcional {
     margin-left: 6px;
     color: var(--tinta-fraca);
-    font-size: var(--texto-sm);
+    font-size: var(--t-sm);
     font-weight: 400;
   }
 
@@ -323,12 +325,12 @@ const titulosCases = Object.fromEntries(cases.map((c) => [c.id, c.data.titulo]))
 
   .campo__ajuda {
     color: var(--tinta-fraca);
-    font-size: var(--texto-sm);
+    font-size: var(--t-sm);
   }
 
   .campo__erro {
     color: var(--alerta);
-    font-size: var(--texto-sm);
+    font-size: var(--t-sm);
     font-weight: 600;
   }
 
@@ -340,7 +342,7 @@ const titulosCases = Object.fromEntries(cases.map((c) => [c.id, c.data.titulo]))
 
   .form__nota {
     color: var(--tinta-fraca);
-    font-size: var(--texto-sm);
+    font-size: var(--t-sm);
     line-height: 1.5;
   }
 

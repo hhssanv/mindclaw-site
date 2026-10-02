@@ -7,6 +7,7 @@ import NotaEscopo from '../../components/NotaEscopo.astro';
 import MetodoFases from '../../components/MetodoFases.astro';
 import ProvaTabela from '../../components/ProvaTabela.astro';
 import ProvaComparativo from '../../components/ProvaComparativo.astro';
+import ProvaFluxo from '../../components/ProvaFluxo.astro';
 import PrincipiosGrid from '../../components/PrincipiosGrid.astro';
 import TiersEntrega from '../../components/TiersEntrega.astro';
 import ChipsEncaixe from '../../components/ChipsEncaixe.astro';
@@ -70,7 +71,16 @@ const numeros = {
   <MetodoFases numero={numeros.metodo} fases={d.metodo.fases} teste={d.metodo.teste} />
 
   {
-    d.prova.tipo === 'comparativo' ? (
+    d.prova.tipo === 'fluxo' ? (
+      <ProvaFluxo
+        numero={numeros.prova}
+        titulo={d.prova.titulo}
+        lead={d.prova.lead}
+        colunas={d.prova.colunas}
+        linhas={d.prova.linhas}
+        nota={d.prova.nota}
+      />
+    ) : d.prova.tipo === 'comparativo' ? (
       <ProvaComparativo
         numero={numeros.prova}
         titulo={d.prova.titulo}
@@ -105,7 +115,7 @@ const numeros = {
 
   <CTAContato
     titulo="Tem um problema parecido?"
-    texto="Conte o que está travando, na linguagem de quem vive o problema. Eu respondo com uma primeira leitura e, se fizer sentido, uma proposta de diagnóstico com escopo fechado."
+    texto="Conte o que está travando, na linguagem de quem vive o problema. A resposta traz uma primeira leitura e, se fizer sentido, uma proposta de diagnóstico com escopo fechado."
     rotuloBotao="Falar sobre um projeto"
     href={`/contato/?caso=${c.id}`}
   />

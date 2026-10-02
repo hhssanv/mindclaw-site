@@ -1,6 +1,6 @@
-JetBrains Mono — SIL Open Font License 1.1
+Saira — SIL Open Font License 1.1 (subconjunto: latim, wght 500–800, wdth 100–112.5)
 
-Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono) JetBrainsMono-Italic[wght].ttf: Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)
+Copyright 2020 The Saira Project Authors (https://github.com/Omnibus-Type/Saira) Saira-Italic[wdth,wght].ttf: Copyright 2020 The Saira Project Authors (https://github.com/Omnibus-Type/Saira)
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:

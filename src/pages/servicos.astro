@@ -22,7 +22,7 @@ const servicos = (await getCollection('servicos'))
 >
   <section class="cabecalho" aria-labelledby="titulo-servicos">
     <div class="container entrada">
-      <p class="eyebrow">Como contratar</p>
+      <p class="eyebrow eyebrow--traco">Como contratar</p>
       <h1 id="titulo-servicos">Serviços</h1>
       <p class="lead">
         Quatro formas de contratação, descritas pelo resultado. Não é tabela de preço: o valor depende do escopo, e o
@@ -38,7 +38,7 @@ const servicos = (await getCollection('servicos'))
           servicos.map((s) => (
             <li class="servico" id={s.id}>
               <div class="servico__cabeca">
-                <span class="servico__numero mono" aria-hidden="true">
+                <span class="servico__numero numeral" aria-hidden="true">
                   {String(s.ordem).padStart(2, '0')}
                 </span>
                 <h2>{s.nome}</h2>
@@ -136,17 +136,17 @@ const servicos = (await getCollection('servicos'))
 
   .servico__numero {
     color: var(--acento);
-    font-size: var(--texto-sm);
+    font-size: var(--t-sm);
   }
 
   .servico h2 {
-    font-size: var(--texto-xl);
+    font-size: var(--t-xl);
     max-width: 22ch;
   }
 
   .servico__resultado {
     color: var(--tinta-media);
-    font-size: var(--texto-md);
+    font-size: var(--t-md);
     line-height: 1.55;
   }
 
@@ -159,7 +159,7 @@ const servicos = (await getCollection('servicos'))
 
   .servico__listas h3 {
     margin-bottom: 12px;
-    font-size: var(--texto-xs);
+    font-size: var(--t-rotulo);
     letter-spacing: 0.08em;
   }
 
@@ -180,7 +180,7 @@ const servicos = (await getCollection('servicos'))
     width: 18px;
     height: 18px;
     margin-top: 2px;
-    color: var(--acento);
+    color: var(--tinta-fraca);
   }
 
   .servico__nao-entra li {
@@ -213,7 +213,7 @@ const servicos = (await getCollection('servicos'))
   }
 
   .servico__provas .link-seta {
-    font-size: var(--texto-sm);
+    font-size: var(--t-sm);
   }
 
   @media (max-width: 960px) {

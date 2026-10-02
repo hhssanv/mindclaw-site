@@ -40,7 +40,7 @@ const resumoTipos = `${cases.length} ${cases.length === 1 ? 'case' : 'cases'}: $
 >
   <section class="cabecalho" aria-labelledby="titulo-cases">
     <div class="container entrada">
-      <p class="eyebrow">Portfólio</p>
+      <p class="eyebrow eyebrow--traco">Portfólio</p>
       <h1 id="titulo-cases">Cases</h1>
       <p class="lead">
         {resumoTipos} Cada um mostra o problema, o limite de escopo, o método e uma prova. Nunca a implementação, nunca o
@@ -155,8 +155,8 @@ const resumoTipos = `${cases.length} ${cases.length === 1 ? 'case' : 'cases'}: $
     border-radius: 999px;
     background: var(--fundo);
     color: var(--tinta-media);
-    font-size: var(--texto-sm);
-    font-weight: 550;
+    font-size: var(--t-sm);
+    font-weight: 500;
     cursor: pointer;
     transition: border-color var(--transicao), background-color var(--transicao), color var(--transicao);
   }

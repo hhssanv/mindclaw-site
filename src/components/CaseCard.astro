@@ -27,14 +27,14 @@ const metricasVisiveis = largo ? metricas : metricas.slice(0, 1);
   <div class="card__corpo">
     <div class="card__topo">
       <TipoBadge tipo={tipo} />
-      {rascunho && <span class="card__rascunho mono">rascunho</span>}
+      {rascunho && <span class="card__rascunho">Rascunho</span>}
     </div>
     <Titulo class="card__titulo">
       <a href={href}>{titulo}</a>
     </Titulo>
     <p class="card__resumo">{resumo}</p>
-    <ul class="chips card__chips" aria-label="Disciplinas">
-      {eyebrow.map((d) => <li class="chip chip--mono">{d}</li>)}
+    <ul class="card__etiquetas" role="list" aria-label="Disciplinas">
+      {eyebrow.map((d) => <li class="etiqueta">{d}</li>)}
     </ul>
   </div>
 
@@ -44,7 +44,7 @@ const metricasVisiveis = largo ? metricas : metricas.slice(0, 1);
         metricasVisiveis.map((m) => (
           <div class="card__metrica">
             <dt>{m.rotulo}</dt>
-            <dd>{m.valor}</dd>
+            <dd class="numeral">{m.valor}</dd>
           </div>
         ))
       }
@@ -110,15 +110,20 @@ const metricasVisiveis = largo ? metricas : metricas.slice(0, 1);
     border-radius: 999px;
     background: #fdc04a;
     color: #141414;
-    font-size: var(--texto-xs);
+    font-family: var(--fonte-display);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
 
   .card__titulo {
-    margin-top: 4px;
-    font-size: var(--texto-lg);
+    margin-top: 6px;
+    font-family: var(--fonte-display);
+    font-size: var(--t-xl);
     font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1.25;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
   }
 
   .card__titulo a {
@@ -144,19 +149,15 @@ const metricasVisiveis = largo ? metricas : metricas.slice(0, 1);
 
   .card__resumo {
     color: var(--tinta-media);
-    font-size: 0.9875rem;
+    font-size: var(--t-sm);
     line-height: 1.55;
   }
 
-  .card__chips {
-    margin-top: 4px;
+  .card__etiquetas {
+    display: flex;
+    flex-wrap: wrap;
     gap: 6px;
-  }
-
-  .card__chips .chip {
-    min-height: 26px;
-    padding: 3px 9px;
-    font-size: 0.6875rem;
+    margin: 6px 0 0;
   }
 
   .card__rodape {
@@ -184,22 +185,21 @@ const metricasVisiveis = largo ? metricas : metricas.slice(0, 1);
   .card__metrica dd {
     margin: 0;
     color: var(--acento);
-    font-size: 1.625rem;
-    font-weight: 750;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1;
   }
 
   .card__metrica dt {
     max-width: 22ch;
     color: var(--tinta-fraca);
-    font-size: var(--texto-sm);
+    font-size: var(--t-sm);
     line-height: 1.35;
   }
 
   .card__ler {
-    font-size: var(--texto-sm);
+    font-size: var(--t-sm);
   }
 
   .card:hover .card__ler :global(svg) {
@@ -207,9 +207,6 @@ const metricasVisiveis = largo ? metricas : metricas.slice(0, 1);
   }
 
   /* Destaque (home) */
-  .card--destaque .card__titulo {
-    font-size: var(--texto-xl);
-  }
 
   .card--largo {
     grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
@@ -219,12 +216,12 @@ const metricasVisiveis = largo ? metricas : metricas.slice(0, 1);
   }
 
   .card--largo .card__titulo {
-    font-size: var(--texto-2xl);
-    max-width: 18ch;
+    font-size: var(--t-2xl);
+    max-width: 20ch;
   }
 
   .card--largo .card__resumo {
-    font-size: var(--texto-md);
+    font-size: var(--t-md);
     max-width: 52ch;
   }
 
@@ -244,7 +241,7 @@ const metricasVisiveis = largo ? metricas : metricas.slice(0, 1);
   }
 
   .card--largo .card__metrica dd {
-    font-size: clamp(2rem, 1.6rem + 1.4vw, 2.625rem);
+    font-size: var(--t-numero);
   }
 
   @media (max-width: 860px) {

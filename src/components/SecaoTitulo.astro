@@ -1,5 +1,5 @@
 ---
-/** Cabeçalho de seção: rótulo técnico em mono + h2 (+ lead opcional). */
+/** Cabeçalho de seção: rótulo técnico (Saira) + h2 (+ lead opcional). */
 interface Props {
   id: string;
   rotulo: string;
@@ -25,8 +25,8 @@ const indice = numero !== undefined ? String(numero).padStart(2, '0') : undefine
 <style>
   .secao-titulo {
     display: grid;
-    gap: 14px;
-    margin-bottom: clamp(28px, 4vw, 48px);
+    gap: 16px;
+    margin-bottom: var(--titulo-secao);
   }
 
   .secao-titulo__rotulo {
@@ -37,6 +37,7 @@ const indice = numero !== undefined ? String(numero).padStart(2, '0') : undefine
 
   .secao-titulo__numero {
     color: var(--acento);
+    font-variant-numeric: tabular-nums;
   }
 
   .secao-titulo__numero::after {
@@ -50,10 +51,10 @@ const indice = numero !== undefined ? String(numero).padStart(2, '0') : undefine
   }
 
   h2 {
-    max-width: 24ch;
+    max-width: 30ch;
   }
 
   .secao-titulo__lead {
-    margin-top: 4px;
+    margin-top: 2px;
   }
 </style>

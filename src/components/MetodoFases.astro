@@ -25,7 +25,7 @@ const fasesNumeradas = fases.map((fase) => ({
       numero={numero}
       rotulo="Método"
       titulo="Como o trabalho foi feito"
-      lead="Cada etapa nomeia um entregável, não uma técnica."
+      lead={`${contador} etapas em três fases. Cada etapa termina em um entregável.`}
     />
     <ol class="fases" role="list">
       {
@@ -36,7 +36,7 @@ const fasesNumeradas = fases.map((fase) => ({
             <ol class="etapas" role="list">
               {fase.etapas.map((etapa) => (
                 <li class="etapa">
-                  <span class="etapa__numero mono" aria-hidden="true">
+                  <span class="etapa__numero numeral" aria-hidden="true">
                     {etapa.n}
                   </span>
                   <div>
@@ -84,10 +84,11 @@ const fasesNumeradas = fases.map((fase) => ({
   }
 
   .fase__nome {
-    margin-bottom: 18px;
-    font-size: var(--texto-xl);
+    margin-bottom: 20px;
+    font-family: var(--fonte-display);
+    font-size: var(--t-xl);
     font-weight: 700;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
   }
 
   .etapas {
@@ -103,20 +104,20 @@ const fasesNumeradas = fases.map((fase) => ({
   }
 
   .etapa__numero {
-    padding-top: 3px;
-    color: var(--acento);
-    font-size: var(--texto-sm);
+    padding-top: 1px;
+    color: var(--tinta-fraca);
+    font-size: var(--t-sm);
   }
 
   .etapa__titulo {
-    font-weight: 650;
+    font-weight: 600;
     line-height: 1.4;
   }
 
   .etapa__detalhe {
     margin-top: 2px;
     color: var(--tinta-media);
-    font-size: 0.9875rem;
+    font-size: var(--t-sm);
     line-height: 1.55;
   }
 
@@ -132,10 +133,11 @@ const fasesNumeradas = fases.map((fase) => ({
   }
 
   .teste blockquote p {
-    font-size: var(--texto-2xl);
-    font-weight: 650;
-    letter-spacing: -0.02em;
-    line-height: 1.25;
+    font-family: var(--fonte-display);
+    font-size: var(--t-2xl);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
     text-wrap: balance;
   }
 

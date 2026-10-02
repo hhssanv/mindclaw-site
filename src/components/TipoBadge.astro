@@ -26,10 +26,11 @@ const { tipo, completo = false } = Astro.props;
     border: 1px solid var(--linha-forte);
     border-radius: 999px;
     color: var(--tinta);
-    font-family: var(--fonte-mono);
-    font-size: var(--texto-xs);
-    font-weight: 500;
-    letter-spacing: 0.04em;
+    font-family: var(--fonte-display);
+    font-size: 0.75rem;
+    font-stretch: 112.5%;
+    font-weight: 600;
+    letter-spacing: 0.08em;
     line-height: 1.4;
     text-transform: uppercase;
     white-space: nowrap;
@@ -51,9 +52,13 @@ const { tipo, completo = false } = Astro.props;
   }
 
   .tipo__descricao {
-    color: var(--tinta-fraca);
-    text-transform: none;
+    color: var(--tinta-media);
+    font-family: var(--fonte);
+    font-size: 0.8125rem;
+    font-stretch: 100%;
+    font-weight: 500;
     letter-spacing: 0;
+    text-transform: none;
   }
 
   :global(.faixa) .tipo--producao .tipo__marca {

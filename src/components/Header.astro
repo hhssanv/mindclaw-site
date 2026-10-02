@@ -84,8 +84,8 @@ const ativo = (href: string) => caminho === href || caminho.startsWith(href);
     padding: 8px 14px;
     border-radius: var(--raio-1);
     color: var(--tinta-media);
-    font-size: 0.9375rem;
-    font-weight: 550;
+    font-size: var(--t-sm);
+    font-weight: 500;
     text-decoration: none;
     transition: color var(--transicao), background-color var(--transicao);
   }
@@ -109,7 +109,7 @@ const ativo = (href: string) => caminho === href || caminho.startsWith(href);
     grid-area: contato;
     min-height: 44px;
     padding: 10px 18px;
-    font-size: 0.9375rem;
+    font-size: var(--t-sm);
   }
 
   @media (max-width: 640px) {
