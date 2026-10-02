@@ -434,3 +434,64 @@ textarea {
   border-radius: 2px;
   background: var(--marca-gradiente);
 }
+
+/*
+ * Gráficos em SVG: uma variante por faixa de largura do contêiner (ver src/lib/grafico.ts),
+ * para o texto do gráfico não encolher nem crescer demais com a escala do SVG.
+ */
+.graficos {
+  container-type: inline-size;
+}
+
+.graficos > [data-w] {
+  display: none;
+}
+
+.graficos > [data-w] > svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+@container (width < 290px) {
+  .graficos > [data-w='240'] {
+    display: block;
+  }
+}
+
+@container (290px <= width < 400px) {
+  .graficos > [data-w='320'] {
+    display: block;
+  }
+}
+
+@container (400px <= width < 550px) {
+  .graficos > [data-w='440'] {
+    display: block;
+  }
+}
+
+@container (550px <= width < 750px) {
+  .graficos > [data-w='600'] {
+    display: block;
+  }
+}
+
+@container (750px <= width < 1025px) {
+  .graficos > [data-w='820'] {
+    display: block;
+  }
+}
+
+@container (width >= 1025px) {
+  .graficos > [data-w='1100'] {
+    display: block;
+  }
+}
+
+@supports not (container-type: inline-size) {
+  .graficos > [data-w='600'] {
+    display: block;
+  }
+}

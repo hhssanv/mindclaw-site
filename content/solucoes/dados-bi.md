@@ -30,6 +30,11 @@ ganhos:
   - Tempo de análise no lugar de tempo de planilha
 
 ferramentas: [Power BI, DAX, Power Query, Excel avançado, SQL, Python]
+
+exemplo:
+  tipo: painel-norvexa
+  titulo: Como fica um painel entregue
+  lead: Recriação de um modelo de demonstração com empresa fictícia. Indicadores com meta, alertas automáticos e totais conferidos antes de chegar à diretoria.
 projetos: [reporting-executivo, horas-extras]
 
 seo:

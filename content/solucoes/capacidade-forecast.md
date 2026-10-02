@@ -32,6 +32,11 @@ ganhos:
   - Processo replicável, que não depende de uma única pessoa
 
 ferramentas: [Excel, Power BI, Python, Séries históricas, Workforce management]
+
+exemplo:
+  tipo: capacidade
+  titulo: Como o problema aparece nos dados
+  lead: A média do dia esconde o pico. Com a necessidade calculada hora a hora, fica visível onde falta e onde sobra gente.
 projetos: [planejamento-capacidade]
 
 seo:

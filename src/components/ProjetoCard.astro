@@ -1,4 +1,5 @@
 ---
+import Icone from './Icone.astro';
 import { hrefSolucao, type ProjetoEntry } from '../lib/conteudo';
 
 interface Props {
@@ -51,6 +52,15 @@ const Titulo = `h${nivel}` as 'h2' | 'h3';
       <dd>{d.resultado}</dd>
     </div>
   </dl>
+
+  {
+    d.link && (
+      <a class="link-seta proj__link" href={d.link.href}>
+        {d.link.rotulo}
+        <Icone nome="seta" />
+      </a>
+    )
+  }
 
   {
     !compacto && (
@@ -156,6 +166,11 @@ const Titulo = `h${nivel}` as 'h2' | 'h3';
   .proj__resultado dd {
     color: var(--tinta);
     font-weight: 500;
+  }
+
+  .proj__link {
+    justify-self: start;
+    font-size: var(--t-sm);
   }
 
   .proj__tecnologias {

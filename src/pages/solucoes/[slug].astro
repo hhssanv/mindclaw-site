@@ -9,7 +9,9 @@ import NavegacaoVizinhos from '../../components/NavegacaoVizinhos.astro';
 import Icone from '../../components/Icone.astro';
 import { solucoes, projetos, hrefSolucao, validarReferencias, vizinhos } from '../../lib/conteudo';
 import { jsonLdBreadcrumb, jsonLdServico } from '../../lib/jsonld';
-import { notaGanho } from '../../lib/site';
+import { notaGanho, linkWhatsApp, mensagemWhatsApp, assuntoDe } from '../../lib/site';
+import PainelExemplo from '../../components/PainelExemplo.astro';
+import IlustracaoCapacidade from '../../components/IlustracaoCapacidade.astro';
 
 export async function getStaticPaths() {
   await validarReferencias();
@@ -56,9 +58,10 @@ const item = (x?: typeof s) => (x ? { href: hrefSolucao(x.id), titulo: x.data.ti
         <h1 id="titulo-solucao">{d.titulo}</h1>
         <p class="hero__chamada">{d.chamada}</p>
         <div>
-          <a class="botao" href={`/contato/?area=${s.id}`}>
-            Falar sobre isso
-            <Icone nome="seta" />
+          <a class="botao" href={linkWhatsApp(mensagemWhatsApp(assuntoDe(d.titulo)))} target="_blank" rel="noopener">
+            <Icone nome="conversa" />
+            Conversar no WhatsApp
+            <span class="visualmente-oculto">(abre o WhatsApp em nova aba)</span>
           </a>
         </div>
       </div>
@@ -112,6 +115,17 @@ const item = (x?: typeof s) => (x ? { href: hrefSolucao(x.id), titulo: x.data.ti
   </section>
 
   {
+    d.exemplo && (
+      <section class="secao" id="exemplo" aria-labelledby="titulo-exemplo">
+        <div class="container">
+          <SecaoTitulo id="titulo-exemplo" rotulo="Exemplo" titulo={d.exemplo.titulo} lead={d.exemplo.lead} />
+          {d.exemplo.tipo === 'painel-norvexa' ? <PainelExemplo /> : <IlustracaoCapacidade />}
+        </div>
+      </section>
+    )
+  }
+
+  {
     d.arquitetura && (
       <DiagramaCamadas
         titulo={d.arquitetura.titulo}
@@ -146,8 +160,8 @@ const item = (x?: typeof s) => (x ? { href: hrefSolucao(x.id), titulo: x.data.ti
   <CTAContato
     titulo="Reconheceu algum desses sinais?"
     texto="Conte como o problema aparece no dia a dia. A primeira conversa serve para entender o cenário e dizer, com franqueza, se e como dá para ajudar."
-    rotuloBotao="Falar sobre isso"
-    href={`/contato/?area=${s.id}`}
+    assunto={assuntoDe(d.titulo)}
+    query={`?area=${s.id}`}
   />
 
   <NavegacaoVizinhos rotulo="Outras soluções" anterior={item(anterior)} proximo={item(proximo)} />

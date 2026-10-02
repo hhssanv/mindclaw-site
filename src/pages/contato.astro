@@ -2,14 +2,14 @@
 import Base from '../layouts/Base.astro';
 import Icone from '../components/Icone.astro';
 import { solucoes } from '../lib/conteudo';
-import { site, linkWhatsApp } from '../lib/site';
+import { site, linkWhatsApp, mensagemWhatsApp } from '../lib/site';
 
 const areas = await solucoes();
 ---
 
 <Base
   title={`Contato · ${site.nome}`}
-  description="Conte o problema do jeito que ele aparece no dia a dia. Formulário curto, sem cadastro, e canais diretos por e-mail e WhatsApp para a primeira conversa."
+  description="Conte o problema do jeito que ele aparece no dia a dia. A conversa começa pelo WhatsApp ou por e-mail, sem cadastro e sem formulário guardado em servidor."
 >
   <section class="contato" aria-labelledby="titulo-contato">
     <div class="container contato__interno">
@@ -25,6 +25,16 @@ const areas = await solucoes();
           <h2 class="eyebrow">Canais diretos</h2>
           <ul role="list">
             <li>
+              <a class="canal canal--principal" href={linkWhatsApp(mensagemWhatsApp())} target="_blank" rel="noopener">
+                <Icone nome="conversa" />
+                <span>
+                  <span class="canal__rotulo">WhatsApp · resposta mais rápida</span>
+                  <span class="canal__valor">{site.whatsapp.exibicao}</span>
+                </span>
+                <span class="visualmente-oculto">(abre o WhatsApp em nova aba)</span>
+              </a>
+            </li>
+            <li class="canal-email">
               <a class="canal" href={`mailto:${site.email}`}>
                 <Icone nome="email" />
                 <span>
@@ -32,17 +42,13 @@ const areas = await solucoes();
                   <span class="canal__valor">{site.email}</span>
                 </span>
               </a>
-            </li>
-            <li>
-              <a class="canal" href={linkWhatsApp()} rel="noopener">
-                <Icone nome="conversa" />
-                <span>
-                  <span class="canal__rotulo">WhatsApp</span>
-                  <span class="canal__valor">{site.whatsapp.exibicao}</span>
-                </span>
-              </a>
+              <button type="button" class="copiar" data-copiar={site.email}>
+                <span data-copiar-rotulo>Copiar</span>
+                <span class="visualmente-oculto"> o endereço de e-mail</span>
+              </button>
             </li>
           </ul>
+          <p class="visualmente-oculto" aria-live="polite" data-copiar-status></p>
           <p class="canais__nota">{site.confidencialidade}</p>
         </div>
       </div>
@@ -56,17 +62,9 @@ const areas = await solucoes();
         </div>
 
         <div class="campo">
-          <label for="retorno">Como prefere receber a resposta?</label>
-          <input
-            id="retorno"
-            name="retorno"
-            type="text"
-            autocomplete="email"
-            required
-            aria-describedby="retorno-ajuda retorno-erro"
-          />
-          <p class="campo__ajuda" id="retorno-ajuda">E-mail ou telefone com DDD.</p>
-          <p class="campo__erro" id="retorno-erro" hidden>Informe um e-mail ou telefone para a resposta.</p>
+          <label for="retorno">Empresa ou outro contato <span class="campo__opcional">opcional</span></label>
+          <input id="retorno" name="retorno" type="text" autocomplete="organization" aria-describedby="retorno-ajuda" />
+          <p class="campo__ajuda" id="retorno-ajuda">Empresa, cargo ou um e-mail para resposta, se preferir.</p>
         </div>
 
         <div class="campo">
@@ -93,17 +91,18 @@ const areas = await solucoes();
         </div>
 
         <div class="form__acoes">
-          <button class="botao" type="submit" data-canal="email">
-            Enviar por e-mail
-            <Icone nome="seta" />
-          </button>
-          <button class="botao botao--secundario" type="submit" data-canal="whatsapp">
+          <button class="botao" type="submit" data-canal="whatsapp">
             <Icone nome="conversa" />
             Enviar pelo WhatsApp
           </button>
+          <button class="botao botao--secundario" type="submit" data-canal="email">
+            <Icone nome="email" />
+            Enviar por e-mail
+          </button>
         </div>
         <p class="form__nota">
-          O formulário não guarda nada: ele abre o seu e-mail ou o WhatsApp com a mensagem pronta, e você decide se envia.{' '}
+          O formulário não guarda nada: ele abre o seu WhatsApp (ou o seu e-mail) com a mensagem pronta, e você decide se
+          envia.{' '}
           <a href="/privacidade/">Privacidade</a>.
         </p>
         <noscript>
@@ -117,13 +116,30 @@ const areas = await solucoes();
 </Base>
 
 <script>
+  // Copiar o e-mail: para quem usa webmail e não tem programa de e-mail configurado.
+  const copiar = document.querySelector<HTMLButtonElement>('[data-copiar]');
+  const statusCopia = document.querySelector<HTMLElement>('[data-copiar-status]');
+  copiar?.addEventListener('click', async () => {
+    const rotulo = copiar.querySelector<HTMLElement>('[data-copiar-rotulo]');
+    try {
+      await navigator.clipboard.writeText(copiar.dataset.copiar ?? '');
+      if (rotulo) rotulo.textContent = 'Copiado';
+      if (statusCopia) statusCopia.textContent = 'Endereço de e-mail copiado.';
+    } catch {
+      if (rotulo) rotulo.textContent = 'Selecione e copie';
+    }
+    window.setTimeout(() => {
+      if (rotulo) rotulo.textContent = 'Copiar';
+    }, 2500);
+  });
+
   const form = document.querySelector<HTMLFormElement>('[data-contato]');
 
   if (form) {
     const campo = (nome: string) => form.elements.namedItem(nome) as HTMLInputElement | HTMLTextAreaElement;
     const params = new URLSearchParams(location.search);
 
-    // Pré-seleção vinda do botão "Falar sobre isso" de uma solução (?area=id).
+    // Pré-seleção vinda do link de contato de uma solução (?area=id).
     const area = params.get('area');
     const select = form.querySelector<HTMLSelectElement>('#tipo');
     const opcao = select && [...select.options].find((o) => o.dataset.area === area);
@@ -139,7 +155,7 @@ const areas = await solucoes();
 
     // Revalida enquanto a pessoa digita (e não no blur): o erro some antes do clique
     // em "Enviar", sem deslocar o botão debaixo do cursor.
-    for (const nome of ['retorno', 'descricao']) {
+    for (const nome of ['descricao']) {
       campo(nome).addEventListener('input', (e) => {
         const el = e.currentTarget as HTMLInputElement;
         if (el.getAttribute('aria-invalid') !== null) validar(el);
@@ -148,7 +164,7 @@ const areas = await solucoes();
 
     form.addEventListener('submit', (evento) => {
       evento.preventDefault();
-      const obrigatorios = [campo('retorno'), campo('descricao')];
+      const obrigatorios = [campo('descricao')];
       const invalidos = obrigatorios.filter((el) => !validar(el));
       if (invalidos.length) {
         invalidos[0].focus();
@@ -158,12 +174,12 @@ const areas = await solucoes();
       const valor = (nome: string) => campo(nome).value.trim();
       const linhas: string[] = [];
       if (valor('nome')) linhas.push(`Nome: ${valor('nome')}`);
-      linhas.push(`Resposta por: ${valor('retorno')}`);
+      if (valor('retorno')) linhas.push(`Contato: ${valor('retorno')}`);
       if (valor('tipo')) linhas.push(`Área: ${valor('tipo')}`);
       linhas.push('', valor('descricao'));
       const corpo = linhas.join('\n');
 
-      const canal = (evento.submitter as HTMLButtonElement | null)?.dataset.canal ?? 'email';
+      const canal = (evento.submitter as HTMLButtonElement | null)?.dataset.canal ?? 'whatsapp';
       if (canal === 'whatsapp') {
         window.open(`https://wa.me/${form.dataset.whatsapp}?text=${encodeURIComponent(corpo)}`, '_blank', 'noopener');
       } else {
@@ -222,6 +238,34 @@ const areas = await solucoes();
     background: var(--superficie);
   }
 
+  .canal--principal {
+    border-color: var(--linha-forte);
+    background: var(--superficie);
+  }
+
+  .canal-email {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+
+  .copiar {
+    min-height: 44px;
+    padding: 0 16px;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-2);
+    background: transparent;
+    color: var(--tinta-media);
+    font-size: var(--t-sm);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .copiar:hover {
+    border-color: var(--linha-forte);
+    color: var(--tinta);
+  }
+
   .canal :global(svg) {
     flex: none;
     width: 22px;
@@ -231,10 +275,11 @@ const areas = await solucoes();
 
   .canal > span {
     display: grid;
+    min-width: 0;
   }
 
   .canal__rotulo {
-    color: var(--tinta-fraca);
+    color: var(--tinta-media);
     font-family: var(--fonte-display);
     font-size: 0.75rem;
     font-stretch: 112.5%;
@@ -245,6 +290,7 @@ const areas = await solucoes();
 
   .canal__valor {
     font-weight: 600;
+    overflow-wrap: anywhere;
   }
 
   .canais__nota {

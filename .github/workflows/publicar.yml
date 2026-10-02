@@ -26,8 +26,11 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      # O build valida todos os cases contra o schema e falha se algum estiver fora do padrão.
+      # O build valida todo o conteúdo contra o schema e falha se algo estiver fora do padrão.
       - run: npm run build
+      # Links, metadados, higiene do conteúdo, acessibilidade (axe) e comportamento.
+      - run: npx playwright install --with-deps chromium
+      - run: npm test
       - uses: actions/upload-pages-artifact@v4
         if: github.event_name != 'pull_request'
         with:

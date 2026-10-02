@@ -41,6 +41,15 @@ export const solucaoSchema = z.object({
   ferramentas: z.array(texto('ferramentas')).min(3),
   projetos: z.array(z.string()).default([]),
 
+  /** Exemplo visual opcional (painel ou ilustração), sempre com dados fictícios. */
+  exemplo: z
+    .object({
+      tipo: z.enum(['painel-norvexa', 'capacidade']),
+      titulo: texto('exemplo.titulo'),
+      lead: texto('exemplo.lead'),
+    })
+    .optional(),
+
   /** Diagrama opcional de camadas (nome, responsabilidade, restrição). */
   arquitetura: z
     .object({
@@ -72,6 +81,8 @@ export const projetoSchema = z.object({
   atuacao: texto('atuacao'),
   resultado: texto('resultado'),
   tecnologias: z.array(texto('tecnologias')).min(2),
+  /** Link opcional para ver o exemplo visual ligado ao projeto. */
+  link: z.object({ href: z.string().startsWith('/'), rotulo: texto('link.rotulo') }).optional(),
 });
 
 export const principioSchema = z.object({

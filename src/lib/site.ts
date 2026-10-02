@@ -12,7 +12,7 @@ export const site = {
   posicionamento:
     'Processos complexos, sistemas desconectados e trabalho manual transformados em automações, integrações, sistemas inteligentes e operações auditáveis.',
   descricao:
-    'Capacity e forecast, BI, automação, IA aplicada, segurança e infraestrutura para operações que dependem de trabalho manual, com controle humano e registro do que acontece.',
+    'Capacity, BI, automação, IA aplicada, segurança e infraestrutura para operações que dependem de trabalho manual, com controle humano e registro de tudo.',
   /** Linha de credencial, vinda do dossiê profissional. */
   trajetoria: 'Mais de uma década em ambientes corporativos',
   areasResumo: 'Infraestrutura, dados, automação, segurança e IA aplicada',
@@ -47,6 +47,18 @@ export const notaGanho =
 
 export function urlAbsoluta(caminho: string): string {
   return new URL(caminho, site.url).href;
+}
+
+/** Título da área como assunto de frase: "Dados, BI e dashboards" → "dados, BI e dashboards". Siglas ficam. */
+export function assuntoDe(titulo: string): string {
+  return /^[A-Z]{2}/.test(titulo) ? titulo : titulo.charAt(0).toLowerCase() + titulo.slice(1);
+}
+
+/** Mensagem inicial do WhatsApp, citando a área de onde a pessoa veio. */
+export function mensagemWhatsApp(assunto?: string): string {
+  return assunto
+    ? `Olá, Hans! Vim pelo site e quero conversar sobre ${assunto}.`
+    : 'Olá, Hans! Vim pelo site e quero conversar sobre um projeto.';
 }
 
 export function linkWhatsApp(texto?: string): string {

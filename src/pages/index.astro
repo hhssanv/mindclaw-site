@@ -22,25 +22,6 @@ const medicao = [
   { titulo: 'Ganho medido na sua base', texto: 'O resultado é comparado com os dados da própria operação.' },
 ];
 
-const foraDoEscopo = [
-  {
-    titulo: 'Produto pronto ou licença de software',
-    texto: 'Cada entrega é construída para o processo do cliente, não vendida de prateleira.',
-  },
-  {
-    titulo: 'Teste de invasão ou auditoria de certificação',
-    texto: 'Governança, revisão de acessos e hardening, sim. Pentest e certificação formal, não.',
-  },
-  {
-    titulo: 'Automação que age sozinha onde o erro custa caro',
-    texto: 'Ação externa com impacto real passa por aprovação humana, sempre.',
-  },
-  {
-    titulo: 'Entrega sem documentação',
-    texto: 'Um sistema que só funciona enquanto quem o construiu está por perto não é uma entrega.',
-  },
-];
-
 const titulo = `${site.nome} · Automação, dados e IA aplicada`;
 ---
 
@@ -63,10 +44,16 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
             <Icone nome="seta" />
           </a>
         </div>
-        <p class="hero-home__credencial">
-          <strong>{site.trajetoria}</strong>
-          <span>{site.areasResumo}</span>
-        </p>
+        <a class="hero-home__credencial" href="/sobre/">
+          <picture>
+            <source type="image/avif" srcset="/marca/hans-spiller-160.avif" />
+            <img src="/marca/hans-spiller-160.webp" width="160" height="160" alt="" />
+          </picture>
+          <span class="hero-home__credencial-texto">
+            <strong>{site.pessoa} · {site.trajetoria}</strong>
+            <span>{site.areasResumo}</span>
+          </span>
+        </a>
       </div>
       <div class="hero-home__marca" aria-hidden="true">
         <picture>
@@ -199,33 +186,10 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
     </div>
   </section>
 
-  <!-- 6. O que fica de fora -->
-  <section class="secao secao--superficie" aria-labelledby="titulo-fora">
-    <div class="container fora">
-      <SecaoTitulo
-        id="titulo-fora"
-        rotulo="Limite de escopo"
-        titulo="O que fica de fora"
-        lead="Dizer o que não está incluído também é parte do trabalho."
-      />
-      <ul class="fora__lista" role="list">
-        {
-          foraDoEscopo.map((item) => (
-            <li>
-              <h3>{item.titulo}</h3>
-              <p>{item.texto}</p>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
-
-  <!-- 7. Contato -->
+  <!-- 6. Contato -->
   <CTAContato
     titulo="Tem um processo que depende de alguém copiando, conferindo ou lembrando?"
     texto="Conte o problema do jeito que ele aparece no dia a dia. A primeira conversa serve para entender o cenário e dizer, com franqueza, se e como dá para ajudar."
-    rotuloBotao="Falar sobre um projeto"
   />
 </Base>
 
@@ -277,13 +241,32 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
   }
 
   .hero-home__credencial {
-    display: grid;
-    gap: 2px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
     margin-top: 8px;
     padding-top: 20px;
     border-top: 1px solid var(--linha);
     color: var(--tinta-media);
     font-size: var(--t-sm);
+    text-decoration: none;
+  }
+
+  .hero-home__credencial picture {
+    flex: none;
+  }
+
+  .hero-home__credencial img {
+    display: block;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px var(--fundo), 0 0 0 4px var(--acento);
+  }
+
+  .hero-home__credencial-texto {
+    display: grid;
+    gap: 2px;
   }
 
   .hero-home__credencial strong {
@@ -291,6 +274,11 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
     font-family: var(--fonte-display);
     font-size: var(--t-md);
     font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .hero-home__credencial:hover strong {
+    color: var(--acento);
   }
 
   .hero-home__marca {
@@ -348,12 +336,23 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
     margin: 0;
   }
 
+  /* Subgrid: título, resumo e link ficam na mesma altura em todos os cards da linha. */
   .solucoes > li {
     display: grid;
+    grid-row: span 4;
+    grid-template-rows: subgrid;
+    row-gap: 0;
   }
 
-  .solucoes__contato {
+  .solucoes > li > :global(.sol) {
+    grid-row: 1 / -1;
+    grid-template-rows: subgrid;
+  }
+
+  .solucoes > .solucoes__contato {
     display: grid;
+    grid-row: span 4;
+    grid-template-rows: none;
     align-content: start;
     gap: 10px;
     padding: 26px 24px;
@@ -507,51 +506,6 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
 
   @media (max-width: 520px) {
     .principios {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  /* O que fica de fora */
-  .fora {
-    display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    gap: 24px clamp(32px, 5vw, 72px);
-    align-items: start;
-  }
-
-  .fora :global(.secao-titulo) {
-    margin-bottom: 0;
-  }
-
-  .fora__lista {
-    display: grid;
-    margin: 0;
-    border-top: 1px solid var(--linha-forte);
-  }
-
-  .fora__lista li {
-    display: grid;
-    grid-template-columns: 28px 1fr;
-    gap: 4px 0;
-    padding: 20px 0;
-    border-bottom: 1px solid var(--linha);
-  }
-
-  .fora__lista li::before {
-    content: '';
-    grid-row: 1 / span 2;
-    width: 12px;
-    height: 2px;
-    margin-top: 0.75em;
-    background: var(--tinta-fraca);
-  }
-
-  .fora__lista p {
-    color: var(--tinta-media);
-  }
-
-  @media (max-width: 860px) {
-    .fora {
       grid-template-columns: 1fr;
     }
   }

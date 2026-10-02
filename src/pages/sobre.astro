@@ -54,16 +54,21 @@ const areas = (await solucoes()).map((s) => s.data.titulo);
           )
         }
       </div>
-      <figure class="perfil__marca">
+      <figure class="perfil__foto">
         <picture>
-          <source type="image/avif" srcset="/marca/isotipo-480.avif 480w, /marca/isotipo-960.avif 960w" sizes="300px" />
+          <source
+            type="image/avif"
+            srcset="/marca/hans-spiller-480.avif 480w, /marca/hans-spiller-960.avif 960w"
+            sizes="(max-width: 860px) 160px, 340px"
+          />
           <img
-            src="/marca/isotipo-480.webp"
-            srcset="/marca/isotipo-480.webp 480w, /marca/isotipo-960.webp 960w"
-            sizes="300px"
+            src="/marca/hans-spiller-480.webp"
+            srcset="/marca/hans-spiller-480.webp 480w, /marca/hans-spiller-960.webp 960w"
+            sizes="(max-width: 860px) 160px, 340px"
             width="480"
             height="480"
-            alt="Isotipo da marca Hans MindClaw: ilustração de um rosto com cabelo e barba em degradê vermelho e óculos de lentes iluminadas."
+            fetchpriority="high"
+            alt="Hans Spiller, de cabelo e barba ruivos e camiseta preta, em frente a uma estante."
           />
         </picture>
       </figure>
@@ -117,7 +122,6 @@ const areas = (await solucoes()).map((s) => s.data.titulo);
   <CTAContato
     titulo="Quer conversar sobre um processo específico?"
     texto="A primeira conversa é para entender o problema. Se fizer sentido, o próximo passo é um diagnóstico com escopo fechado."
-    rotuloBotao="Falar sobre um projeto"
   />
 </Base>
 
@@ -152,9 +156,24 @@ const areas = (await solucoes()).map((s) => s.data.titulo);
     line-height: 1.65;
   }
 
-  .perfil__marca {
-    width: clamp(200px, 24vw, 300px);
+  .perfil__foto {
+    position: relative;
+    width: clamp(220px, 26vw, 340px);
     margin: 0;
+  }
+
+  /* Moldura deslocada no degradê da marca: liga a foto ao isotipo sem competir com ela. */
+  .perfil__foto::before {
+    content: '';
+    position: absolute;
+    inset: 14px 14px -14px -14px;
+    border-radius: var(--raio-3);
+    background: linear-gradient(135deg, var(--marca-vermelho), var(--marca-vinho));
+  }
+
+  .perfil__foto img {
+    position: relative;
+    border-radius: var(--raio-3);
   }
 
   @media (max-width: 860px) {
@@ -162,9 +181,13 @@ const areas = (await solucoes()).map((s) => s.data.titulo);
       grid-template-columns: 1fr;
     }
 
-    .perfil__marca {
+    .perfil__foto {
       order: -1;
       width: 160px;
+    }
+
+    .perfil__foto::before {
+      inset: 8px 8px -8px -8px;
     }
   }
 

@@ -1,15 +1,18 @@
 ---
 import Icone from './Icone.astro';
+import { linkWhatsApp, mensagemWhatsApp } from '../lib/site';
 
 interface Props {
   titulo: string;
   texto: string;
-  rotuloBotao: string;
-  href?: string;
+  /** Assunto citado na mensagem inicial do WhatsApp (ex.: nome da solução). */
+  assunto?: string;
+  /** Parâmetros para o link "outras formas de contato" (ex.: "?area=dados-bi"). */
+  query?: string;
   id?: string;
 }
 
-const { titulo, texto, rotuloBotao, href = '/contato/', id = 'titulo-cta' } = Astro.props;
+const { titulo, texto, assunto, query = '', id = 'titulo-cta' } = Astro.props;
 ---
 
 <section class="cta faixa" aria-labelledby={id}>
@@ -19,10 +22,14 @@ const { titulo, texto, rotuloBotao, href = '/contato/', id = 'titulo-cta' } = As
       <h2 id={id}>{titulo}</h2>
       <p class="cta__texto">{texto}</p>
     </div>
-    <a class="botao cta__botao" href={href}>
-      {rotuloBotao}
-      <Icone nome="seta" />
-    </a>
+    <div class="cta__acoes">
+      <a class="botao cta__botao" href={linkWhatsApp(mensagemWhatsApp(assunto))} target="_blank" rel="noopener">
+        <Icone nome="conversa" />
+        Conversar no WhatsApp
+        <span class="visualmente-oculto">(abre o WhatsApp em nova aba)</span>
+      </a>
+      <a class="cta__alternativa" href={`/contato/${query}`}>Prefere e-mail? Outras formas de contato</a>
+    </div>
   </div>
 </section>
 
@@ -54,13 +61,29 @@ const { titulo, texto, rotuloBotao, href = '/contato/', id = 'titulo-cta' } = As
     line-height: 1.55;
   }
 
+  .cta__acoes {
+    display: grid;
+    justify-items: end;
+    gap: 14px;
+  }
+
+  .cta__alternativa {
+    color: var(--tinta-media);
+    font-size: var(--t-sm);
+    text-underline-offset: 0.25em;
+  }
+
+  .cta__alternativa:hover {
+    color: var(--tinta);
+  }
+
   @media (max-width: 760px) {
     .cta__interno {
       grid-template-columns: 1fr;
     }
 
-    .cta__botao {
-      justify-self: start;
+    .cta__acoes {
+      justify-items: start;
     }
   }
 </style>

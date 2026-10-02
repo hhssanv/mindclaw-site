@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "test": "node --test --test-reporter=spec \"tests/*.test.mjs\"",
+    "verificar": "npm run build && npm test"
   },
   "dependencies": {
     "@fontsource/inter": "^5.3.0",
@@ -18,5 +20,9 @@
   "description": "Site da Hans MindClaw: soluções, projetos e contato.",
   "engines": {
     "node": ">=22.12"
+  },
+  "devDependencies": {
+    "axe-core": "^4.13.0",
+    "playwright": "1.56.1"
   }
 }
