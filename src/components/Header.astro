@@ -1,38 +1,102 @@
 ---
 import Logo from './Logo.astro';
-import { site } from '../lib/site';
+import Icone from './Icone.astro';
+import { site, linkWhatsApp, mensagemWhatsApp } from '../lib/site';
 
 const caminho = Astro.url.pathname;
 const ativo = (href: string) => caminho === href || caminho.startsWith(href);
 ---
 
-<header class="topo">
+<header class="topo" data-topo>
   <div class="container topo__interno">
     <a class="topo__marca" href="/" aria-label={`${site.nome}, página inicial`}>
       <Logo id="topo" class="topo__logo" />
     </a>
-    <nav class="topo__nav" aria-label="Principal">
-      <ul role="list">
-        {
-          site.navegacao.map((item) => (
-            <li>
-              <a href={item.href} aria-current={ativo(item.href) ? 'page' : undefined}>
-                {item.rotulo}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </nav>
-    <a
-      class="botao topo__contato"
-      href={site.contato.href}
-      aria-current={ativo(site.contato.href) ? 'page' : undefined}
-    >
-      {site.contato.rotulo}
-    </a>
+
+    <!-- Só aparece no celular com JavaScript; sem ele, a navegação fica visível abaixo do logo. -->
+    <button class="topo__menu" type="button" aria-expanded="false" aria-controls="menu-principal" data-menu-botao>
+      <span class="topo__menu-icone" aria-hidden="true">
+        <Icone nome="menu" class="topo__menu-abrir" />
+        <Icone nome="fechar" class="topo__menu-fechar" />
+      </span>
+      Menu
+    </button>
+
+    <!-- No desktop este bloco some do layout (display: contents) e os filhos ocupam as áreas da grade. -->
+    <div class="topo__painel" id="menu-principal" data-menu-painel>
+      <nav class="topo__nav" aria-label="Principal">
+        <ul role="list">
+          {
+            site.navegacao.map((item) => (
+              <li>
+                <a href={item.href} aria-current={ativo(item.href) ? 'page' : undefined}>
+                  {item.rotulo}
+                  <Icone nome="seta" class="topo__nav-seta" />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      <a
+        class="botao topo__contato"
+        href={site.contato.href}
+        aria-current={ativo(site.contato.href) ? 'page' : undefined}
+      >
+        {site.contato.rotulo}
+      </a>
+      <a class="topo__whatsapp" href={linkWhatsApp(mensagemWhatsApp())} target="_blank" rel="noopener">
+        <Icone nome="conversa" />
+        Conversar no WhatsApp
+        <span class="visualmente-oculto">(abre o WhatsApp em nova aba)</span>
+      </a>
+      <a class="topo__email" href={`mailto:${site.email}`}>{site.email}</a>
+    </div>
   </div>
 </header>
+
+<script>
+  // Menu do celular: botão de abrir e fechar (padrão disclosure), Esc fecha e devolve o foco,
+  // o resto da página fica inerte enquanto o menu cobre a tela, e voltar ao desktop fecha.
+  const topo = document.querySelector<HTMLElement>('[data-topo]');
+  const botao = document.querySelector<HTMLButtonElement>('[data-menu-botao]');
+  const painel = document.querySelector<HTMLElement>('[data-menu-painel]');
+  const celular = window.matchMedia('(max-width: 720px)');
+
+  if (topo && botao && painel) {
+    const fundo = () => [...document.querySelectorAll<HTMLElement>('body > main, body > footer, .pular-link')];
+
+    const definir = (aberto: boolean, devolverFoco = false) => {
+      botao.setAttribute('aria-expanded', String(aberto));
+      topo.toggleAttribute('data-aberto', aberto);
+      document.documentElement.classList.toggle('menu-aberto', aberto);
+      for (const el of fundo()) el.inert = aberto;
+      if (!aberto && devolverFoco) botao.focus();
+    };
+
+    botao.addEventListener('click', () => definir(botao.getAttribute('aria-expanded') !== 'true'));
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && topo.hasAttribute('data-aberto')) definir(false, true);
+    });
+
+    // Com o resto da página inerte, o Tab circula dentro do cabeçalho. Se o foco ainda assim
+    // sair para outro ponto da página, o menu fecha.
+    topo.addEventListener('focusout', (e) => {
+      const destino = e.relatedTarget as Node | null;
+      if (topo.hasAttribute('data-aberto') && destino && !topo.contains(destino)) definir(false);
+    });
+
+    // Link interno clicado: fecha antes de navegar (inclusive âncoras na mesma página).
+    painel.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) definir(false);
+    });
+
+    celular.addEventListener('change', (e) => {
+      if (!e.matches) definir(false);
+    });
+  }
+</script>
 
 <style>
   .topo {
@@ -51,19 +115,24 @@ const ativo = (href: string) => caminho === href || caminho.startsWith(href);
     grid-template-areas: 'marca nav contato';
     align-items: center;
     gap: 8px 24px;
-    min-height: 72px;
+    min-height: 80px;
   }
 
   .topo__marca {
     grid-area: marca;
     display: block;
-    padding-block: 8px;
+    padding-block: 10px;
     color: var(--tinta);
   }
 
   .topo__marca :global(.topo__logo) {
-    width: 128px;
+    display: block;
+    width: 168px;
     height: auto;
+  }
+
+  .topo__painel {
+    display: contents;
   }
 
   .topo__nav {
@@ -101,8 +170,8 @@ const ativo = (href: string) => caminho === href || caminho.startsWith(href);
     border-radius: 0;
   }
 
-  .topo__contato[aria-current='page'] {
-    box-shadow: 0 0 0 2px var(--fundo), 0 0 0 4px var(--botao);
+  .topo__nav :global(.topo__nav-seta) {
+    display: none;
   }
 
   .topo__contato {
@@ -112,18 +181,35 @@ const ativo = (href: string) => caminho === href || caminho.startsWith(href);
     font-size: var(--t-sm);
   }
 
-  @media (max-width: 640px) {
+  .topo__contato[aria-current='page'] {
+    box-shadow: 0 0 0 2px var(--fundo), 0 0 0 4px var(--botao);
+  }
+
+  .topo__menu,
+  .topo__whatsapp,
+  .topo__email {
+    display: none;
+  }
+
+  @media (max-width: 1023px) {
+    .topo__marca :global(.topo__logo) {
+      width: 144px;
+    }
+  }
+
+  /* Celular sem JavaScript: navegação em uma segunda linha, sempre visível. */
+  @media (max-width: 720px) {
     .topo__interno {
       grid-template-columns: 1fr auto;
       grid-template-areas:
         'marca contato'
         'nav nav';
-      padding-top: 8px;
       gap: 0 16px;
+      min-height: 64px;
     }
 
     .topo__marca :global(.topo__logo) {
-      width: 112px;
+      width: 120px;
     }
 
     .topo__nav {
@@ -139,5 +225,166 @@ const ativo = (href: string) => caminho === href || caminho.startsWith(href);
     .topo__nav a {
       padding-inline: 8px;
     }
+  }
+
+  /* Celular com JavaScript: botão Menu e painel que cobre a tela abaixo do cabeçalho. */
+  @media (max-width: 720px) {
+    :global(.js) .topo__interno {
+      grid-template-areas: 'marca menu';
+    }
+
+    :global(.js) .topo__menu {
+      grid-area: menu;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+      margin-right: -10px;
+      padding: 8px 10px;
+      border: 0;
+      border-radius: var(--raio-1);
+      background: transparent;
+      color: var(--tinta);
+      font-family: var(--fonte-display);
+      font-size: var(--t-sm);
+      font-stretch: 112.5%;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .topo__menu-icone {
+      display: grid;
+    }
+
+    .topo__menu-icone :global(svg) {
+      grid-area: 1 / 1;
+      width: 24px;
+      height: 24px;
+      transition: opacity var(--transicao), transform var(--transicao);
+    }
+
+    .topo__menu-icone :global(.topo__menu-fechar),
+    .topo[data-aberto] .topo__menu-icone :global(.topo__menu-abrir) {
+      opacity: 0;
+      transform: rotate(-45deg);
+    }
+
+    .topo[data-aberto] .topo__menu-icone :global(.topo__menu-fechar) {
+      opacity: 1;
+      transform: none;
+    }
+
+    :global(.js) .topo__painel {
+      display: none;
+    }
+
+    :global(.js) .topo[data-aberto] .topo__painel {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      /* Altura da tela inteira: o que passa da borda fica abaixo do fim da página, nunca à mostra. */
+      height: 100dvh;
+      padding: 8px var(--gutter) calc(88px + env(safe-area-inset-bottom));
+      overflow-y: auto;
+      border-top: 1px solid var(--linha);
+      background: var(--fundo);
+    }
+
+    :global(.js) .topo[data-aberto] .topo__nav {
+      margin: 0 0 12px;
+      border: 0;
+    }
+
+    :global(.js) .topo[data-aberto] .topo__nav ul {
+      flex-direction: column;
+      gap: 0;
+    }
+
+    :global(.js) .topo[data-aberto] .topo__nav a {
+      display: flex;
+      justify-content: space-between;
+      min-height: 60px;
+      padding: 12px 2px;
+      border-bottom: 1px solid var(--linha);
+      border-radius: 0;
+      color: var(--tinta);
+      font-family: var(--fonte-display);
+      font-size: var(--t-xl);
+      font-weight: 700;
+    }
+
+    :global(.js) .topo[data-aberto] .topo__nav a:hover {
+      background: transparent;
+      color: var(--acento);
+    }
+
+    :global(.js) .topo[data-aberto] .topo__nav a[aria-current='page'] {
+      box-shadow: inset 3px 0 0 var(--acento);
+      padding-left: 14px;
+    }
+
+    :global(.js) .topo[data-aberto] .topo__nav :global(.topo__nav-seta) {
+      display: block;
+      width: 22px;
+      height: 22px;
+      color: var(--tinta-fraca);
+    }
+
+    :global(.js) .topo[data-aberto] .topo__contato {
+      justify-content: center;
+      min-height: 52px;
+      font-size: var(--t-base);
+    }
+
+    :global(.js) .topo[data-aberto] .topo__whatsapp {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 52px;
+      border: 1px solid var(--linha-forte);
+      border-radius: var(--raio-1);
+      color: var(--tinta);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    :global(.js) .topo[data-aberto] .topo__email {
+      display: block;
+      align-self: center;
+      margin-top: 4px;
+      padding: 10px;
+      color: var(--tinta-media);
+      font-size: var(--t-sm);
+    }
+
+    .topo__whatsapp :global(svg) {
+      width: 20px;
+      height: 20px;
+      color: var(--acento);
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      :global(.js) .topo[data-aberto] .topo__painel {
+        animation: menu-entra 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
+      }
+    }
+  }
+
+  @keyframes menu-entra {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+  }
+
+  :global(html.menu-aberto) {
+    overflow: hidden;
   }
 </style>

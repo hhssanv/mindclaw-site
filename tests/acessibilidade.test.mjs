@@ -16,7 +16,27 @@ let amb;
 before(async () => (amb = await ambiente()));
 after(async () => amb.fechar());
 
+const verificarAxe = async (pagina) => {
+  await pagina.addScriptTag({ content: axe });
+  const resultado = await pagina.evaluate((runOnly) => window.axe.run(document, { runOnly }), REGRAS);
+  return resultado.violations.map(
+    (v) => `${v.id}: ${v.help} → ${v.nodes.slice(0, 3).map((n) => n.target.join(' ')).join(' | ')}`,
+  );
+};
+
 for (const esquema of ['light', 'dark']) {
+  test(`menu do celular aberto, tema ${esquema === 'light' ? 'claro' : 'escuro'}`, async () => {
+    const pagina = await amb.navegador.newPage({
+      viewport: { width: 390, height: 844 },
+      colorScheme: esquema,
+      reducedMotion: 'reduce',
+    });
+    await pagina.goto(`${amb.base}/sobre/`, { waitUntil: 'networkidle' });
+    await pagina.click('[data-menu-botao]');
+    assert.deepEqual(await verificarAxe(pagina), [], 'axe sem violações com o menu aberto');
+    await pagina.close();
+  });
+
   for (const largura of [1366, 390]) {
     describe(`tema ${esquema === 'light' ? 'claro' : 'escuro'}, ${largura}px`, () => {
       let pagina;
@@ -32,12 +52,7 @@ for (const esquema of ['light', 'dark']) {
       for (const caminho of paginas) {
         test(caminho, async () => {
           await pagina.goto(amb.base + caminho, { waitUntil: 'networkidle' });
-          await pagina.addScriptTag({ content: axe });
-          const resultado = await pagina.evaluate((runOnly) => window.axe.run(document, { runOnly }), REGRAS);
-          const violacoes = resultado.violations.map(
-            (v) => `${v.id}: ${v.help} → ${v.nodes.slice(0, 3).map((n) => n.target.join(' ')).join(' | ')}`,
-          );
-          assert.deepEqual(violacoes, [], 'axe sem violações');
+          assert.deepEqual(await verificarAxe(pagina), [], 'axe sem violações');
 
           const niveis = await pagina.$$eval('h1,h2,h3,h4,h5,h6', (els) => els.map((e) => Number(e.tagName[1])));
           assert.equal(niveis.filter((n) => n === 1).length, 1, 'um único h1');
