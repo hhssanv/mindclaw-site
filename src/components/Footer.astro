@@ -1,0 +1,196 @@
+---
+import Logo from './Logo.astro';
+import Icone from './Icone.astro';
+import { site, linkWhatsApp } from '../lib/site';
+import { solucoes, hrefSolucao } from '../lib/conteudo';
+
+const areas = await solucoes();
+const ano = new Date().getFullYear();
+
+const mapa = [
+  { rotulo: 'Início', href: '/' },
+  ...site.navegacao,
+  site.contato,
+  { rotulo: 'Privacidade', href: '/privacidade/' },
+];
+---
+
+<footer class="rodape faixa">
+  <div class="container">
+    <div class="rodape__topo">
+      <a class="rodape__marca" href="/" aria-label={`${site.nome}, página inicial`}>
+        <Logo id="rodape" class="rodape__logo" />
+      </a>
+      <p class="rodape__posicionamento">{site.posicionamento}</p>
+    </div>
+
+    <div class="rodape__colunas">
+      <nav aria-label="Mapa do site">
+        <h2 class="eyebrow">Mapa do site</h2>
+        <ul role="list">
+          {
+            mapa.map((item) => (
+              <li>
+                <a href={item.href}>{item.rotulo}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <nav aria-label="Soluções">
+        <h2 class="eyebrow">Soluções</h2>
+        <ul role="list">
+          {
+            areas.map((a) => (
+              <li>
+                <a href={hrefSolucao(a.id)}>{a.data.titulo}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <div>
+        <h2 class="eyebrow">Contato</h2>
+        <ul role="list" class="rodape__canais">
+          <li>
+            <a href={`mailto:${site.email}`}>
+              <Icone nome="email" />
+              {site.email}
+            </a>
+          </li>
+          <li>
+            <a href={linkWhatsApp()} rel="noopener">
+              <Icone nome="conversa" />
+              WhatsApp {site.whatsapp.exibicao}
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="rodape__nota">
+        <h2 class="eyebrow">Confidencialidade</h2>
+        <p>{site.confidencialidade}</p>
+      </div>
+    </div>
+
+    <p class="rodape__base">
+      <span>© {ano} {site.pessoa} · {site.nome}</span>
+      <span class="numeral">hansmindclaw.com</span>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .rodape {
+    padding-block: clamp(48px, 6vw, 80px) 28px;
+    border-top: 1px solid var(--faixa-linha);
+    font-size: var(--t-sm);
+  }
+
+  .rodape__topo {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 24px 48px;
+    align-items: center;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--linha);
+  }
+
+  .rodape__marca {
+    color: var(--tinta);
+  }
+
+  .rodape__marca :global(.rodape__logo) {
+    width: 150px;
+    height: auto;
+  }
+
+  .rodape__posicionamento {
+    max-width: 62ch;
+    justify-self: end;
+    color: var(--tinta-media);
+    font-size: var(--t-base);
+    line-height: 1.5;
+  }
+
+  .rodape__colunas {
+    display: grid;
+    grid-template-columns: 0.8fr 1.4fr 1.3fr 1.5fr;
+    gap: 32px 40px;
+    padding-block: 40px;
+  }
+
+  .rodape__colunas h2 {
+    margin-bottom: 14px;
+    font-size: var(--t-rotulo);
+    letter-spacing: 0.08em;
+  }
+
+  .rodape__colunas ul {
+    display: grid;
+    gap: 4px;
+    margin: 0;
+  }
+
+  .rodape__colunas a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 32px;
+    color: var(--tinta-media);
+    text-decoration: none;
+  }
+
+  .rodape__colunas a:hover {
+    color: var(--tinta);
+    text-decoration: underline;
+  }
+
+  .rodape__canais :global(svg) {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    color: var(--acento);
+  }
+
+  .rodape__nota p {
+    color: var(--tinta-media);
+    line-height: 1.55;
+  }
+
+  .rodape__base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--linha);
+    color: var(--tinta-fraca);
+  }
+
+  @media (max-width: 960px) {
+    .rodape__topo {
+      grid-template-columns: 1fr;
+    }
+
+    .rodape__posicionamento {
+      justify-self: start;
+    }
+
+    .rodape__colunas {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .rodape__colunas {
+      grid-template-columns: 1fr;
+    }
+
+    .rodape__colunas a {
+      min-height: 44px;
+    }
+  }
+</style>

@@ -1,0 +1,89 @@
+---
+import Icone from './Icone.astro';
+import { linkWhatsApp, mensagemWhatsApp } from '../lib/site';
+
+interface Props {
+  titulo: string;
+  texto: string;
+  /** Assunto citado na mensagem inicial do WhatsApp (ex.: nome da solução). */
+  assunto?: string;
+  /** Parâmetros para o link "outras formas de contato" (ex.: "?area=dados-bi"). */
+  query?: string;
+  id?: string;
+}
+
+const { titulo, texto, assunto, query = '', id = 'titulo-cta' } = Astro.props;
+---
+
+<section class="cta faixa" aria-labelledby={id}>
+  <div class="container cta__interno">
+    <div>
+      <p class="eyebrow eyebrow--traco cta__rotulo">Contato</p>
+      <h2 id={id}>{titulo}</h2>
+      <p class="cta__texto">{texto}</p>
+    </div>
+    <div class="cta__acoes">
+      <a class="botao cta__botao" href={linkWhatsApp(mensagemWhatsApp(assunto))} target="_blank" rel="noopener">
+        <Icone nome="conversa" />
+        Conversar no WhatsApp
+        <span class="visualmente-oculto">(abre o WhatsApp em nova aba)</span>
+      </a>
+      <a class="cta__alternativa" href={`/contato/${query}`}>Prefere e-mail? Outras formas de contato</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta {
+    padding-block: clamp(56px, 7vw, 96px);
+  }
+
+  .cta__interno {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 28px 48px;
+    align-items: end;
+  }
+
+  .cta__rotulo {
+    margin-bottom: 18px;
+  }
+
+  h2 {
+    max-width: 22ch;
+  }
+
+  .cta__texto {
+    max-width: 58ch;
+    margin-top: 14px;
+    color: var(--tinta-media);
+    font-size: var(--t-lg);
+    line-height: 1.55;
+  }
+
+  .cta__acoes {
+    display: grid;
+    justify-items: end;
+    gap: 14px;
+  }
+
+  .cta__alternativa {
+    color: var(--tinta-media);
+    font-size: var(--t-sm);
+    text-underline-offset: 0.25em;
+  }
+
+  .cta__alternativa:hover {
+    color: var(--tinta);
+  }
+
+  @media (max-width: 760px) {
+    .cta__interno {
+      grid-template-columns: 1fr;
+    }
+
+    .cta__acoes {
+      justify-items: start;
+    }
+  }
+</style>

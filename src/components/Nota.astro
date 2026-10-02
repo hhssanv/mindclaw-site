@@ -1,0 +1,53 @@
+---
+import Icone from './Icone.astro';
+
+interface Props {
+  texto: string;
+  /** "faixa": faixa de largura total. "bloco": caixa dentro do conteúdo. */
+  variante?: 'faixa' | 'bloco';
+  rotulo?: string;
+}
+
+const { texto, variante = 'faixa', rotulo = 'Nota' } = Astro.props;
+---
+
+<div class:list={['disclaimer', `disclaimer--${variante}`]} role="note" aria-label={rotulo}>
+  <div class:list={[variante === 'faixa' && 'container', 'disclaimer__interno']}>
+    <Icone nome="info" class="disclaimer__icone" />
+    <p>{texto}</p>
+  </div>
+</div>
+
+<style>
+  .disclaimer {
+    color: var(--tinta-media);
+    font-size: var(--t-sm);
+    line-height: 1.5;
+  }
+
+  .disclaimer__interno {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .disclaimer :global(.disclaimer__icone) {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    color: var(--tinta-fraca);
+  }
+
+  .disclaimer--faixa {
+    padding-block: 14px;
+    border-bottom: 1px solid var(--linha);
+    background: var(--superficie);
+  }
+
+  .disclaimer--bloco .disclaimer__interno {
+    padding: 16px 18px;
+    border: 1px dashed var(--linha-forte);
+    border-radius: var(--raio-2);
+  }
+</style>

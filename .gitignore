@@ -4,6 +4,7 @@ node_modules/
 # Builds / caches
 .next/
 dist/
+.astro/
 build/
 .cache/
 coverage/

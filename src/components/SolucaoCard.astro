@@ -1,0 +1,151 @@
+---
+import Icone from './Icone.astro';
+import { hrefSolucao, type SolucaoEntry } from '../lib/conteudo';
+
+interface Props {
+  solucao: SolucaoEntry;
+  /** Mostra até três itens de "o que costuma melhorar". */
+  ganhos?: boolean;
+  nivel?: 2 | 3;
+}
+
+const { solucao, ganhos = false, nivel = 3 } = Astro.props;
+const d = solucao.data;
+const Titulo = `h${nivel}` as 'h2' | 'h3';
+---
+
+<article class="sol">
+  <Icone nome={d.icone} class="sol__icone" />
+  <Titulo class="sol__titulo">
+    <a href={hrefSolucao(solucao.id)}>{d.titulo}</a>
+  </Titulo>
+  <p class="sol__resumo">{d.resumo}</p>
+  {
+    ganhos && (
+      <ul class="sol__ganhos" role="list" aria-label="O que costuma melhorar">
+        {d.ganhos.slice(0, 3).map((g) => (
+          <li>
+            <Icone nome="check" />
+            <span>{g}</span>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+  <span class="link-seta sol__ver" aria-hidden="true">
+    Ver a solução
+    <Icone nome="seta" />
+  </span>
+</article>
+
+<style>
+  .sol {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto auto;
+    gap: 10px;
+    padding: 26px 24px 24px;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-3);
+    background: var(--fundo);
+    transition: border-color var(--transicao), box-shadow var(--transicao);
+  }
+
+  .sol:hover {
+    border-color: var(--linha-forte);
+    box-shadow: var(--sombra);
+  }
+
+  /* Canto triangular do logo, no canto inferior esquerdo. */
+  .sol::after {
+    content: '';
+    position: absolute;
+    left: -1px;
+    bottom: -1px;
+    width: 16px;
+    height: 16px;
+    border-bottom-left-radius: var(--raio-3);
+    background: linear-gradient(45deg, var(--acento) 50%, transparent 50%);
+    opacity: 0;
+    transition: opacity var(--transicao);
+  }
+
+  .sol:hover::after,
+  .sol:focus-within::after {
+    opacity: 1;
+  }
+
+  .sol :global(.sol__icone) {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 6px;
+    color: var(--tinta);
+  }
+
+  .sol__titulo {
+    font-family: var(--fonte-display);
+    font-size: var(--t-lg);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+
+  .sol__titulo a {
+    text-decoration: none;
+  }
+
+  .sol__titulo a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--raio-3);
+  }
+
+  .sol__titulo a:focus-visible {
+    outline: none;
+  }
+
+  .sol__titulo a:focus-visible::after {
+    outline: 2px solid var(--acento);
+    outline-offset: 3px;
+  }
+
+  .sol__resumo {
+    color: var(--tinta-media);
+    font-size: var(--t-sm);
+    line-height: 1.55;
+  }
+
+  .sol__ganhos {
+    display: grid;
+    gap: 6px;
+    margin: 6px 0 4px;
+    padding-top: 14px;
+    border-top: 1px solid var(--linha);
+  }
+
+  .sol__ganhos li {
+    display: grid;
+    grid-template-columns: 16px 1fr;
+    gap: 8px;
+    font-size: var(--t-sm);
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .sol__ganhos :global(svg) {
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+    color: var(--acento);
+  }
+
+  .sol__ver {
+    margin-top: 6px;
+    font-size: var(--t-sm);
+  }
+
+  .sol:hover .sol__ver :global(svg) {
+    transform: translateX(3px);
+  }
+</style>

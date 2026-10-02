@@ -1,0 +1,276 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import SecaoTitulo from '../components/SecaoTitulo.astro';
+import Confidencialidade from '../components/Confidencialidade.astro';
+import CTAContato from '../components/CTAContato.astro';
+import Icone from '../components/Icone.astro';
+import { solucoes } from '../lib/conteudo';
+import { jsonLdPessoa } from '../lib/jsonld';
+import { site } from '../lib/site';
+
+const stack = (await getCollection('stack')).map((s) => s.data).sort((a, b) => a.ordem - b.ordem);
+const principios = (await getCollection('principios')).map((p) => p.data).sort((a, b) => a.numero - b.numero);
+const areas = (await solucoes()).map((s) => s.data.titulo);
+---
+
+<Base
+  title={`Sobre · ${site.nome}`}
+  description="Mais de uma década em ambientes corporativos, unindo infraestrutura, segurança, dados, automação e IA aplicada em projetos de ponta a ponta."
+  jsonLd={[jsonLdPessoa(areas)]}
+>
+  <section class="perfil" aria-labelledby="titulo-sobre">
+    <div class="container perfil__interno">
+      <div class="perfil__texto entrada">
+        <p class="eyebrow eyebrow--traco">Sobre</p>
+        <h1 id="titulo-sobre">{site.pessoa}</h1>
+        <p class="perfil__cargo">
+          {site.trajetoria}{site.localizacao && <span> · {site.localizacao}</span>}
+        </p>
+        <div class="prosa perfil__prosa">
+          <p>
+            Hans Spiller reúne competências que normalmente ficam em áreas separadas de TI: infraestrutura, segurança, dados,
+            automação, governança e IA aplicada. Em vez de tratar só a ferramenta, o trabalho olha o processo completo:
+            origem do dado, regra de negócio, infraestrutura, segurança, usuário, automação, evidência e sustentação.
+          </p>
+          <p>
+            Esse perfil faz diferença onde a causa de um problema não está em um único sistema. Boa parte dos projetos
+            cruza tecnologia, operação, RH, banco de dados, planilhas, redes e integrações: entender a operação, investigar
+            o problema, organizar os dados, construir a solução, ajustar acessos, validar o resultado e documentar o novo
+            processo.
+          </p>
+          <p>
+            A abordagem é prática e orientada a evidência: localizar o gargalo real, reduzir trabalho manual, proteger os
+            pontos críticos e deixar rastreabilidade. Mudanças são pequenas e reversíveis em ambiente crítico, e a validação
+            humana permanece onde o risco exige.
+          </p>
+        </div>
+        {
+          site.linkedin && (
+            <a class="link-seta" href={site.linkedin} rel="me noopener">
+              Perfil no LinkedIn
+              <Icone nome="seta" />
+            </a>
+          )
+        }
+      </div>
+      <figure class="perfil__foto">
+        <picture>
+          <source
+            type="image/avif"
+            srcset="/marca/hans-spiller-480.avif 480w, /marca/hans-spiller-960.avif 960w"
+            sizes="(max-width: 860px) 160px, 340px"
+          />
+          <img
+            src="/marca/hans-spiller-480.webp"
+            srcset="/marca/hans-spiller-480.webp 480w, /marca/hans-spiller-960.webp 960w"
+            sizes="(max-width: 860px) 160px, 340px"
+            width="480"
+            height="480"
+            fetchpriority="high"
+            alt="Hans Spiller, de cabelo e barba ruivos e camiseta preta, em frente a uma estante."
+          />
+        </picture>
+      </figure>
+    </div>
+  </section>
+
+  <section class="secao secao--superficie" aria-labelledby="titulo-stack">
+    <div class="container">
+      <SecaoTitulo id="titulo-stack" rotulo="Stack" titulo="Tecnologias e conhecimentos por área" />
+      <dl class="stack">
+        {
+          stack.map((area) => (
+            <div class="stack__area">
+              <dt>{area.area}</dt>
+              {area.itens.map((item) => (
+                <dd>{item}</dd>
+              ))}
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <section class="secao" id="forma-de-trabalhar" aria-labelledby="titulo-forma">
+    <div class="container">
+      <SecaoTitulo
+        id="titulo-forma"
+        rotulo="Forma de trabalhar"
+        titulo="Oito princípios em todo projeto"
+        lead="Do diagnóstico ao desenho da solução, implementação, validação, documentação e sustentação."
+      />
+      <ol class="forma" role="list">
+        {
+          principios.map((p) => (
+            <li class="forma__item">
+              <span class="forma__numero numeral" aria-hidden="true">
+                {String(p.numero).padStart(2, '0')}
+              </span>
+              <h3>{p.nome}</h3>
+              <p>{p.descricao}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <Confidencialidade />
+
+  <CTAContato
+    titulo="Quer conversar sobre um processo específico?"
+    texto="A primeira conversa é para entender o problema. Se fizer sentido, o próximo passo é um diagnóstico com escopo fechado."
+  />
+</Base>
+
+<style>
+  .perfil {
+    padding-block: clamp(48px, 6vw, 96px);
+  }
+
+  .perfil__interno {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 40px clamp(40px, 6vw, 96px);
+    align-items: center;
+  }
+
+  .perfil__texto {
+    display: grid;
+    gap: 18px;
+  }
+
+  .perfil__cargo {
+    margin-top: -6px;
+    color: var(--tinta);
+    font-family: var(--fonte-display);
+    font-size: var(--t-lg);
+    font-weight: 600;
+  }
+
+  .perfil__prosa {
+    margin-top: 8px;
+    font-size: var(--t-md);
+    line-height: 1.65;
+  }
+
+  .perfil__foto {
+    position: relative;
+    width: clamp(220px, 26vw, 340px);
+    margin: 0;
+  }
+
+  /* Moldura deslocada no degradê da marca: liga a foto ao isotipo sem competir com ela. */
+  .perfil__foto::before {
+    content: '';
+    position: absolute;
+    inset: 14px 14px -14px -14px;
+    border-radius: var(--raio-3);
+    background: linear-gradient(135deg, var(--marca-vermelho), var(--marca-vinho));
+  }
+
+  .perfil__foto img {
+    position: relative;
+    border-radius: var(--raio-3);
+  }
+
+  @media (max-width: 860px) {
+    .perfil__interno {
+      grid-template-columns: 1fr;
+    }
+
+    .perfil__foto {
+      order: -1;
+      width: 160px;
+    }
+
+    .perfil__foto::before {
+      inset: 8px 8px -8px -8px;
+    }
+  }
+
+  .stack {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    margin: 0;
+    border-top: 1px solid var(--linha);
+    border-left: 1px solid var(--linha);
+    background: var(--fundo);
+  }
+
+  .stack__area {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    padding: 22px 24px;
+    border-right: 1px solid var(--linha);
+    border-bottom: 1px solid var(--linha);
+  }
+
+  .stack dt {
+    margin-bottom: 8px;
+    color: var(--tinta);
+    font-family: var(--fonte-display);
+    font-size: var(--t-rotulo);
+    font-stretch: 112.5%;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .stack dd {
+    margin: 0;
+    color: var(--tinta-media);
+    font-size: var(--t-sm);
+    line-height: 1.45;
+  }
+
+  @media (max-width: 960px) {
+    .stack {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 560px) {
+    .stack {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .forma {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 clamp(32px, 4vw, 56px);
+    margin: 0;
+  }
+
+  .forma__item {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    grid-template-rows: auto auto;
+    align-content: start;
+    gap: 4px 0;
+    padding-block: 22px;
+    border-top: 1px solid var(--linha);
+  }
+
+  .forma__numero {
+    grid-row: 1 / span 2;
+    color: var(--tinta-fraca);
+    font-size: var(--t-sm);
+    padding-top: 3px;
+  }
+
+  .forma__item p {
+    color: var(--tinta-media);
+  }
+
+  @media (max-width: 760px) {
+    .forma {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

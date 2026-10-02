@@ -1,0 +1,163 @@
+---
+import Base from '../layouts/Base.astro';
+import ProjetoCard from '../components/ProjetoCard.astro';
+import CTAContato from '../components/CTAContato.astro';
+import { solucoes, projetos, validarReferencias } from '../lib/conteudo';
+import { site } from '../lib/site';
+
+await validarReferencias();
+const areas = await solucoes();
+const lista = await projetos();
+const rotulos = new Map(areas.map((a) => [a.id, a.data.curto]));
+const areasComProjeto = areas.filter((a) => lista.some((p) => p.data.areas.includes(a.id)));
+---
+
+<Base
+  title={`Projetos · ${site.nome}`}
+  description="Projetos de capacity, BI, automação, IA aplicada, segurança e infraestrutura, descritos de forma anonimizada: contexto, atuação, resultado e tecnologias."
+>
+  <section class="cabecalho" aria-labelledby="titulo-projetos">
+    <div class="container entrada">
+      <p class="eyebrow eyebrow--traco">Portfólio</p>
+      <h1 id="titulo-projetos">Projetos</h1>
+      <p class="lead">
+        Trabalhos descritos de forma anonimizada, agrupados pelo tipo de problema: o contexto, o que foi feito, o resultado
+        e as tecnologias. Sem nome de cliente e sem detalhe de implementação. O único modelo de demonstração está
+        identificado.
+      </p>
+    </div>
+  </section>
+
+  <section class="secao lista" aria-label="Lista de projetos">
+    <div class="container">
+      <div class="filtro" role="group" aria-label="Filtrar projetos por área" data-filtro hidden>
+        <span class="eyebrow filtro__rotulo">Filtrar por área</span>
+        <button type="button" class="filtro__botao" aria-pressed="true" data-area="">Todas</button>
+        {
+          areasComProjeto.map((a) => (
+            <button type="button" class="filtro__botao" aria-pressed="false" data-area={a.id}>
+              {a.data.curto}
+            </button>
+          ))
+        }
+      </div>
+      <p class="visualmente-oculto" aria-live="polite" data-filtro-status></p>
+
+      <ul class="grade" role="list">
+        {
+          lista.map((p) => (
+            <li data-areas={p.data.areas.join(' ')}>
+              <ProjetoCard projeto={p} areas={rotulos} nivel={2} />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CTAContato
+    titulo="Tem um problema parecido com algum desses?"
+    texto="Os projetos mostram o tipo de problema, não o limite do que dá para fazer. Conte o que está travando."
+  />
+</Base>
+
+<script>
+  // Filtro: só esconde e mostra. Sem rota nova e sem estado em URL.
+  const filtro = document.querySelector<HTMLElement>('[data-filtro]');
+  const status = document.querySelector<HTMLElement>('[data-filtro-status]');
+  const itens = [...document.querySelectorAll<HTMLElement>('[data-areas]')];
+
+  if (filtro && status) {
+    filtro.hidden = false;
+    const botoes = [...filtro.querySelectorAll<HTMLButtonElement>('button[data-area]')];
+
+    filtro.addEventListener('click', (evento) => {
+      const botao = (evento.target as HTMLElement).closest<HTMLButtonElement>('button[data-area]');
+      if (!botao) return;
+      const area = botao.dataset.area ?? '';
+      botoes.forEach((b) => b.setAttribute('aria-pressed', String(b === botao)));
+
+      let visiveis = 0;
+      for (const item of itens) {
+        const mostra = !area || (item.dataset.areas ?? '').split(' ').includes(area);
+        item.hidden = !mostra;
+        if (mostra) visiveis++;
+      }
+      status.textContent = `${visiveis} ${visiveis === 1 ? 'projeto exibido' : 'projetos exibidos'}`;
+    });
+  }
+</script>
+
+<style>
+  .cabecalho {
+    padding-block: clamp(48px, 6vw, 88px) 0;
+  }
+
+  .cabecalho .container {
+    display: grid;
+    gap: 18px;
+  }
+
+  .cabecalho .lead {
+    max-width: 66ch;
+  }
+
+  .lista {
+    padding-top: clamp(32px, 4vw, 48px);
+  }
+
+  .filtro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+
+  .filtro[hidden] {
+    display: none;
+  }
+
+  .filtro__rotulo {
+    margin-right: 6px;
+  }
+
+  .filtro__botao {
+    min-height: 40px;
+    padding: 8px 16px;
+    border: 1px solid var(--linha-forte);
+    border-radius: 999px;
+    background: var(--fundo);
+    color: var(--tinta-media);
+    font-size: var(--t-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color var(--transicao), background-color var(--transicao), color var(--transicao);
+  }
+
+  .filtro__botao:hover {
+    border-color: var(--tinta-fraca);
+    color: var(--tinta);
+  }
+
+  .filtro__botao[aria-pressed='true'] {
+    border-color: var(--tinta);
+    background: var(--tinta);
+    color: var(--fundo);
+  }
+
+  .grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 460px), 1fr));
+    gap: 16px;
+    margin: 0;
+  }
+
+  .grade > li {
+    display: grid;
+  }
+
+  .grade > li[hidden] {
+    display: none;
+  }
+</style>

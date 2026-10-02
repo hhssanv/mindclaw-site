@@ -1,0 +1,777 @@
+---
+/**
+ * Painel executivo de exemplo, recriado a partir do modelo de demonstração da
+ * empresa fictícia Norvexa Systems (planilha com 12 páginas e 9 tabelas de origem).
+ * Gráfico em SVG gerado no build, com tooltip por mês, foco por teclado e tabela.
+ */
+import Icone from './Icone.astro';
+import { norvexa as n } from '../data/norvexa';
+import { moedaMi, pct, pctFino, variacao, num } from '../lib/formato';
+import { LARGURAS } from '../lib/grafico';
+
+type Estado = 'ok' | 'atencao' | 'alerta';
+const rotuloEstado: Record<Estado, string> = { ok: 'No alvo', atencao: 'Atenção', alerta: 'Em risco' };
+const k = n.kpis;
+
+const kpis = [
+  { rotulo: 'Receita do mês', valor: moedaMi(k.receitaMes), nota: `${variacao(k.receitaMesVar)} sobre jul/2025`, estado: 'ok' as Estado },
+  { rotulo: 'Receita recorrente anual', valor: moedaMi(k.arr), nota: `${variacao(k.arrVar)} em 12 meses`, estado: 'ok' as Estado },
+  { rotulo: 'Margem bruta', valor: pct(k.margemBruta), nota: `meta ${pct(k.margemBrutaMeta)}`, estado: 'atencao' as Estado },
+  { rotulo: 'Churn de clientes (3 meses)', valor: pctFino(k.churn), nota: `teto ${pctFino(k.churnTeto)}`, estado: 'alerta' as Estado },
+];
+
+const atencao = [
+  { indicador: 'Margem EBITDA', atual: pct(k.margemEbitda), alvo: `meta ${pct(k.margemEbitdaMeta)}`, estado: 'alerta' as Estado },
+  { indicador: 'Churn de clientes', atual: pctFino(k.churn), alvo: `teto ${pctFino(k.churnTeto)}`, estado: 'alerta' as Estado },
+  { indicador: 'Taxa de ganho de propostas', atual: pct(k.winRate), alvo: `meta ${pct(k.winRateMeta)}`, estado: 'alerta' as Estado },
+  { indicador: 'Margem bruta', atual: pct(k.margemBruta), alvo: `meta ${pct(k.margemBrutaMeta)}`, estado: 'atencao' as Estado },
+  { indicador: 'Crescimento da receita no ano', atual: pct(k.crescimentoYtd), alvo: `meta ${pct(k.crescimentoMeta)}`, estado: 'ok' as Estado },
+];
+
+// ---------- Gráfico de linhas: realizado, previsão e orçamento ----------
+const serie = n.serie;
+const yMin = 1_150_000;
+const yMax = 1_700_000;
+const ticks = [1_200_000, 1_400_000, 1_600_000];
+const iUltimoReal = serie.findLastIndex((p) => p.realizado !== null);
+
+function montar(W: number) {
+  // Rótulos diretos no fim das linhas só a partir de 600: abaixo disso a legenda basta.
+  const rotulos = W >= 600;
+  const H = { 240: 210, 320: 230, 440: 260, 600: 280, 820: 320, 1100: 380 }[W] ?? Math.round(W * 0.45);
+  const m = { t: 24, r: rotulos ? 150 : 16, b: 32, l: W >= 820 ? 58 : 52 };
+  const x = (i: number) => m.l + (i * (W - m.l - m.r)) / (serie.length - 1);
+  const y = (v: number) => m.t + ((yMax - v) / (yMax - yMin)) * (H - m.t - m.b);
+  const caminho = (pts: [number, number][]) => pts.map(([px, py], i) => `${i ? 'L' : 'M'}${px.toFixed(1)},${py.toFixed(1)}`).join('');
+  const real = serie.flatMap((p, i) => (p.realizado !== null ? [[x(i), y(p.realizado)] as [number, number]] : []));
+  const prev = [
+    [x(iUltimoReal), y(serie[iUltimoReal].realizado!)] as [number, number],
+    ...serie.flatMap((p, i) => (p.previsao !== null ? [[x(i), y(p.previsao)] as [number, number]] : [])),
+  ];
+  const orc = serie.map((p, i) => [x(i), y(p.orcamento)] as [number, number]);
+  const passo = (W - m.l - m.r) / (serie.length - 1);
+  return {
+    W,
+    H,
+    m,
+    x,
+    y,
+    rotulos,
+    // Rótulo de mês a cada 1, 2 ou 3 meses, conforme o espaço por mês.
+    pularMeses: passo >= 34 ? 1 : passo >= 20 ? 2 : 3,
+    real: caminho(real),
+    prev: caminho(prev),
+    orc: caminho(orc),
+    fimReal: real[real.length - 1],
+    fimPrev: prev[prev.length - 1],
+    fimOrc: orc[orc.length - 1],
+    passo,
+  };
+}
+
+const variantes = LARGURAS.map(montar);
+
+const dadosTooltip = JSON.stringify(
+  serie.map((p) => ({
+    mes: p.mes,
+    linhas: [
+      p.realizado !== null && ['realizado', 'Realizado', moedaMi(p.realizado)],
+      p.previsao !== null && ['previsao', 'Previsão', moedaMi(p.previsao)],
+      ['orcamento', 'Orçamento', moedaMi(p.orcamento)],
+    ].filter(Boolean),
+  })),
+);
+
+const rotuloAria = (i: number) => {
+  const p = serie[i];
+  const partes = [
+    p.realizado !== null ? `realizado ${moedaMi(p.realizado)}` : `previsão ${moedaMi(p.previsao!)}`,
+    `orçamento ${moedaMi(p.orcamento)}`,
+  ];
+  return `${p.mes}: ${partes.join(', ')}`;
+};
+const diferencaAnual = n.previsaoAnual / n.orcamentoAnual - 1;
+---
+
+<figure class="painel" aria-labelledby="painel-titulo">
+  <div class="painel__barra">
+    <span class="painel__janela" aria-hidden="true"><i></i><i></i><i></i></span>
+    <p id="painel-titulo" class="painel__titulo">
+      <strong>{n.empresa}</strong> · Painel executivo · {n.mesReferencia}
+    </p>
+    <span class="painel__selo">Empresa e dados fictícios</span>
+  </div>
+
+  <div class="painel__corpo">
+    <dl class="painel__kpis">
+      {
+        kpis.map((t) => (
+          <div class="kpi">
+            <dt>{t.rotulo}</dt>
+            <dd class="kpi__valor">{t.valor}</dd>
+            <dd class="kpi__nota">
+              <span class:list={['estado', `estado--${t.estado}`]}>{rotuloEstado[t.estado]}</span>
+              <span>{t.nota}</span>
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    <div class="painel__grade">
+      <div class="painel__bloco painel__grafico" data-grafico data-pontos={dadosTooltip}>
+        <div class="painel__bloco-topo">
+          <h3>Receita mensal de 2026, em US$</h3>
+          <ul class="legenda" role="list" aria-label="Legenda">
+            <li><span class="chave chave--realizado" aria-hidden="true"></span>Realizado</li>
+            <li><span class="chave chave--previsao" aria-hidden="true"></span>Previsão</li>
+            <li><span class="chave chave--orcamento" aria-hidden="true"></span>Orçamento</li>
+          </ul>
+        </div>
+
+        <div class="graficos">
+          {
+            variantes.map((g) => (
+              <div class="grafico" data-w={g.W}>
+                <svg viewBox={`0 0 ${g.W} ${g.H}`} role="group" aria-label={`Receita mensal de 2026: realizado de janeiro a julho, previsão de agosto a dezembro e orçamento do ano. Ano projetado em ${moedaMi(n.previsaoAnual)} contra ${moedaMi(n.orcamentoAnual)} no orçamento.`}>
+                  <rect
+                    class="grafico__previsao-fundo"
+                    x={g.x(iUltimoReal)}
+                    y={g.m.t}
+                    width={g.x(serie.length - 1) - g.x(iUltimoReal) + g.passo / 2}
+                    height={g.H - g.m.t - g.m.b}
+                  />
+                  <text aria-hidden="true" class="grafico__marca" x={g.x(iUltimoReal) + 6} y={g.m.t - 8}>previsão →</text>
+                  {ticks.map((t) => (
+                    <g>
+                      <line class="grafico__grade" x1={g.m.l} x2={g.W - g.m.r} y1={g.y(t)} y2={g.y(t)} />
+                      <text aria-hidden="true" class="grafico__eixo" x={g.m.l - 8} y={g.y(t) + 4} text-anchor="end">
+                        {(t / 1_000_000).toLocaleString('pt-BR', { minimumFractionDigits: 1 })} mi
+                      </text>
+                    </g>
+                  ))}
+                  {serie.map((p, i) =>
+                    i % g.pularMeses === 0 ? (
+                      <text aria-hidden="true" class="grafico__eixo" x={g.x(i)} y={g.H - 8} text-anchor="middle">
+                        {p.mes}
+                      </text>
+                    ) : null,
+                  )}
+                  <line class="grafico__cursor" x1="0" x2="0" y1={g.m.t} y2={g.H - g.m.b} data-cursor />
+                  <path class="linha linha--orcamento" d={g.orc} />
+                  <path class="linha linha--previsao" d={g.prev} />
+                  <path class="linha linha--realizado" d={g.real} />
+                  <circle class="ponto ponto--realizado" cx={g.fimReal[0]} cy={g.fimReal[1]} r="4.5" />
+                  {g.rotulos && (
+                    <>
+                      <text aria-hidden="true" class="grafico__rotulo" x={g.fimOrc[0] + 10} y={g.fimOrc[1] + 4}>
+                        Orçamento {moedaMi(serie[serie.length - 1].orcamento).replace('US$ ', '')}
+                      </text>
+                      <text aria-hidden="true" class="grafico__rotulo" x={g.fimPrev[0] + 10} y={g.fimPrev[1] + 4}>
+                        Previsão {moedaMi(serie[serie.length - 1].previsao!).replace('US$ ', '')}
+                      </text>
+                    </>
+                  )}
+                  {serie.map((_, i) => (
+                    <rect
+                      class="grafico__zona"
+                      x={g.x(i) - g.passo / 2}
+                      y={g.m.t}
+                      width={g.passo}
+                      height={g.H - g.m.t - g.m.b}
+                      data-i={i}
+                      data-x={g.x(i)}
+                      tabindex="0"
+                      role="img"
+                      aria-label={rotuloAria(i)}
+                    />
+                  ))}
+                </svg>
+              </div>
+            ))
+          }
+        </div>
+        <div class="tooltip" role="status" aria-live="polite" hidden data-tooltip></div>
+        <p class="painel__resumo">
+          Ano projetado: <strong>{moedaMi(n.previsaoAnual)}</strong> contra {moedaMi(n.orcamentoAnual)} no orçamento ({
+            variacao(diferencaAnual)
+          }).
+        </p>
+      </div>
+
+      <div class="painel__bloco painel__atencao">
+        <div class="painel__bloco-topo">
+          <h3>Atenção da gestão</h3>
+        </div>
+        <ul role="list">
+          {
+            atencao.map((a) => (
+              <li>
+                <span class="atencao__indicador">{a.indicador}</span>
+                <span class="atencao__valores">
+                  <strong>{a.atual}</strong> · {a.alvo}
+                </span>
+                <span class:list={['estado', `estado--${a.estado}`]}>{rotuloEstado[a.estado]}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    <p class="painel__rodape">
+      <span class="painel__validacao">
+        <Icone nome="check" />
+        {n.checagens.passando} de {n.checagens.total} checagens de reconciliação passando
+      </span>
+      <span>
+        {`${n.regras.total} regras de alerta automáticas: ${n.regras.noAlvo} no alvo, ${n.regras.atencao} em atenção, ${n.regras.acao} exigindo ação`}
+      </span>
+    </p>
+  </div>
+
+  <details class="painel__tabela">
+    <summary>Ver os dados do gráfico em tabela</summary>
+    <div class="painel__tabela-rolagem">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Mês</th>
+            <th scope="col">Realizado</th>
+            <th scope="col">Previsão</th>
+            <th scope="col">Orçamento</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            serie.map((p) => (
+              <tr>
+                <th scope="row">{p.mes}</th>
+                <td>{p.realizado !== null ? `US$ ${num(p.realizado)}` : '—'}</td>
+                <td>{p.previsao !== null ? `US$ ${num(p.previsao)}` : '—'}</td>
+                <td>US$ {num(p.orcamento)}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </details>
+
+  <figcaption class="painel__legenda">
+    {`Painel recriado a partir de um modelo de demonstração com 12 páginas de relatório e 9 tabelas de origem. A empresa ${n.empresa} não existe; clientes, pessoas e valores são sintéticos.`}
+  </figcaption>
+</figure>
+
+<script>
+  // Tooltip com cursor vertical: acompanha o ponteiro ou o foco do teclado, mês a mês.
+  for (const bloco of document.querySelectorAll<HTMLElement>('[data-grafico]')) {
+    const pontos = JSON.parse(bloco.dataset.pontos ?? '[]') as { mes: string; linhas: [string, string, string][] }[];
+    const tooltip = bloco.querySelector<HTMLElement>('[data-tooltip]');
+    if (!tooltip) continue;
+
+    const mostrar = (zona: SVGRectElement) => {
+      const i = Number(zona.dataset.i);
+      const svg = zona.ownerSVGElement!;
+      const cursor = svg.querySelector<SVGLineElement>('[data-cursor]');
+      const x = Number(zona.dataset.x);
+      cursor?.setAttribute('x1', String(x));
+      cursor?.setAttribute('x2', String(x));
+      svg.classList.add('ativo');
+
+      tooltip.replaceChildren();
+      const titulo = document.createElement('p');
+      titulo.className = 'tooltip__titulo';
+      titulo.textContent = pontos[i].mes;
+      tooltip.append(titulo);
+      for (const [chave, nome, valor] of pontos[i].linhas) {
+        const linha = document.createElement('p');
+        const marca = document.createElement('span');
+        marca.className = `chave chave--${chave}`;
+        const forte = document.createElement('strong');
+        forte.textContent = valor;
+        const rotulo = document.createElement('span');
+        rotulo.textContent = nome;
+        linha.append(marca, forte, rotulo);
+        tooltip.append(linha);
+      }
+
+      const caixaSvg = svg.getBoundingClientRect();
+      const caixaBloco = bloco.getBoundingClientRect();
+      const escala = caixaSvg.width / svg.viewBox.baseVal.width;
+      const esquerda = caixaSvg.left - caixaBloco.left + x * escala;
+      tooltip.hidden = false;
+      const largura = tooltip.offsetWidth;
+      const posicao = esquerda + 14 + largura > caixaBloco.width ? esquerda - 14 - largura : esquerda + 14;
+      tooltip.style.left = `${Math.max(0, posicao)}px`;
+      tooltip.style.top = `${caixaSvg.top - caixaBloco.top + 8}px`;
+    };
+
+    const esconder = (svg: SVGSVGElement) => {
+      svg.classList.remove('ativo');
+      tooltip.hidden = true;
+    };
+
+    for (const zona of bloco.querySelectorAll<SVGRectElement>('.grafico__zona')) {
+      zona.addEventListener('pointerenter', () => mostrar(zona));
+      zona.addEventListener('focus', () => mostrar(zona));
+      zona.addEventListener('blur', () => esconder(zona.ownerSVGElement!));
+    }
+    for (const svg of bloco.querySelectorAll('svg')) {
+      svg.addEventListener('pointerleave', () => esconder(svg));
+    }
+  }
+</script>
+
+<style>
+  .painel {
+    --serie-realizado: #da0b29;
+    --serie-orcamento: #3d6bb3;
+    margin: 0;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-3);
+    background: var(--fundo);
+    box-shadow: var(--sombra);
+    overflow: hidden;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .painel {
+      --serie-realizado: #ef3f56;
+      --serie-orcamento: #5b8ad8;
+    }
+  }
+
+  .painel__barra {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 14px;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--linha);
+    background: var(--superficie);
+  }
+
+  .painel__janela {
+    display: flex;
+    gap: 6px;
+  }
+
+  @media (max-width: 560px) {
+    .painel__janela {
+      display: none;
+    }
+  }
+
+  .painel__janela i {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--linha-forte);
+  }
+
+  .painel__titulo {
+    flex: 1 1 18rem;
+    min-width: 0;
+    color: var(--tinta-media);
+    font-size: var(--t-sm);
+  }
+
+  .painel__titulo strong {
+    color: var(--tinta);
+  }
+
+  .painel__selo {
+    padding: 3px 10px;
+    border: 1px dashed var(--linha-forte);
+    border-radius: 999px;
+    color: var(--tinta-media);
+    font-size: 0.8125rem;
+    font-weight: 500;
+  }
+
+  .painel__corpo {
+    display: grid;
+    gap: 16px;
+    padding: clamp(14px, 2vw, 22px);
+  }
+
+  /* KPIs */
+  .painel__kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0;
+  }
+
+  .kpi {
+    display: grid;
+    gap: 6px;
+    padding: 14px 16px;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-2);
+  }
+
+  .kpi dt {
+    color: var(--tinta-media);
+    font-size: 0.8125rem;
+    font-weight: 500;
+  }
+
+  .kpi dd {
+    margin: 0;
+  }
+
+  .kpi__valor {
+    font-family: var(--fonte-display);
+    font-size: clamp(1.375rem, 1.1rem + 0.9vw, 1.75rem);
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .kpi__nota {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    color: var(--tinta-media);
+    font-size: 0.8125rem;
+  }
+
+  .kpi__nota .estado {
+    padding: 1px 8px 1px 6px;
+    font-size: 0.75rem;
+  }
+
+  @media (max-width: 860px) {
+    .painel__kpis {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* Blocos */
+  .painel__grade {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 16px;
+  }
+
+  @media (max-width: 960px) {
+    .painel__grade {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .painel__bloco {
+    position: relative;
+    min-width: 0;
+    padding: 16px;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-2);
+  }
+
+  .painel__bloco-topo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px 16px;
+    margin-bottom: 10px;
+  }
+
+  .painel__bloco h3 {
+    font-size: var(--t-base);
+  }
+
+  .legenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    margin: 0;
+    color: var(--tinta-media);
+    font-size: 0.8125rem;
+  }
+
+  .legenda li {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .chave {
+    display: inline-block;
+    width: 16px;
+    height: 0;
+    border-top: 2px solid;
+  }
+
+  .chave--realizado {
+    border-color: var(--serie-realizado);
+  }
+
+  .chave--previsao {
+    border-top-style: dashed;
+    border-color: var(--serie-realizado);
+  }
+
+  .chave--orcamento {
+    border-color: var(--serie-orcamento);
+  }
+
+  /* Gráfico (a variante por largura vem de .graficos, em global.css) */
+  .grafico__grade {
+    stroke: var(--linha);
+    stroke-width: 1;
+  }
+
+  .grafico__eixo {
+    fill: var(--tinta-media);
+    font-family: var(--fonte);
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .grafico__rotulo {
+    fill: var(--tinta-media);
+    font-family: var(--fonte);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .grafico__marca {
+    fill: var(--tinta-media);
+    font-family: var(--fonte);
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .grafico__previsao-fundo {
+    fill: var(--superficie);
+  }
+
+  .linha {
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .linha--realizado {
+    stroke: var(--serie-realizado);
+  }
+
+  .linha--previsao {
+    stroke: var(--serie-realizado);
+    stroke-dasharray: 5 5;
+  }
+
+  .linha--orcamento {
+    stroke: var(--serie-orcamento);
+  }
+
+  .ponto--realizado {
+    fill: var(--serie-realizado);
+    stroke: var(--fundo);
+    stroke-width: 2;
+  }
+
+  .grafico__cursor {
+    stroke: var(--tinta-fraca);
+    stroke-width: 1;
+    opacity: 0;
+  }
+
+  svg.ativo .grafico__cursor {
+    opacity: 1;
+  }
+
+  .grafico__zona {
+    fill: transparent;
+    cursor: crosshair;
+    outline: none;
+  }
+
+  .grafico__zona:focus-visible {
+    fill: color-mix(in srgb, var(--acento) 8%, transparent);
+    stroke: var(--acento);
+    stroke-width: 1.5;
+  }
+
+  .tooltip {
+    position: absolute;
+    z-index: 2;
+    display: grid;
+    gap: 4px;
+    min-width: 150px;
+    padding: 10px 12px;
+    border: 1px solid var(--linha-forte);
+    border-radius: var(--raio-1);
+    background: var(--fundo);
+    box-shadow: var(--sombra);
+    font-size: 0.8125rem;
+    pointer-events: none;
+  }
+
+  .tooltip[hidden] {
+    display: none;
+  }
+
+  .tooltip :global(.tooltip__titulo) {
+    color: var(--tinta-media);
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+
+  .tooltip :global(p) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tooltip :global(strong) {
+    color: var(--tinta);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tooltip :global(span:last-child) {
+    color: var(--tinta-media);
+  }
+
+  .tooltip :global(.chave) {
+    flex: none;
+  }
+
+  .tooltip :global(.chave--realizado) {
+    border-color: var(--serie-realizado);
+  }
+
+  .tooltip :global(.chave--previsao) {
+    border-top-style: dashed;
+    border-color: var(--serie-realizado);
+  }
+
+  .tooltip :global(.chave--orcamento) {
+    border-color: var(--serie-orcamento);
+  }
+
+  .painel__resumo {
+    margin-top: 8px;
+    color: var(--tinta-media);
+    font-size: var(--t-sm);
+  }
+
+  .painel__resumo strong {
+    color: var(--tinta);
+  }
+
+  /* Atenção da gestão */
+  .painel__atencao ul {
+    display: grid;
+    margin: 0;
+  }
+
+  .painel__atencao li {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2px 12px;
+    align-items: center;
+    padding: 11px 0;
+    border-top: 1px solid var(--linha);
+  }
+
+  .atencao__indicador {
+    font-size: var(--t-sm);
+    font-weight: 600;
+  }
+
+  .atencao__valores {
+    grid-column: 1;
+    color: var(--tinta-media);
+    font-size: 0.8125rem;
+  }
+
+  .atencao__valores strong {
+    color: var(--tinta);
+  }
+
+  .painel__atencao .estado {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    font-size: 0.8125rem;
+  }
+
+  /* Rodapé do painel */
+  .painel__rodape {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    padding-top: 12px;
+    border-top: 1px solid var(--linha);
+    color: var(--tinta-media);
+    font-size: 0.8125rem;
+  }
+
+  .painel__validacao {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--ok);
+    font-weight: 600;
+  }
+
+  .painel__validacao :global(svg) {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Tabela (alternativa acessível ao gráfico) */
+  .painel__tabela {
+    border-top: 1px solid var(--linha);
+  }
+
+  .painel__tabela summary {
+    padding: 12px 18px;
+    color: var(--acento);
+    font-size: var(--t-sm);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .painel__tabela-rolagem {
+    overflow-x: auto;
+    padding: 0 18px 16px;
+  }
+
+  .painel__tabela table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .painel__tabela th,
+  .painel__tabela td {
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--linha);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .painel__tabela th:first-child {
+    text-align: left;
+    text-transform: capitalize;
+  }
+
+  .painel__tabela thead th {
+    color: var(--tinta-media);
+    font-weight: 600;
+  }
+
+  .painel__legenda {
+    padding: 12px 18px 16px;
+    border-top: 1px solid var(--linha);
+    color: var(--tinta-media);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+</style>

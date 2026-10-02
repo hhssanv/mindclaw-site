@@ -1,0 +1,112 @@
+---
+import SecaoTitulo from './SecaoTitulo.astro';
+import Icone from './Icone.astro';
+
+interface Props {
+  id?: string;
+}
+
+const { id = 'titulo-confidencialidade' } = Astro.props;
+
+const compromissos = [
+  {
+    titulo: 'Nenhum nome de cliente',
+    texto: 'Não aparece em portfólio, projeto publicado, conversa com terceiros ou metadado de arquivo.',
+  },
+  {
+    titulo: 'Exemplos sempre fictícios',
+    texto: 'O que é mostrado em público usa dados sintéticos. Captura real não sai do projeto.',
+  },
+  {
+    titulo: 'O que é seu fica com você',
+    texto: 'Código, arquivos e credenciais ficam no seu ambiente e não são reaproveitados em outro cliente.',
+  },
+  {
+    titulo: 'Acordo antes do acesso',
+    texto: 'Um acordo de confidencialidade pode ser assinado antes de qualquer acesso a dados.',
+  },
+];
+---
+
+<section class="secao secao--superficie" aria-labelledby={id}>
+  <div class="container conf">
+    <SecaoTitulo
+      id={id}
+      rotulo="Confidencialidade"
+      titulo="Como o seu trabalho é tratado"
+      lead="Confidencialidade como método, não como cláusula. Os projetos deste site seguem a mesma regra aplicada a cada trabalho de cliente."
+    />
+    <ul class="conf__lista" role="list">
+      {
+        compromissos.map((c) => (
+          <li>
+            <Icone nome="governanca" class="conf__icone" />
+            <div>
+              <h3>{c.titulo}</h3>
+              <p>{c.texto}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .conf {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 24px clamp(32px, 5vw, 72px);
+    align-items: start;
+  }
+
+  .conf :global(.secao-titulo) {
+    margin-bottom: 0;
+  }
+
+  .conf__lista {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin: 0;
+  }
+
+  .conf__lista li {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 14px;
+    padding: 20px;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-2);
+    background: var(--fundo);
+  }
+
+  .conf__lista :global(.conf__icone) {
+    width: 22px;
+    height: 22px;
+    color: var(--tinta-fraca);
+  }
+
+  .conf__lista h3 {
+    margin-bottom: 4px;
+    font-size: var(--t-base);
+  }
+
+  .conf__lista p {
+    color: var(--tinta-media);
+    font-size: var(--t-sm);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 960px) {
+    .conf {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .conf__lista {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

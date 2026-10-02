@@ -1,0 +1,143 @@
+---
+import Logo from './Logo.astro';
+import { site } from '../lib/site';
+
+const caminho = Astro.url.pathname;
+const ativo = (href: string) => caminho === href || caminho.startsWith(href);
+---
+
+<header class="topo">
+  <div class="container topo__interno">
+    <a class="topo__marca" href="/" aria-label={`${site.nome}, página inicial`}>
+      <Logo id="topo" class="topo__logo" />
+    </a>
+    <nav class="topo__nav" aria-label="Principal">
+      <ul role="list">
+        {
+          site.navegacao.map((item) => (
+            <li>
+              <a href={item.href} aria-current={ativo(item.href) ? 'page' : undefined}>
+                {item.rotulo}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <a
+      class="botao topo__contato"
+      href={site.contato.href}
+      aria-current={ativo(site.contato.href) ? 'page' : undefined}
+    >
+      {site.contato.rotulo}
+    </a>
+  </div>
+</header>
+
+<style>
+  .topo {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 1px solid var(--linha);
+    background: color-mix(in srgb, var(--fundo) 92%, transparent);
+    backdrop-filter: saturate(1.4) blur(10px);
+    -webkit-backdrop-filter: saturate(1.4) blur(10px);
+  }
+
+  .topo__interno {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: 'marca nav contato';
+    align-items: center;
+    gap: 8px 24px;
+    min-height: 72px;
+  }
+
+  .topo__marca {
+    grid-area: marca;
+    display: block;
+    padding-block: 8px;
+    color: var(--tinta);
+  }
+
+  .topo__marca :global(.topo__logo) {
+    width: 128px;
+    height: auto;
+  }
+
+  .topo__nav {
+    grid-area: nav;
+    justify-self: end;
+  }
+
+  .topo__nav ul {
+    display: flex;
+    gap: 4px;
+    margin: 0;
+  }
+
+  .topo__nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 8px 14px;
+    border-radius: var(--raio-1);
+    color: var(--tinta-media);
+    font-size: var(--t-sm);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color var(--transicao), background-color var(--transicao);
+  }
+
+  .topo__nav a:hover {
+    background: var(--superficie);
+    color: var(--tinta);
+  }
+
+  .topo__nav a[aria-current='page'] {
+    color: var(--tinta);
+    box-shadow: inset 0 -2px 0 var(--acento);
+    border-radius: 0;
+  }
+
+  .topo__contato[aria-current='page'] {
+    box-shadow: 0 0 0 2px var(--fundo), 0 0 0 4px var(--botao);
+  }
+
+  .topo__contato {
+    grid-area: contato;
+    min-height: 44px;
+    padding: 10px 18px;
+    font-size: var(--t-sm);
+  }
+
+  @media (max-width: 640px) {
+    .topo__interno {
+      grid-template-columns: 1fr auto;
+      grid-template-areas:
+        'marca contato'
+        'nav nav';
+      padding-top: 8px;
+      gap: 0 16px;
+    }
+
+    .topo__marca :global(.topo__logo) {
+      width: 112px;
+    }
+
+    .topo__nav {
+      justify-self: stretch;
+      margin-inline: -8px;
+      border-top: 1px solid var(--linha);
+    }
+
+    .topo__nav ul {
+      justify-content: space-between;
+    }
+
+    .topo__nav a {
+      padding-inline: 8px;
+    }
+  }
+</style>

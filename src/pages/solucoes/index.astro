@@ -1,0 +1,376 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import SecaoTitulo from '../../components/SecaoTitulo.astro';
+import SolucaoCard from '../../components/SolucaoCard.astro';
+import Nota from '../../components/Nota.astro';
+import Confidencialidade from '../../components/Confidencialidade.astro';
+import CTAContato from '../../components/CTAContato.astro';
+import Icone from '../../components/Icone.astro';
+import { solucoes } from '../../lib/conteudo';
+import { site, notaGanho } from '../../lib/site';
+
+const lista = await solucoes();
+const formas = (await getCollection('servicos')).map((s) => s.data).sort((a, b) => a.ordem - b.ordem);
+
+const foraDoEscopo = [
+  {
+    titulo: 'Produto pronto ou licença de software',
+    texto: 'Cada entrega é construída para o processo do cliente, não vendida de prateleira.',
+  },
+  {
+    titulo: 'Teste de invasão ou auditoria de certificação',
+    texto: 'Governança, revisão de acessos e hardening, sim. Pentest e certificação formal, não.',
+  },
+  {
+    titulo: 'Automação que age sozinha onde o erro custa caro',
+    texto: 'Ação externa com impacto real passa por aprovação humana, sempre.',
+  },
+  {
+    titulo: 'Entrega sem documentação',
+    texto: 'Um sistema que só funciona enquanto quem o construiu está por perto não é uma entrega.',
+  },
+];
+---
+
+<Base
+  title={`Soluções · ${site.nome}`}
+  description="Capacity e forecast, folha e RH, BI, automação, IA aplicada, segurança e infraestrutura: o problema que cada área resolve e o que costuma melhorar."
+>
+  <section class="cabecalho" aria-labelledby="titulo-solucoes">
+    <div class="container entrada">
+      <p class="eyebrow eyebrow--traco">Soluções</p>
+      <h1 id="titulo-solucoes">Onde dá para ajudar</h1>
+      <p class="lead">
+        Sete áreas, descritas pelo problema que resolvem e pelo que costuma melhorar. Muitos problemas atravessam mais de
+        uma delas, e é aí que um perfil que conecta infraestrutura, dados, automação e segurança faz diferença.
+      </p>
+    </div>
+  </section>
+
+  <section class="secao lista" aria-label="Áreas de atuação">
+    <div class="container">
+      <ul class="grade" role="list">
+        {
+          lista.map((s) => (
+            <li>
+              <SolucaoCard solucao={s} ganhos nivel={2} />
+            </li>
+          ))
+        }
+        <li class="grade__contato">
+          <h2 class="grade__contato-titulo">Não encontrou a sua área?</h2>
+          <p>Problemas que atravessam sistemas, dados e pessoas costumam não caber em uma área só. Conte como ele aparece.</p>
+          <a class="link-seta" href="/contato/">
+            Conte o problema
+            <Icone nome="seta" />
+          </a>
+        </li>
+      </ul>
+      <div class="nota">
+        <Nota texto={notaGanho} variante="bloco" rotulo="Sobre os ganhos" />
+      </div>
+    </div>
+  </section>
+
+  <section class="secao secao--superficie" aria-labelledby="titulo-formas">
+    <div class="container">
+      <SecaoTitulo
+        id="titulo-formas"
+        rotulo="Como contratar"
+        titulo="Quatro formas de contratação"
+        lead="Não é tabela de preço: o valor depende do escopo, e o escopo é fechado por escrito antes de começar."
+      />
+      <ol class="formas" role="list">
+        {
+          formas.map((f) => (
+            <li class="forma" id={f.id}>
+              <div class="forma__cabeca">
+                <span class="forma__numero numeral" aria-hidden="true">
+                  {String(f.ordem).padStart(2, '0')}
+                </span>
+                <h3>{f.nome}</h3>
+                <p>{f.resultado}</p>
+              </div>
+              <div class="forma__listas">
+                <div>
+                  <p class="eyebrow">O que entra</p>
+                  <ul role="list" class="forma__entra">
+                    {f.entra.map((item) => (
+                      <li>
+                        <Icone nome="check" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <p class="eyebrow">O que não entra</p>
+                  <ul role="list" class="forma__nao-entra">
+                    {f.naoEntra.map((item) => (
+                      <li>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="secao" aria-labelledby="titulo-fora">
+    <div class="container fora">
+      <SecaoTitulo
+        id="titulo-fora"
+        rotulo="Limite de escopo"
+        titulo="O que fica de fora"
+        lead="Dizer o que não está incluído também é parte do trabalho."
+      />
+      <ul class="fora__lista" role="list">
+        {
+          foraDoEscopo.map((item) => (
+            <li>
+              <h3>{item.titulo}</h3>
+              <p>{item.texto}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <Confidencialidade />
+
+  <CTAContato
+    titulo="Não sabe por qual área começar?"
+    texto="Quase sempre começa por um diagnóstico. Conte o problema e o formato é definido junto."
+  />
+</Base>
+
+<style>
+  .cabecalho {
+    padding-block: clamp(48px, 6vw, 88px) 0;
+  }
+
+  .cabecalho .container {
+    display: grid;
+    gap: 18px;
+  }
+
+  .cabecalho .lead {
+    max-width: 64ch;
+  }
+
+  .lista {
+    padding-top: clamp(32px, 4vw, 48px);
+  }
+
+  /* 7 áreas + 1 célula de contato: grade completa em 4, 2 ou 1 coluna, sem card órfão. */
+  .grade {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin: 0;
+  }
+
+  /* Subgrid: ícone, título, resumo, ganhos e link alinhados entre os cards da mesma linha. */
+  .grade > li {
+    display: grid;
+    grid-row: span 5;
+    grid-template-rows: subgrid;
+    row-gap: 0;
+  }
+
+  .grade > li > :global(.sol) {
+    grid-row: 1 / -1;
+    grid-template-rows: subgrid;
+  }
+
+  .grade__contato {
+    align-content: start;
+    gap: 10px;
+    padding: 26px 24px;
+    border: 1px dashed var(--linha-forte);
+    border-radius: var(--raio-3);
+  }
+
+  .grade > .grade__contato {
+    grid-template-rows: none;
+    row-gap: 10px;
+  }
+
+  .grade__contato-titulo {
+    font-size: var(--t-lg);
+    line-height: 1.2;
+  }
+
+  .grade__contato p {
+    color: var(--tinta-media);
+    font-size: var(--t-sm);
+    line-height: 1.55;
+  }
+
+  .grade__contato .link-seta {
+    margin-top: 6px;
+    font-size: var(--t-sm);
+  }
+
+  @media (max-width: 1080px) {
+    .grade {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 560px) {
+    .grade {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .nota {
+    margin-top: 24px;
+  }
+
+  .formas {
+    display: grid;
+    margin: 0;
+  }
+
+  .forma {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 24px clamp(32px, 5vw, 72px);
+    padding-block: clamp(28px, 3.5vw, 40px);
+    border-top: 1px solid var(--linha-forte);
+    scroll-margin-top: 96px;
+  }
+
+  .forma__cabeca {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+  }
+
+  .forma__numero {
+    color: var(--acento);
+    font-size: var(--t-sm);
+  }
+
+  .forma h3 {
+    font-family: var(--fonte-display);
+    font-size: var(--t-xl);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+
+  .forma__cabeca p {
+    color: var(--tinta-media);
+  }
+
+  .forma__listas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 32px;
+    align-content: start;
+  }
+
+  .forma__listas .eyebrow {
+    margin-bottom: 12px;
+  }
+
+  .forma__listas ul {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .forma__entra li {
+    display: grid;
+    grid-template-columns: 18px 1fr;
+    gap: 10px;
+    line-height: 1.45;
+  }
+
+  .forma__entra :global(svg) {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    color: var(--tinta-fraca);
+  }
+
+  .forma__nao-entra li {
+    position: relative;
+    padding-left: 28px;
+    color: var(--tinta-media);
+    line-height: 1.45;
+  }
+
+  .forma__nao-entra li::before {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 0.7em;
+    width: 12px;
+    height: 2px;
+    background: var(--tinta-fraca);
+  }
+
+  @media (max-width: 960px) {
+    .forma {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .forma__listas {
+      grid-template-columns: 1fr;
+    }
+  }
+  /* O que fica de fora */
+  .fora {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 24px clamp(32px, 5vw, 72px);
+    align-items: start;
+  }
+
+  .fora :global(.secao-titulo) {
+    margin-bottom: 0;
+  }
+
+  .fora__lista {
+    display: grid;
+    margin: 0;
+    border-top: 1px solid var(--linha-forte);
+  }
+
+  .fora__lista li {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 4px 0;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--linha);
+  }
+
+  .fora__lista li::before {
+    content: '';
+    grid-row: 1 / span 2;
+    width: 12px;
+    height: 2px;
+    margin-top: 0.75em;
+    background: var(--tinta-fraca);
+  }
+
+  .fora__lista p {
+    color: var(--tinta-media);
+  }
+
+  @media (max-width: 860px) {
+    .fora {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

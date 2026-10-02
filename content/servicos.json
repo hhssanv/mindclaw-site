@@ -1,0 +1,66 @@
+[
+  {
+    "id": "diagnostico",
+    "ordem": 1,
+    "nome": "Diagnóstico técnico com escopo fechado",
+    "resultado": "Você sai com um mapa claro do problema, dos riscos e do que vale construir, com prazo e escopo definidos antes de começar.",
+    "entra": [
+      "Levantamento de sistemas, dados e processos envolvidos",
+      "Mapa de dependências e de etapas manuais",
+      "Matriz de risco técnico",
+      "Recomendação priorizada, com o que não fazer"
+    ],
+    "naoEntra": [
+      "Implementação das recomendações",
+      "Compra ou licenciamento de software"
+    ]
+  },
+  {
+    "id": "construcao",
+    "ordem": 2,
+    "nome": "Construção de automação ou integração",
+    "resultado": "Um processo manual ou uma integração que faltava passa a funcionar, com aprovação humana onde importa e registro do que acontece.",
+    "entra": [
+      "Desenho da solução e das camadas",
+      "Construção e testes com dados controlados",
+      "Implantação assistida, com plano de retorno",
+      "Documentação operacional"
+    ],
+    "naoEntra": [
+      "Alteração de sistemas de terceiros sem autorização",
+      "Operação contínua depois da entrega (ver acompanhamento)"
+    ]
+  },
+  {
+    "id": "auditoria",
+    "ordem": 3,
+    "nome": "Auditoria de ambiente e documentação operacional",
+    "resultado": "O que existe fica conhecido, documentado e com dono: sistemas, acessos, dados e procedimentos.",
+    "entra": [
+      "Inventário de sistemas e acessos",
+      "Revisão de identidades e permissões",
+      "Registro de achados com responsável e prazo",
+      "Documentação dos procedimentos críticos"
+    ],
+    "naoEntra": [
+      "Teste de invasão",
+      "Auditoria de certificação ou avaliação formal de segurança"
+    ]
+  },
+  {
+    "id": "acompanhamento",
+    "ordem": 4,
+    "nome": "Acompanhamento contínuo",
+    "resultado": "O que foi construído continua funcionando, evoluindo e documentado, com alguém acompanhando de perto.",
+    "entra": [
+      "Monitoramento e ajustes",
+      "Evolução incremental com escopo combinado",
+      "Revisão periódica de acessos, regras e backups",
+      "Atualização da documentação"
+    ],
+    "naoEntra": [
+      "Suporte 24 horas",
+      "Atendimento direto a usuários finais"
+    ]
+  }
+]

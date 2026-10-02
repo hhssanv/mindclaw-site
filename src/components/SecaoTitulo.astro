@@ -1,0 +1,60 @@
+---
+/** Cabeçalho de seção: rótulo técnico (Saira) + h2 (+ lead opcional). */
+interface Props {
+  id: string;
+  rotulo: string;
+  titulo: string;
+  numero?: number;
+  lead?: string;
+  class?: string;
+}
+
+const { id, rotulo, titulo, numero, lead, class: classe } = Astro.props;
+const indice = numero !== undefined ? String(numero).padStart(2, '0') : undefined;
+---
+
+<div class:list={['secao-titulo', classe]}>
+  <p class="eyebrow secao-titulo__rotulo">
+    {indice && <span class="secao-titulo__numero">{indice}</span>}
+    {rotulo}
+  </p>
+  <h2 id={id}>{titulo}</h2>
+  {lead && <p class="lead secao-titulo__lead">{lead}</p>}
+</div>
+
+<style>
+  .secao-titulo {
+    display: grid;
+    gap: 16px;
+    margin-bottom: var(--titulo-secao);
+  }
+
+  .secao-titulo__rotulo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .secao-titulo__numero {
+    color: var(--acento);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .secao-titulo__numero::after {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 1px;
+    margin-left: 10px;
+    vertical-align: middle;
+    background: var(--linha-forte);
+  }
+
+  h2 {
+    max-width: 30ch;
+  }
+
+  .secao-titulo__lead {
+    margin-top: 2px;
+  }
+</style>

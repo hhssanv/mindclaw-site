@@ -1,0 +1,512 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import SecaoTitulo from '../components/SecaoTitulo.astro';
+import SolucaoCard from '../components/SolucaoCard.astro';
+import ProjetoCard from '../components/ProjetoCard.astro';
+import CTAContato from '../components/CTAContato.astro';
+import Icone from '../components/Icone.astro';
+import { solucoes, projetos, validarReferencias } from '../lib/conteudo';
+import { jsonLdPessoa } from '../lib/jsonld';
+import { site } from '../lib/site';
+
+await validarReferencias();
+const areas = await solucoes();
+const rotulos = new Map(areas.map((a) => [a.id, a.data.curto]));
+const destaques = (await projetos()).filter((p) => p.data.destaque).slice(0, 3);
+const principios = (await getCollection('principios')).map((p) => p.data).sort((a, b) => a.numero - b.numero);
+
+const medicao = [
+  { titulo: 'Diagnóstico primeiro', texto: 'A situação atual é medida antes de qualquer proposta.' },
+  { titulo: 'Critério antes de começar', texto: 'O que conta como sucesso fica escrito no escopo.' },
+  { titulo: 'Ganho medido na sua base', texto: 'O resultado é comparado com os dados da própria operação.' },
+];
+
+const titulo = `${site.nome} · Automação, dados e IA aplicada`;
+---
+
+<Base title={titulo} description={site.descricao} jsonLd={[jsonLdPessoa(areas.map((a) => a.data.titulo))]}>
+  <!-- 1. Hero -->
+  <section class="hero-home" aria-labelledby="titulo-home">
+    <div class="container hero-home__interno">
+      <div class="hero-home__texto entrada">
+        <p class="eyebrow eyebrow--traco">{site.pessoa} · Tecnologia, dados e automação</p>
+        <h1 id="titulo-home">
+          Do trabalho manual à <span class="hero-home__destaque">operação automatizada e auditável.</span>
+        </h1>
+        <p class="lead hero-home__lead">
+          Processos complexos, sistemas desconectados e trabalho manual transformados em automações, integrações e sistemas
+          inteligentes, com aprovação humana onde importa e registro de tudo o que acontece.
+        </p>
+        <div class="hero-home__acao">
+          <a class="botao" href="/solucoes/">
+            Ver as soluções
+            <Icone nome="seta" />
+          </a>
+        </div>
+        <a class="hero-home__credencial" href="/sobre/">
+          <picture>
+            <source type="image/avif" srcset="/marca/hans-spiller-160.avif" />
+            <img src="/marca/hans-spiller-160.webp" width="160" height="160" alt="" />
+          </picture>
+          <span class="hero-home__credencial-texto">
+            <strong>{site.pessoa} · {site.trajetoria}</strong>
+            <span>{site.areasResumo}</span>
+          </span>
+        </a>
+      </div>
+      <div class="hero-home__marca" aria-hidden="true">
+        <picture>
+          <source type="image/avif" srcset="/marca/isotipo-480.avif 480w, /marca/isotipo-960.avif 960w" sizes="340px" />
+          <img
+            src="/marca/isotipo-480.webp"
+            srcset="/marca/isotipo-480.webp 480w, /marca/isotipo-960.webp 960w"
+            sizes="340px"
+            width="480"
+            height="480"
+            alt=""
+            fetchpriority="high"
+          />
+        </picture>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Soluções -->
+  <section class="secao secao--superficie" aria-labelledby="titulo-solucoes">
+    <div class="container">
+      <div class="cabecalho-com-link">
+        <SecaoTitulo
+          id="titulo-solucoes"
+          rotulo="Soluções"
+          titulo="Onde dá para ajudar"
+          lead="Áreas descritas pelo problema que resolvem. Muitos problemas atravessam mais de uma delas."
+        />
+        <a class="link-seta" href="/solucoes/">
+          Todas as soluções
+          <Icone nome="seta" />
+        </a>
+      </div>
+      <ul class="solucoes" role="list">
+        {
+          areas.map((s) => (
+            <li>
+              <SolucaoCard solucao={s} />
+            </li>
+          ))
+        }
+        <li class="solucoes__contato">
+          <p class="solucoes__contato-titulo">Não encontrou a sua área?</p>
+          <p>Problemas que atravessam sistemas, dados e pessoas costumam não caber em uma área só.</p>
+          <a class="link-seta" href="/contato/">
+            Conte o problema
+            <Icone nome="seta" />
+          </a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 3. Resultado: medido, não prometido -->
+  <section class="secao" aria-labelledby="titulo-resultado">
+    <div class="container resultado">
+      <SecaoTitulo
+        id="titulo-resultado"
+        rotulo="Resultado"
+        titulo="Ganho medido na sua operação, não prometido no site"
+      />
+      <div class="resultado__corpo">
+        <p class="resultado__texto">
+          Capacity e forecast podem reduzir custo de forma expressiva em uma operação e pouco em outra. Depende do volume,
+          da estrutura e da maturidade dos dados. Por isso nenhum percentual pronto aparece aqui.
+        </p>
+        <ol class="resultado__passos" role="list">
+          {
+            medicao.map((m, i) => (
+              <li>
+                <span class="numeral" aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <div>
+                  <h3>{m.titulo}</h3>
+                  <p>{m.texto}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Projetos em destaque -->
+  <section class="secao secao--superficie" aria-labelledby="titulo-projetos">
+    <div class="container">
+      <div class="cabecalho-com-link">
+        <SecaoTitulo
+          id="titulo-projetos"
+          rotulo="Projetos"
+          titulo="Trabalho real, descrito sem expor ninguém"
+          lead="Projetos anonimizados: contexto, resultado e a área em que se encaixam."
+        />
+        <a class="link-seta" href="/projetos/">
+          Todos os projetos
+          <Icone nome="seta" />
+        </a>
+      </div>
+      <div class="destaques">
+        {destaques.map((p) => <ProjetoCard projeto={p} areas={rotulos} compacto />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Forma de trabalhar -->
+  <section class="secao" aria-labelledby="titulo-forma">
+    <div class="container">
+      <div class="cabecalho-com-link">
+        <SecaoTitulo id="titulo-forma" rotulo="Como funciona" titulo="Forma de trabalhar" />
+        <a class="link-seta" href="/sobre/#forma-de-trabalhar">
+          Sobre o perfil
+          <Icone nome="seta" />
+        </a>
+      </div>
+      <ol class="principios" role="list">
+        {
+          principios.map((p) => (
+            <li>
+              <span class="principios__numero numeral" aria-hidden="true">
+                {String(p.numero).padStart(2, '0')}
+              </span>
+              <h3>{p.nome}</h3>
+              <p>{p.descricao}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- 6. Contato -->
+  <CTAContato
+    titulo="Tem um processo que depende de alguém copiando, conferindo ou lembrando?"
+    texto="Conte o problema do jeito que ele aparece no dia a dia. A primeira conversa serve para entender o cenário e dizer, com franqueza, se e como dá para ajudar."
+  />
+</Base>
+
+<style>
+  /* Hero */
+  .hero-home {
+    overflow: hidden;
+    padding-block: clamp(56px, 8vw, 112px) clamp(56px, 7vw, 96px);
+  }
+
+  .hero-home__interno {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 40px clamp(32px, 6vw, 96px);
+  }
+
+  .hero-home__texto {
+    display: grid;
+    gap: 24px;
+    max-width: 46rem;
+  }
+
+  .hero-home h1 {
+    font-size: clamp(2.5rem, 1.6rem + 3.6vw, 4.25rem);
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+  }
+
+  .hero-home__destaque {
+    background: linear-gradient(90deg, #da0b29, #782747);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .hero-home__destaque {
+      background-image: linear-gradient(90deg, #ff5468, #e0698a);
+    }
+  }
+
+  .hero-home__lead {
+    max-width: 56ch;
+  }
+
+  .hero-home__acao {
+    margin-top: 4px;
+  }
+
+  .hero-home__credencial {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 8px;
+    padding-top: 20px;
+    border-top: 1px solid var(--linha);
+    color: var(--tinta-media);
+    font-size: var(--t-sm);
+    text-decoration: none;
+  }
+
+  .hero-home__credencial picture {
+    flex: none;
+  }
+
+  .hero-home__credencial img {
+    display: block;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px var(--fundo), 0 0 0 4px var(--acento);
+  }
+
+  .hero-home__credencial-texto {
+    display: grid;
+    gap: 2px;
+  }
+
+  .hero-home__credencial strong {
+    color: var(--tinta);
+    font-family: var(--fonte-display);
+    font-size: var(--t-md);
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .hero-home__credencial:hover strong {
+    color: var(--acento);
+  }
+
+  .hero-home__marca {
+    position: relative;
+    width: clamp(220px, 25vw, 330px);
+  }
+
+  .hero-home__marca::before {
+    content: '';
+    position: absolute;
+    inset: 8% 4% 2%;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--marca-vermelho) 12%, transparent), transparent);
+  }
+
+  .hero-home__marca img {
+    position: relative;
+    width: 100%;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-home__marca {
+      animation: entrada 900ms 160ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .hero-home__interno {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-home__marca {
+      display: none;
+    }
+  }
+
+  /* Cabeçalho de seção com link à direita */
+  .cabecalho-com-link {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0 32px;
+  }
+
+  .cabecalho-com-link .link-seta {
+    margin-bottom: var(--titulo-secao);
+  }
+
+  /* Soluções: 7 áreas + 1 célula de contato = grade completa em 4, 2 ou 1 coluna */
+  .solucoes {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin: 0;
+  }
+
+  /* Subgrid: título, resumo e link ficam na mesma altura em todos os cards da linha. */
+  .solucoes > li {
+    display: grid;
+    grid-row: span 4;
+    grid-template-rows: subgrid;
+    row-gap: 0;
+  }
+
+  .solucoes > li > :global(.sol) {
+    grid-row: 1 / -1;
+    grid-template-rows: subgrid;
+  }
+
+  .solucoes > .solucoes__contato {
+    display: grid;
+    grid-row: span 4;
+    grid-template-rows: none;
+    align-content: start;
+    gap: 10px;
+    padding: 26px 24px;
+    border: 1px dashed var(--linha-forte);
+    border-radius: var(--raio-3);
+  }
+
+  .solucoes__contato-titulo {
+    font-family: var(--fonte-display);
+    font-size: var(--t-lg);
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .solucoes__contato p:not(.solucoes__contato-titulo) {
+    color: var(--tinta-media);
+    font-size: var(--t-sm);
+    line-height: 1.55;
+  }
+
+  .solucoes__contato .link-seta {
+    margin-top: 6px;
+    font-size: var(--t-sm);
+  }
+
+  @media (max-width: 1080px) {
+    .solucoes {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 560px) {
+    .solucoes {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Resultado */
+  .resultado {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 24px clamp(32px, 5vw, 72px);
+    align-items: start;
+  }
+
+  .resultado :global(.secao-titulo) {
+    margin-bottom: 0;
+  }
+
+  .resultado__corpo {
+    display: grid;
+    gap: 28px;
+  }
+
+  .resultado__texto {
+    font-size: var(--t-lg);
+    line-height: 1.6;
+  }
+
+  .resultado__passos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin: 0;
+  }
+
+  .resultado__passos li {
+    display: grid;
+    gap: 8px;
+    padding-top: 16px;
+    border-top: 2px solid var(--acento);
+  }
+
+  .resultado__passos .numeral {
+    color: var(--tinta-fraca);
+    font-size: var(--t-sm);
+  }
+
+  .resultado__passos h3 {
+    margin-bottom: 4px;
+    font-size: var(--t-base);
+  }
+
+  .resultado__passos p {
+    color: var(--tinta-media);
+    font-size: var(--t-sm);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 860px) {
+    .resultado {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .resultado__passos {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Projetos em destaque */
+  .destaques {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  @media (max-width: 1080px) {
+    .destaques {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Forma de trabalhar */
+  .principios {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0 24px;
+    margin: 0;
+  }
+
+  .principios li {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    padding: 20px 0 28px;
+    border-top: 1px solid var(--linha-forte);
+  }
+
+  .principios__numero {
+    color: var(--tinta-fraca);
+    font-size: var(--t-sm);
+  }
+
+  .principios h3 {
+    font-size: var(--t-md);
+  }
+
+  .principios p {
+    color: var(--tinta-media);
+    font-size: var(--t-sm);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 900px) {
+    .principios {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 520px) {
+    .principios {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

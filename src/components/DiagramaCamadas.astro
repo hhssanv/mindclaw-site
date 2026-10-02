@@ -1,0 +1,231 @@
+---
+import SecaoTitulo from './SecaoTitulo.astro';
+import Icone from './Icone.astro';
+
+/**
+ * Diagrama de camadas: cada item é uma camada do sistema, na ordem em que o dado passa,
+ * com a responsabilidade e a restrição que ela não pode violar. Mostra decisão de
+ * arquitetura sem nenhum detalhe de implementação.
+ */
+interface Props {
+  titulo: string;
+  lead: string;
+  regra?: string;
+  camadas: [string, string, string][];
+  rotulo?: string;
+  id?: string;
+}
+
+const { titulo, lead, regra, camadas, rotulo = 'Arquitetura', id = 'titulo-arquitetura' } = Astro.props;
+---
+
+<section class="secao" aria-labelledby={id}>
+  <div class="container">
+    <SecaoTitulo id={id} rotulo={rotulo} titulo={titulo} lead={lead} />
+
+    {
+      regra && (
+        <p class="fluxo__regra">
+          <span class="eyebrow eyebrow--acento">Regra que decide o desenho</span>
+          <span>{regra}</span>
+        </p>
+      )
+    }
+
+    <ol class="fluxo" role="list" style={`--colunas: ${camadas.length}`}>
+      {
+        camadas.map(([camada, responsabilidade, restricao], i) => (
+          <li class="camada">
+            <p class="camada__indice numeral" aria-hidden="true">
+              {String(i + 1).padStart(2, '0')}
+            </p>
+            <h3 class="camada__nome">{camada}</h3>
+            <p class="camada__responsabilidade">
+              <span class="visualmente-oculto">Responsabilidade: </span>
+              {responsabilidade}
+            </p>
+            <p class="camada__restricao">
+              <span class="camada__restricao-rotulo eyebrow">
+                <Icone nome="trava" />
+                Restrição
+              </span>
+              <span>{restricao}</span>
+            </p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .fluxo__regra {
+    display: grid;
+    gap: 8px;
+    max-width: 60rem;
+    margin-bottom: 36px;
+    padding: 18px 22px;
+    border-left: 3px solid var(--acento);
+    border-radius: 0 var(--raio-2) var(--raio-2) 0;
+    background: var(--superficie);
+    font-size: var(--t-md);
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .fluxo {
+    --seta: 28px;
+    display: grid;
+    grid-template-columns: repeat(var(--colunas), minmax(0, 1fr));
+    grid-template-rows: repeat(4, auto);
+    column-gap: var(--seta);
+    margin: 0;
+  }
+
+  /* Subgrid: nome, responsabilidade e restrição ficam alinhados entre as camadas. */
+  .camada {
+    position: relative;
+    display: grid;
+    grid-row: span 4;
+    grid-template-rows: subgrid;
+    row-gap: 8px;
+    padding: 20px;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-2);
+    background: var(--fundo);
+  }
+
+  /* Conector entre camadas: linha + ponta de seta no vão. */
+  .camada:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 34px;
+    right: calc(-1 * var(--seta) + 4px);
+    width: calc(var(--seta) - 8px);
+    height: 10px;
+    background:
+      linear-gradient(var(--linha-forte), var(--linha-forte)) left center / calc(100% - 6px) 1.5px no-repeat,
+      conic-gradient(from 225deg at 100% 50%, var(--linha-forte) 0 90deg, transparent 90deg) right center / 7px 10px
+        no-repeat;
+  }
+
+  .camada__indice {
+    color: var(--tinta-fraca);
+    font-size: var(--t-sm);
+  }
+
+  .camada__nome {
+    font-family: var(--fonte-display);
+    font-size: var(--t-lg);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .camada__responsabilidade {
+    color: var(--tinta-media);
+    font-size: var(--t-sm);
+    line-height: 1.5;
+  }
+
+  .camada__restricao {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    margin-top: 6px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--linha-forte);
+    color: var(--tinta);
+    font-size: var(--t-sm);
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
+  .camada__restricao-rotulo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--acento);
+    font-size: 0.75rem;
+  }
+
+  .camada__restricao-rotulo :global(svg) {
+    width: 14px;
+    height: 14px;
+  }
+
+  @media (max-width: 1080px) {
+    .fluxo {
+      grid-template-columns: 1fr;
+      grid-template-rows: none;
+      row-gap: var(--seta);
+    }
+
+    .camada {
+      grid-row: auto;
+      grid-template-columns: 2.5rem minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-rows: auto auto;
+      column-gap: 20px;
+      align-items: start;
+    }
+
+    .camada__indice {
+      grid-row: 1 / span 2;
+      padding-top: 4px;
+    }
+
+    .camada__nome {
+      grid-column: 2;
+    }
+
+    .camada__responsabilidade {
+      grid-column: 2;
+    }
+
+    .camada__restricao {
+      grid-column: 3;
+      grid-row: 1 / span 2;
+      margin-top: 0;
+      padding-top: 0;
+      padding-left: 20px;
+      border-top: 0;
+      border-left: 1px dashed var(--linha-forte);
+    }
+
+    .camada:not(:last-child)::after {
+      top: auto;
+      right: auto;
+      bottom: calc(-1 * var(--seta) + 4px);
+      left: 32px;
+      width: 10px;
+      height: calc(var(--seta) - 8px);
+      background:
+        linear-gradient(var(--linha-forte), var(--linha-forte)) center top / 1.5px calc(100% - 6px) no-repeat,
+        conic-gradient(from 135deg at 50% 100%, var(--linha-forte) 0 90deg, transparent 90deg) center bottom / 10px 7px
+          no-repeat;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .camada {
+      grid-template-columns: 2rem minmax(0, 1fr);
+    }
+
+    .camada__restricao {
+      grid-column: 2;
+      grid-row: auto;
+      margin-top: 6px;
+      padding-top: 12px;
+      padding-left: 0;
+      border-left: 0;
+      border-top: 1px dashed var(--linha-forte);
+    }
+
+    .camada__indice {
+      grid-row: 1 / span 3;
+    }
+
+    .camada:not(:last-child)::after {
+      left: 26px;
+    }
+  }
+</style>

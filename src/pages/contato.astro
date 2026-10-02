@@ -1,0 +1,402 @@
+---
+import Base from '../layouts/Base.astro';
+import Icone from '../components/Icone.astro';
+import { solucoes } from '../lib/conteudo';
+import { site, linkWhatsApp, mensagemWhatsApp } from '../lib/site';
+
+const areas = await solucoes();
+---
+
+<Base
+  title={`Contato · ${site.nome}`}
+  description="Conte o problema do jeito que ele aparece no dia a dia. A conversa começa pelo WhatsApp ou por e-mail, sem cadastro e sem formulário guardado em servidor."
+>
+  <section class="contato" aria-labelledby="titulo-contato">
+    <div class="container contato__interno">
+      <div class="contato__intro entrada">
+        <p class="eyebrow eyebrow--traco">Contato</p>
+        <h1 id="titulo-contato">Conte o que está travando</h1>
+        <p class="lead">
+          Na linguagem de quem vive o problema, sem precisar saber a solução. A resposta traz uma primeira leitura e, se
+          fizer sentido, uma proposta de diagnóstico com escopo fechado.
+        </p>
+
+        <div class="canais">
+          <h2 class="eyebrow">Canais diretos</h2>
+          <ul role="list">
+            <li>
+              <a class="canal canal--principal" href={linkWhatsApp(mensagemWhatsApp())} target="_blank" rel="noopener">
+                <Icone nome="conversa" />
+                <span>
+                  <span class="canal__rotulo">WhatsApp · resposta mais rápida</span>
+                  <span class="canal__valor">{site.whatsapp.exibicao}</span>
+                </span>
+                <span class="visualmente-oculto">(abre o WhatsApp em nova aba)</span>
+              </a>
+            </li>
+            <li class="canal-email">
+              <a class="canal" href={`mailto:${site.email}`}>
+                <Icone nome="email" />
+                <span>
+                  <span class="canal__rotulo">E-mail</span>
+                  <span class="canal__valor">{site.email}</span>
+                </span>
+              </a>
+              <button type="button" class="copiar" data-copiar={site.email}>
+                <span data-copiar-rotulo>Copiar</span>
+                <span class="visualmente-oculto"> o endereço de e-mail</span>
+              </button>
+            </li>
+          </ul>
+          <p class="visualmente-oculto" aria-live="polite" data-copiar-status></p>
+          <p class="canais__nota">{site.confidencialidade}</p>
+        </div>
+      </div>
+
+      <form class="form" data-contato data-email={site.email} data-whatsapp={site.whatsapp.numero} novalidate>
+        <h2 class="visualmente-oculto">Formulário de contato</h2>
+
+        <div class="campo">
+          <label for="nome">Nome <span class="campo__opcional">opcional</span></label>
+          <input id="nome" name="nome" type="text" autocomplete="name" />
+        </div>
+
+        <div class="campo">
+          <label for="retorno">Empresa ou outro contato <span class="campo__opcional">opcional</span></label>
+          <input id="retorno" name="retorno" type="text" autocomplete="organization" aria-describedby="retorno-ajuda" />
+          <p class="campo__ajuda" id="retorno-ajuda">Empresa, cargo ou um e-mail para resposta, se preferir.</p>
+        </div>
+
+        <div class="campo">
+          <label for="tipo">Área mais próxima <span class="campo__opcional">opcional</span></label>
+          <select id="tipo" name="tipo">
+            <option value="">Escolha a opção mais próxima</option>
+            {areas.map((a) => <option value={a.data.titulo} data-area={a.id}>{a.data.titulo}</option>)}
+            <option value="Outro">Outro / ainda não sei</option>
+          </select>
+        </div>
+
+        <div class="campo">
+          <label for="descricao">O que está acontecendo?</label>
+          <textarea
+            id="descricao"
+            name="descricao"
+            rows="6"
+            required
+            aria-describedby="descricao-ajuda descricao-erro"></textarea>
+          <p class="campo__ajuda" id="descricao-ajuda">
+            Quem sofre com o problema, com que frequência e o que já foi tentado. Não inclua dados sensíveis.
+          </p>
+          <p class="campo__erro" id="descricao-erro" hidden>Descreva o problema em poucas linhas.</p>
+        </div>
+
+        <div class="form__acoes">
+          <button class="botao" type="submit" data-canal="whatsapp">
+            <Icone nome="conversa" />
+            Enviar pelo WhatsApp
+          </button>
+          <button class="botao botao--secundario" type="submit" data-canal="email">
+            <Icone nome="email" />
+            Enviar por e-mail
+          </button>
+        </div>
+        <p class="form__nota">
+          O formulário não guarda nada: ele abre o seu WhatsApp (ou o seu e-mail) com a mensagem pronta, e você decide se
+          envia.{' '}
+          <a href="/privacidade/">Privacidade</a>.
+        </p>
+        <noscript>
+          <p class="form__nota form__nota--aviso">
+            Com o JavaScript desligado o formulário não monta a mensagem. Use os canais diretos ao lado.
+          </p>
+        </noscript>
+      </form>
+    </div>
+  </section>
+</Base>
+
+<script>
+  // Copiar o e-mail: para quem usa webmail e não tem programa de e-mail configurado.
+  const copiar = document.querySelector<HTMLButtonElement>('[data-copiar]');
+  const statusCopia = document.querySelector<HTMLElement>('[data-copiar-status]');
+  copiar?.addEventListener('click', async () => {
+    const rotulo = copiar.querySelector<HTMLElement>('[data-copiar-rotulo]');
+    try {
+      await navigator.clipboard.writeText(copiar.dataset.copiar ?? '');
+      if (rotulo) rotulo.textContent = 'Copiado';
+      if (statusCopia) statusCopia.textContent = 'Endereço de e-mail copiado.';
+    } catch {
+      if (rotulo) rotulo.textContent = 'Selecione e copie';
+    }
+    window.setTimeout(() => {
+      if (rotulo) rotulo.textContent = 'Copiar';
+    }, 2500);
+  });
+
+  const form = document.querySelector<HTMLFormElement>('[data-contato]');
+
+  if (form) {
+    const campo = (nome: string) => form.elements.namedItem(nome) as HTMLInputElement | HTMLTextAreaElement;
+    const params = new URLSearchParams(location.search);
+
+    // Pré-seleção vinda do link de contato de uma solução (?area=id).
+    const area = params.get('area');
+    const select = form.querySelector<HTMLSelectElement>('#tipo');
+    const opcao = select && [...select.options].find((o) => o.dataset.area === area);
+    if (select && opcao) select.value = opcao.value;
+
+    const validar = (el: HTMLInputElement | HTMLTextAreaElement) => {
+      const ok = el.value.trim().length > 0;
+      el.setAttribute('aria-invalid', String(!ok));
+      const erro = document.getElementById(`${el.id}-erro`);
+      if (erro) erro.hidden = ok;
+      return ok;
+    };
+
+    // Revalida enquanto a pessoa digita (e não no blur): o erro some antes do clique
+    // em "Enviar", sem deslocar o botão debaixo do cursor.
+    for (const nome of ['descricao']) {
+      campo(nome).addEventListener('input', (e) => {
+        const el = e.currentTarget as HTMLInputElement;
+        if (el.getAttribute('aria-invalid') !== null) validar(el);
+      });
+    }
+
+    form.addEventListener('submit', (evento) => {
+      evento.preventDefault();
+      const obrigatorios = [campo('descricao')];
+      const invalidos = obrigatorios.filter((el) => !validar(el));
+      if (invalidos.length) {
+        invalidos[0].focus();
+        return;
+      }
+
+      const valor = (nome: string) => campo(nome).value.trim();
+      const linhas: string[] = [];
+      if (valor('nome')) linhas.push(`Nome: ${valor('nome')}`);
+      if (valor('retorno')) linhas.push(`Contato: ${valor('retorno')}`);
+      if (valor('tipo')) linhas.push(`Área: ${valor('tipo')}`);
+      linhas.push('', valor('descricao'));
+      const corpo = linhas.join('\n');
+
+      const canal = (evento.submitter as HTMLButtonElement | null)?.dataset.canal ?? 'whatsapp';
+      if (canal === 'whatsapp') {
+        window.open(`https://wa.me/${form.dataset.whatsapp}?text=${encodeURIComponent(corpo)}`, '_blank', 'noopener');
+      } else {
+        const assunto = valor('tipo') ? `Contato pelo site: ${valor('tipo')}` : 'Contato pelo site';
+        location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpo)}`;
+      }
+    });
+  }
+</script>
+
+<style>
+  .contato {
+    padding-block: clamp(48px, 6vw, 96px);
+  }
+
+  .contato__interno {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: 48px clamp(40px, 6vw, 96px);
+    align-items: start;
+  }
+
+  .contato__intro {
+    display: grid;
+    gap: 18px;
+  }
+
+  .canais {
+    display: grid;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 24px;
+    border-top: 1px solid var(--linha);
+  }
+
+  .canais ul {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .canal {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 56px;
+    padding: 10px 16px;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-2);
+    text-decoration: none;
+    transition: border-color var(--transicao), background-color var(--transicao);
+  }
+
+  .canal:hover {
+    border-color: var(--linha-forte);
+    background: var(--superficie);
+  }
+
+  .canal--principal {
+    border-color: var(--linha-forte);
+    background: var(--superficie);
+  }
+
+  .canal-email {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+
+  .copiar {
+    min-height: 44px;
+    padding: 0 16px;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-2);
+    background: transparent;
+    color: var(--tinta-media);
+    font-size: var(--t-sm);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .copiar:hover {
+    border-color: var(--linha-forte);
+    color: var(--tinta);
+  }
+
+  .canal :global(svg) {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    color: var(--acento);
+  }
+
+  .canal > span {
+    display: grid;
+    min-width: 0;
+  }
+
+  .canal__rotulo {
+    color: var(--tinta-media);
+    font-family: var(--fonte-display);
+    font-size: 0.75rem;
+    font-stretch: 112.5%;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .canal__valor {
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  .canais__nota {
+    color: var(--tinta-fraca);
+    font-size: var(--t-sm);
+    line-height: 1.5;
+  }
+
+  .form {
+    display: grid;
+    gap: 22px;
+    padding: clamp(22px, 3vw, 36px);
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-3);
+    background: var(--superficie);
+  }
+
+  .campo {
+    display: grid;
+    gap: 8px;
+  }
+
+  .campo label {
+    font-weight: 600;
+  }
+
+  .campo__opcional {
+    margin-left: 6px;
+    color: var(--tinta-fraca);
+    font-size: var(--t-sm);
+    font-weight: 400;
+  }
+
+  .campo input,
+  .campo select,
+  .campo textarea {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+    border: 1px solid var(--linha-forte);
+    border-radius: var(--raio-1);
+    background: var(--fundo);
+    color: var(--tinta);
+    line-height: 1.4;
+    transition: border-color var(--transicao), box-shadow var(--transicao);
+  }
+
+  .campo textarea {
+    resize: vertical;
+    min-height: 140px;
+  }
+
+  .campo input:hover,
+  .campo select:hover,
+  .campo textarea:hover {
+    border-color: var(--tinta-fraca);
+  }
+
+  .campo input:focus-visible,
+  .campo select:focus-visible,
+  .campo textarea:focus-visible {
+    border-color: var(--acento);
+    outline: 2px solid var(--acento);
+    outline-offset: 1px;
+  }
+
+  .campo [aria-invalid='true'] {
+    border-color: var(--alerta);
+  }
+
+  .campo__ajuda {
+    color: var(--tinta-fraca);
+    font-size: var(--t-sm);
+  }
+
+  .campo__erro {
+    color: var(--alerta);
+    font-size: var(--t-sm);
+    font-weight: 600;
+  }
+
+  .form__acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .form__nota {
+    color: var(--tinta-fraca);
+    font-size: var(--t-sm);
+    line-height: 1.5;
+  }
+
+  .form__nota--aviso {
+    color: var(--alerta);
+  }
+
+  @media (max-width: 900px) {
+    .contato__interno {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .form__acoes .botao {
+      width: 100%;
+    }
+  }
+</style>

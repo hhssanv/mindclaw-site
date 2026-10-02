@@ -1,0 +1,106 @@
+---
+import Icone from './Icone.astro';
+
+interface Item {
+  href: string;
+  titulo: string;
+}
+
+interface Props {
+  anterior?: Item;
+  proximo?: Item;
+  rotulo: string;
+}
+
+const { anterior, proximo, rotulo } = Astro.props;
+---
+
+{
+  (anterior || proximo) && (
+    <nav class="vizinhos container" aria-label={rotulo}>
+      {anterior && (
+        <a class="vizinhos__link" href={anterior.href} rel="prev">
+          <span class="vizinhos__rotulo eyebrow">
+            <Icone nome="seta-esquerda" />
+            Anterior
+          </span>
+          <span class="vizinhos__titulo">{anterior.titulo}</span>
+        </a>
+      )}
+      {proximo && (
+        <a class="vizinhos__link vizinhos__link--proximo" href={proximo.href} rel="next">
+          <span class="vizinhos__rotulo eyebrow">
+            Próxima
+            <Icone nome="seta" />
+          </span>
+          <span class="vizinhos__titulo">{proximo.titulo}</span>
+        </a>
+      )}
+    </nav>
+  )
+}
+
+<style>
+  .vizinhos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding-block: clamp(40px, 5vw, 64px);
+  }
+
+  .vizinhos__link {
+    display: grid;
+    gap: 8px;
+    padding: 22px 24px;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-2);
+    text-decoration: none;
+    transition: border-color var(--transicao), background-color var(--transicao);
+  }
+
+  .vizinhos__link:hover {
+    border-color: var(--linha-forte);
+    background: var(--superficie);
+  }
+
+  .vizinhos__link--proximo {
+    text-align: right;
+  }
+
+  .vizinhos__link--proximo .vizinhos__rotulo {
+    justify-content: flex-end;
+  }
+
+  .vizinhos__rotulo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .vizinhos__rotulo :global(svg) {
+    width: 16px;
+    height: 16px;
+    color: var(--acento);
+  }
+
+  .vizinhos__titulo {
+    font-family: var(--fonte-display);
+    font-size: var(--t-lg);
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  @media (max-width: 640px) {
+    .vizinhos {
+      grid-template-columns: 1fr;
+    }
+
+    .vizinhos__link--proximo {
+      text-align: left;
+    }
+
+    .vizinhos__link--proximo .vizinhos__rotulo {
+      justify-content: flex-start;
+    }
+  }
+</style>

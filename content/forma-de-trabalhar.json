@@ -1,0 +1,50 @@
+[
+  {
+    "id": "processo-real",
+    "numero": 1,
+    "nome": "Processo real primeiro",
+    "descricao": "Entender o processo como ele acontece de fato antes de automatizar ou mudar qualquer tecnologia."
+  },
+  {
+    "id": "evidencia",
+    "numero": 2,
+    "nome": "Evidência antes de conclusão",
+    "descricao": "Separar sintoma, causa provável e evidência, para não decidir com base só em percepção."
+  },
+  {
+    "id": "riscos",
+    "numero": 3,
+    "nome": "Riscos mapeados",
+    "descricao": "Mapear dependências e riscos antes de qualquer mudança."
+  },
+  {
+    "id": "reversivel",
+    "numero": 4,
+    "nome": "Mudança pequena e reversível",
+    "descricao": "Preferir mudanças pequenas, com backup e caminho de volta, em ambientes críticos."
+  },
+  {
+    "id": "humano",
+    "numero": 5,
+    "nome": "Validação humana onde importa",
+    "descricao": "Automatizar o que é repetitivo e manter validação humana onde o risco exige."
+  },
+  {
+    "id": "criterio",
+    "numero": 6,
+    "nome": "Critério objetivo de sucesso",
+    "descricao": "Definir métricas e critérios para confirmar, com dados, se a solução funcionou."
+  },
+  {
+    "id": "documentacao",
+    "numero": 7,
+    "nome": "Documentação para continuar",
+    "descricao": "Documentar de forma que outra pessoa consiga operar, auditar ou dar continuidade ao trabalho."
+  },
+  {
+    "id": "melhoria",
+    "numero": 8,
+    "nome": "Incidente vira melhoria",
+    "descricao": "Transformar incidentes e tarefas pontuais em melhoria permanente sempre que possível."
+  }
+]
