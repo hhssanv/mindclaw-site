@@ -95,12 +95,95 @@ describe('contato', () => {
   test('o botão de conversa de cada solução já leva o assunto', async () => {
     const pagina = await amb.navegador.newPage();
     await pagina.goto(`${amb.base}/solucoes/capacidade-forecast/`);
-    const hrefs = await pagina.$$eval(`a[href^="${WHATSAPP}"]`, (as) => as.map((a) => a.href));
+    const hrefs = await pagina.$$eval(`main a[href^="${WHATSAPP}"]`, (as) => as.map((a) => a.href));
     assert.ok(hrefs.length >= 2, 'botão no topo e no fim da página');
     for (const href of hrefs) {
       assert.match(new URL(href).searchParams.get('text') ?? '', /planejamento de capacidade e forecast/);
     }
     await pagina.close();
+  });
+});
+
+describe('menu do celular', () => {
+  const CELULAR = { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true };
+
+  test('abre e fecha pelo botão, deixa o resto da página inerte e fecha com Esc', async () => {
+    const pagina = await amb.navegador.newPage(CELULAR);
+    await pagina.goto(`${amb.base}/solucoes/`);
+    const botao = pagina.locator('[data-menu-botao]');
+    const link = pagina.locator('#menu-principal a[href="/projetos/"]');
+
+    assert.ok(await botao.isVisible(), 'botão Menu aparece no celular');
+    assert.equal(await link.isVisible(), false, 'links escondidos com o menu fechado');
+
+    await botao.click();
+    assert.equal(await botao.getAttribute('aria-expanded'), 'true');
+    assert.ok(await link.isVisible(), 'links aparecem com o menu aberto');
+    assert.ok(await pagina.locator('#menu-principal a[href="/contato/"]').isVisible(), 'contato dentro do menu');
+    assert.equal(await pagina.evaluate(() => document.querySelector('main')?.inert), true, 'conteúdo inerte');
+    assert.equal(
+      await pagina.getAttribute('#menu-principal a[href="/solucoes/"]', 'aria-current'),
+      'page',
+      'página atual marcada',
+    );
+
+    await pagina.keyboard.press('Escape');
+    assert.equal(await botao.getAttribute('aria-expanded'), 'false');
+    assert.equal(await link.isVisible(), false);
+    assert.equal(await pagina.evaluate(() => document.activeElement?.hasAttribute('data-menu-botao')), true, 'foco volta ao botão');
+    assert.equal(await pagina.evaluate(() => document.querySelector('main')?.inert), false);
+    await pagina.close();
+  });
+
+  test('com o menu aberto o Tab não chega ao conteúdo escondido atrás dele', async () => {
+    const pagina = await amb.navegador.newPage(CELULAR);
+    await pagina.goto(`${amb.base}/`);
+    await pagina.click('[data-menu-botao]');
+    const fora = [];
+    for (let i = 0; i < 12; i++) {
+      await pagina.keyboard.press('Tab');
+      const onde = await pagina.evaluate(() => {
+        const el = document.activeElement;
+        return !el || el === document.body ? 'body' : el.closest('main, footer') ? 'fora' : 'menu';
+      });
+      if (onde === 'fora') fora.push(i);
+    }
+    assert.deepEqual(fora, [], 'nenhum Tab caiu no conteúdo ou no rodapé');
+    await pagina.close();
+  });
+
+  test('o link escolhido navega e o menu chega fechado', async () => {
+    const pagina = await amb.navegador.newPage(CELULAR);
+    await pagina.goto(`${amb.base}/`);
+    await pagina.click('[data-menu-botao]');
+    await Promise.all([pagina.waitForURL('**/projetos/'), pagina.click('#menu-principal a[href="/projetos/"]')]);
+    assert.equal(await pagina.getAttribute('[data-menu-botao]', 'aria-expanded'), 'false');
+    assert.equal(await pagina.evaluate(() => document.documentElement.classList.contains('menu-aberto')), false);
+    await pagina.close();
+  });
+
+  test('voltar para a largura de desktop fecha o menu e mostra a navegação', async () => {
+    const pagina = await amb.navegador.newPage({ viewport: { width: 390, height: 844 } });
+    await pagina.goto(`${amb.base}/`);
+    await pagina.click('[data-menu-botao]');
+    await pagina.setViewportSize({ width: 1200, height: 800 });
+    await pagina.waitForTimeout(100);
+    assert.equal(await pagina.getAttribute('[data-menu-botao]', 'aria-expanded'), 'false');
+    assert.equal(await pagina.isVisible('[data-menu-botao]'), false, 'botão some no desktop');
+    assert.ok(await pagina.isVisible('#menu-principal a[href="/projetos/"]'), 'navegação visível no desktop');
+    assert.equal(await pagina.evaluate(() => document.querySelector('main')?.inert), false);
+    await pagina.close();
+  });
+
+  test('sem JavaScript a navegação fica visível e o botão não aparece', async () => {
+    const contexto = await amb.navegador.newContext({ ...CELULAR, javaScriptEnabled: false });
+    const pagina = await contexto.newPage();
+    await pagina.goto(`${amb.base}/`);
+    assert.equal(await pagina.isVisible('[data-menu-botao]'), false);
+    for (const href of ['/solucoes/', '/projetos/', '/sobre/', '/contato/']) {
+      assert.ok(await pagina.isVisible(`#menu-principal a[href="${href}"]`), `${href} visível`);
+    }
+    await contexto.close();
   });
 });
 

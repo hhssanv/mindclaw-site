@@ -25,7 +25,7 @@ const mapa = [
     </div>
 
     <div class="rodape__colunas">
-      <nav aria-label="Mapa do site">
+      <nav class="rodape__mapa" aria-label="Mapa do site">
         <h2 class="eyebrow">Mapa do site</h2>
         <ul role="list">
           {
@@ -191,6 +191,21 @@ const mapa = [
 
     .rodape__colunas a {
       min-height: 44px;
+    }
+
+    /* Links curtos do mapa em duas colunas: a lista ocupa metade da altura. */
+    .rodape__mapa ul {
+      grid-template-columns: 1fr 1fr;
+      column-gap: 16px;
+    }
+
+    .rodape__topo {
+      padding-bottom: 28px;
+    }
+
+    .rodape__colunas {
+      gap: 28px;
+      padding-block: 28px;
     }
   }
 </style>

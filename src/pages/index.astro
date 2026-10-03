@@ -30,7 +30,9 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
   <section class="hero-home" aria-labelledby="titulo-home">
     <div class="container hero-home__interno">
       <div class="hero-home__texto entrada">
-        <p class="eyebrow eyebrow--traco">{site.pessoa} · Tecnologia, dados e automação</p>
+        <p class="eyebrow eyebrow--traco">
+          <span><span class="hero-home__eyebrow-nome">{site.pessoa} · </span>Tecnologia, dados e automação</span>
+        </p>
         <h1 id="titulo-home">
           Do trabalho manual à <span class="hero-home__destaque">operação automatizada e auditável.</span>
         </h1>
@@ -57,11 +59,15 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
       </div>
       <div class="hero-home__marca" aria-hidden="true">
         <picture>
-          <source type="image/avif" srcset="/marca/isotipo-480.avif 480w, /marca/isotipo-960.avif 960w" sizes="340px" />
+          <source
+            type="image/avif"
+            srcset="/marca/isotipo-480.avif 480w, /marca/isotipo-960.avif 960w"
+            sizes="(max-width: 860px) 128px, 460px"
+          />
           <img
             src="/marca/isotipo-480.webp"
             srcset="/marca/isotipo-480.webp 480w, /marca/isotipo-960.webp 960w"
-            sizes="340px"
+            sizes="(max-width: 860px) 128px, 460px"
             width="480"
             height="480"
             alt=""
@@ -281,9 +287,11 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
     color: var(--acento);
   }
 
+  /* O desenho do isotipo ocupa só metade da largura do arquivo: a escala aumenta a marca.
+     A largura cresce com a tela só até o ponto em que o título continua em três linhas. */
   .hero-home__marca {
     position: relative;
-    width: clamp(220px, 25vw, 330px);
+    width: clamp(200px, 64vw - 452px, 380px);
   }
 
   .hero-home__marca::before {
@@ -297,6 +305,7 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
   .hero-home__marca img {
     position: relative;
     width: 100%;
+    transform: scale(1.2);
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -310,7 +319,28 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
       grid-template-columns: 1fr;
     }
 
+    /* Celular: a marca volta, pequena, acima do texto. */
     .hero-home__marca {
+      order: -1;
+      width: 128px;
+      margin: -12px 0 12px -14px;
+    }
+
+    .hero-home__marca::before {
+      inset: 12% 8% 6%;
+    }
+
+    .hero-home__marca img {
+      transform: none;
+    }
+
+    .hero-home__interno {
+      gap: 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero-home__eyebrow-nome {
       display: none;
     }
   }
@@ -384,9 +414,55 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
     }
   }
 
+  /* Celular: cada área vira uma linha compacta (ícone, título e resumo), o card inteiro é o link. */
   @media (max-width: 560px) {
     .solucoes {
       grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .solucoes > li,
+    .solucoes > .solucoes__contato {
+      grid-row: auto;
+      grid-template-rows: none;
+    }
+
+    .solucoes > li > :global(.sol) {
+      grid-row: auto;
+      grid-template-columns: 24px minmax(0, 1fr) 20px;
+      grid-template-rows: none;
+      align-items: start;
+      gap: 4px 14px;
+      padding: 18px 16px;
+    }
+
+    .solucoes > li > :global(.sol) :global(.sol__icone) {
+      grid-row: span 2;
+      width: 24px;
+      height: 24px;
+      margin: 2px 0 0;
+    }
+
+    .solucoes > li > :global(.sol) :global(.sol__titulo) {
+      grid-column: 2;
+      font-size: var(--t-md);
+    }
+
+    .solucoes > li > :global(.sol) :global(.sol__resumo) {
+      grid-column: 2 / -1;
+    }
+
+    /* "Ver a solução" vira só a seta, à direita do título. */
+    .solucoes > li > :global(.sol) :global(.sol__ver) {
+      grid-column: 3;
+      grid-row: 1;
+      gap: 0;
+      margin: 2px 0 0;
+      font-size: 0;
+    }
+
+    .solucoes__contato {
+      padding: 18px 16px;
     }
   }
 
@@ -451,6 +527,23 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
   @media (max-width: 600px) {
     .resultado__passos {
       grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    /* Número ao lado do título, não acima: cada passo fica com metade da altura. */
+    .resultado__passos li {
+      grid-template-columns: 2.25rem 1fr;
+      gap: 0;
+      padding: 14px 0 16px;
+    }
+
+    .resultado__passos li + li {
+      border-top-width: 1px;
+      border-top-color: var(--linha-forte);
+    }
+
+    .resultado__passos .numeral {
+      padding-top: 2px;
     }
   }
 
@@ -461,9 +554,25 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
     gap: 16px;
   }
 
+  /* Tablet e celular: carrossel com rolagem lateral; o próximo card aparece pela metade
+     para mostrar que há mais. Sem JavaScript: é só uma área com rolagem horizontal. */
   @media (max-width: 1080px) {
     .destaques {
-      grid-template-columns: 1fr;
+      grid-template-columns: none;
+      grid-auto-columns: min(86%, 400px);
+      grid-auto-flow: column;
+      gap: 12px;
+      margin-inline: calc(-1 * var(--gutter));
+      padding: 4px var(--gutter) 12px;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--gutter);
+      scrollbar-width: thin;
+    }
+
+    .destaques > :global(*) {
+      scroll-snap-align: start;
     }
   }
 
@@ -507,6 +616,23 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
   @media (max-width: 520px) {
     .principios {
       grid-template-columns: 1fr;
+    }
+
+    /* Número ao lado do título e menos respiro: oito princípios em pouco mais de uma tela. */
+    .principios li {
+      grid-template-columns: 2.25rem 1fr;
+      gap: 2px 0;
+      padding: 14px 0 16px;
+    }
+
+    .principios__numero {
+      grid-row: span 2;
+      padding-top: 2px;
+    }
+
+    .principios h3,
+    .principios p {
+      grid-column: 2;
     }
   }
 </style>
