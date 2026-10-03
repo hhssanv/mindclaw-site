@@ -62,12 +62,12 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
           <source
             type="image/avif"
             srcset="/marca/isotipo-480.avif 480w, /marca/isotipo-960.avif 960w"
-            sizes="(max-width: 860px) 128px, 460px"
+            sizes="(max-width: 860px) 128px, 540px"
           />
           <img
             src="/marca/isotipo-480.webp"
             srcset="/marca/isotipo-480.webp 480w, /marca/isotipo-960.webp 960w"
-            sizes="(max-width: 860px) 128px, 460px"
+            sizes="(max-width: 860px) 128px, 540px"
             width="480"
             height="480"
             alt=""
@@ -287,8 +287,9 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
     color: var(--acento);
   }
 
-  /* O desenho do isotipo ocupa só metade da largura do arquivo: a escala aumenta a marca.
-     A largura cresce com a tela só até o ponto em que o título continua em três linhas. */
+  /* O desenho do isotipo ocupa só metade da largura do arquivo: a escala (1,4) aumenta a marca
+     sem mudar a coluna, que cresce com a tela só até o ponto em que o título continua em três
+     linhas. Em 1366 px o desenho fica com cerca de 254 × 459 px. */
   .hero-home__marca {
     position: relative;
     width: clamp(200px, 64vw - 452px, 380px);
@@ -300,12 +301,13 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
     inset: 8% 4% 2%;
     border-radius: 50%;
     background: radial-gradient(closest-side, color-mix(in srgb, var(--marca-vermelho) 12%, transparent), transparent);
+    transform: scale(1.4);
   }
 
   .hero-home__marca img {
     position: relative;
     width: 100%;
-    transform: scale(1.2);
+    transform: scale(1.4);
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -328,6 +330,7 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
 
     .hero-home__marca::before {
       inset: 12% 8% 6%;
+      transform: none;
     }
 
     .hero-home__marca img {
