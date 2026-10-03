@@ -324,22 +324,14 @@ const diferencaAnual = n.previsaoAnual / n.orcamentoAnual - 1;
 </script>
 
 <style>
+  /* Cores das séries vêm dos tokens (--serie-*), com os valores de cada tema. */
   .painel {
-    --serie-realizado: #da0b29;
-    --serie-orcamento: #3d6bb3;
     margin: 0;
     border: 1px solid var(--linha);
     border-radius: var(--raio-3);
     background: var(--fundo);
     box-shadow: var(--sombra);
     overflow: hidden;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .painel {
-      --serie-realizado: #ef3f56;
-      --serie-orcamento: #5b8ad8;
-    }
   }
 
   .painel__barra {

@@ -99,10 +99,30 @@
   --raio-3: 14px;
   --sombra: 0 1px 2px rgb(20 20 20 / 0.04), 0 8px 24px rgb(20 20 20 / 0.06);
   --transicao: 160ms cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* Destaque em degradê do título da home */
+  --destaque-inicio: #da0b29;
+  --destaque-fim: #782747;
+
+  /* Séries dos gráficos (paletas conferidas para daltonismo em cada tema) */
+  --serie-realizado: #da0b29;
+  --serie-orcamento: #3d6bb3;
+  --serie-necessidade: #3d6bb3;
+  --serie-falta: #b42318;
+}
+
+/*
+ * Tema escuro. Por padrão segue o sistema; o botão do cabeçalho grava a escolha em
+ * <html data-tema="claro|escuro">. Os dois blocos abaixo têm os MESMOS valores: o primeiro
+ * vale no automático, o segundo quando a pessoa escolhe o escuro. Os testes comparam o
+ * resultado dos dois, então qualquer diferença entre eles quebra o build.
+ */
+:root[data-tema='claro'] {
+  color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-tema='claro']) {
     --fundo: #0d0d0f;
     --superficie: #17171a;
     --superficie-acento: #2b1218;
@@ -130,7 +150,54 @@
     --ok-fundo: #0c2619;
 
     --sombra: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.25);
+
+    --destaque-inicio: #ff5468;
+    --destaque-fim: #e0698a;
+
+    --serie-realizado: #ef3f56;
+    --serie-orcamento: #5b8ad8;
+    --serie-necessidade: #5b8ad8;
+    --serie-falta: #ec5f55;
   }
+}
+
+:root[data-tema='escuro'] {
+  color-scheme: dark;
+  --fundo: #0d0d0f;
+  --superficie: #17171a;
+  --superficie-acento: #2b1218;
+  --linha: #28282e;
+  --linha-forte: #3c3c44;
+
+  --tinta: #f2f2f4;
+  --tinta-media: #c4c4cb;
+  --tinta-fraca: #a0a0ab;
+
+  --acento: #ff5468;
+  --acento-forte: #ff8593;
+  --botao: #da0b29;
+  --botao-hover: #ef1a39;
+
+  --faixa: #151518;
+  --faixa-elevada: #1f1f23;
+  --faixa-linha: #33333a;
+
+  --alerta: #fd8a80;
+  --alerta-fundo: #2c1412;
+  --atencao: #fdc04a;
+  --atencao-fundo: #2a1f0a;
+  --ok: #5fd99a;
+  --ok-fundo: #0c2619;
+
+  --sombra: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.25);
+
+  --destaque-inicio: #ff5468;
+  --destaque-fim: #e0698a;
+
+  --serie-realizado: #ef3f56;
+  --serie-orcamento: #5b8ad8;
+  --serie-necessidade: #5b8ad8;
+  --serie-falta: #ec5f55;
 }
 
 /* Dentro de uma faixa escura, os tokens de texto e linha se remapeiam. */

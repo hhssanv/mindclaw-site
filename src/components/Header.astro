@@ -13,6 +13,19 @@ const ativo = (href: string) => caminho === href || caminho.startsWith(href);
       <Logo id="topo" class="topo__logo" />
     </a>
 
+    <!-- Tema claro/escuro: só aparece com JavaScript; sem ele, o site segue o tema do sistema. -->
+    <button
+      class="topo__tema"
+      type="button"
+      aria-pressed="false"
+      title="Alternar entre tema claro e escuro"
+      data-tema-botao
+    >
+      <Icone nome="lua" class="topo__tema-lua" />
+      <Icone nome="sol" class="topo__tema-sol" />
+      <span class="visualmente-oculto">Tema escuro</span>
+    </button>
+
     <!-- Só aparece no celular com JavaScript; sem ele, a navegação fica visível abaixo do logo. -->
     <button class="topo__menu" type="button" aria-expanded="false" aria-controls="menu-principal" data-menu-botao>
       <span class="topo__menu-icone" aria-hidden="true">
@@ -56,6 +69,43 @@ const ativo = (href: string) => caminho === href || caminho.startsWith(href);
 </header>
 
 <script>
+  // Tema: o padrão segue o sistema. Escolher o tema diferente do sistema grava a escolha;
+  // voltar ao tema do sistema apaga a escolha e o site volta ao automático.
+  const raiz = document.documentElement;
+  const botaoTema = document.querySelector<HTMLButtonElement>('[data-tema-botao]');
+  const sistemaEscuro = window.matchMedia('(prefers-color-scheme: dark)');
+  const temaAtual = () => raiz.dataset.tema ?? (sistemaEscuro.matches ? 'escuro' : 'claro');
+
+  const refletirTema = () => {
+    const escuro = temaAtual() === 'escuro';
+    botaoTema?.setAttribute('aria-pressed', String(escuro));
+    for (const meta of document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')) {
+      meta.content = escuro ? '#0d0d0f' : '#ffffff';
+    }
+  };
+
+  const trocarTema = () => {
+    const novo = temaAtual() === 'escuro' ? 'claro' : 'escuro';
+    const doSistema = sistemaEscuro.matches ? 'escuro' : 'claro';
+    if (novo === doSistema) delete raiz.dataset.tema;
+    else raiz.dataset.tema = novo;
+    try {
+      if (novo === doSistema) localStorage.removeItem('tema');
+      else localStorage.setItem('tema', novo);
+    } catch {
+      // Sem armazenamento (aba anônima bloqueada etc.): o tema vale só nesta página.
+    }
+    refletirTema();
+  };
+
+  botaoTema?.addEventListener('click', () => {
+    const suave = 'startViewTransition' in document && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (suave) document.startViewTransition(trocarTema);
+    else trocarTema();
+  });
+  sistemaEscuro.addEventListener('change', refletirTema);
+  refletirTema();
+
   // Menu do celular: botão de abrir e fechar (padrão disclosure), Esc fecha e devolve o foco,
   // o resto da página fica inerte enquanto o menu cobre a tela, e voltar ao desktop fecha.
   const topo = document.querySelector<HTMLElement>('[data-topo]');
@@ -111,8 +161,8 @@ const ativo = (href: string) => caminho === href || caminho.startsWith(href);
 
   .topo__interno {
     display: grid;
-    grid-template-columns: auto 1fr auto;
-    grid-template-areas: 'marca nav contato';
+    grid-template-columns: auto 1fr auto auto;
+    grid-template-areas: 'marca nav tema contato';
     align-items: center;
     gap: 8px 24px;
     min-height: 80px;
@@ -187,8 +237,56 @@ const ativo = (href: string) => caminho === href || caminho.startsWith(href);
 
   .topo__menu,
   .topo__whatsapp,
-  .topo__email {
+  .topo__email,
+  .topo__tema {
     display: none;
+  }
+
+  /* Botão de tema: lua no tema claro (vai para o escuro), sol no escuro (volta ao claro). */
+  :global(.js) .topo__tema {
+    grid-area: tema;
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--linha);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--tinta-media);
+    cursor: pointer;
+    transition: color var(--transicao), border-color var(--transicao), background-color var(--transicao);
+  }
+
+  :global(.js) .topo__tema:hover {
+    border-color: var(--linha-forte);
+    background: var(--superficie);
+    color: var(--tinta);
+  }
+
+  .topo__tema :global(svg) {
+    grid-area: 1 / 1;
+    width: 20px;
+    height: 20px;
+  }
+
+  .topo__tema :global(.topo__tema-sol),
+  :global(:root[data-tema='escuro']) .topo__tema :global(.topo__tema-lua) {
+    display: none;
+  }
+
+  :global(:root[data-tema='escuro']) .topo__tema :global(.topo__tema-sol) {
+    display: block;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-tema='claro'])) .topo__tema :global(.topo__tema-lua) {
+      display: none;
+    }
+
+    :global(:root:not([data-tema='claro'])) .topo__tema :global(.topo__tema-sol) {
+      display: block;
+    }
   }
 
   @media (max-width: 1023px) {
@@ -230,7 +328,9 @@ const ativo = (href: string) => caminho === href || caminho.startsWith(href);
   /* Celular com JavaScript: botão Menu e painel que cobre a tela abaixo do cabeçalho. */
   @media (max-width: 720px) {
     :global(.js) .topo__interno {
-      grid-template-areas: 'marca menu';
+      grid-template-columns: 1fr auto auto;
+      grid-template-areas: 'marca tema menu';
+      column-gap: 6px;
     }
 
     :global(.js) .topo__menu {

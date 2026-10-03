@@ -167,9 +167,8 @@ const rotulo = (i: number) => {
 </script>
 
 <style>
+  /* Cores das séries vêm dos tokens (--serie-*), com os valores de cada tema. */
   .capacidade {
-    --serie-necessidade: #3d6bb3;
-    --serie-falta: #b42318;
     display: grid;
     gap: 12px;
     margin: 0;
@@ -179,12 +178,6 @@ const rotulo = (i: number) => {
     background: var(--fundo);
   }
 
-  @media (prefers-color-scheme: dark) {
-    .capacidade {
-      --serie-necessidade: #5b8ad8;
-      --serie-falta: #ec5f55;
-    }
-  }
 
   .capacidade__topo {
     display: flex;

@@ -187,6 +187,105 @@ describe('menu do celular', () => {
   });
 });
 
+describe('tema claro e escuro', () => {
+  const tema = (pagina) => pagina.evaluate(() => document.documentElement.dataset.tema ?? null);
+  const salvo = (pagina) => pagina.evaluate(() => localStorage.getItem('tema'));
+  const fundo = (pagina) => pagina.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  const BRANCO = 'rgb(255, 255, 255)';
+  const ESCURO = 'rgb(13, 13, 15)';
+
+  test('no sistema claro: escolhe o escuro, mantém ao recarregar e volta ao automático', async () => {
+    const contexto = await amb.navegador.newContext({ colorScheme: 'light', reducedMotion: 'reduce' });
+    const pagina = await contexto.newPage();
+    await pagina.goto(`${amb.base}/`);
+    assert.equal(await fundo(pagina), BRANCO);
+    assert.equal(await pagina.getAttribute('[data-tema-botao]', 'aria-pressed'), 'false');
+
+    await pagina.click('[data-tema-botao]');
+    assert.equal(await tema(pagina), 'escuro');
+    assert.equal(await salvo(pagina), 'escuro');
+    assert.equal(await fundo(pagina), ESCURO);
+    assert.equal(await pagina.getAttribute('[data-tema-botao]', 'aria-pressed'), 'true');
+    assert.equal(await pagina.getAttribute('meta[name="theme-color"]', 'content'), '#0d0d0f');
+
+    await pagina.goto(`${amb.base}/sobre/`);
+    assert.equal(await tema(pagina), 'escuro', 'a escolha vale nas outras páginas');
+    assert.equal(await fundo(pagina), ESCURO);
+
+    await pagina.click('[data-tema-botao]');
+    assert.equal(await tema(pagina), null, 'voltar ao tema do sistema apaga a escolha');
+    assert.equal(await salvo(pagina), null);
+    assert.equal(await fundo(pagina), BRANCO);
+    await contexto.close();
+  });
+
+  test('no sistema escuro: o botão leva ao claro', async () => {
+    const contexto = await amb.navegador.newContext({ colorScheme: 'dark', reducedMotion: 'reduce' });
+    const pagina = await contexto.newPage();
+    await pagina.goto(`${amb.base}/`);
+    assert.equal(await fundo(pagina), ESCURO);
+    assert.equal(await pagina.getAttribute('[data-tema-botao]', 'aria-pressed'), 'true');
+    await pagina.click('[data-tema-botao]');
+    assert.equal(await tema(pagina), 'claro');
+    assert.equal(await fundo(pagina), BRANCO);
+    await contexto.close();
+  });
+
+  test('no celular o botão fica ao lado do Menu', async () => {
+    const pagina = await amb.navegador.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+    await pagina.goto(`${amb.base}/`);
+    const botao = await pagina.locator('[data-tema-botao]').boundingBox();
+    const menu = await pagina.locator('[data-menu-botao]').boundingBox();
+    assert.ok(botao && menu && botao.x + botao.width <= menu.x && Math.abs(botao.y + botao.height / 2 - (menu.y + menu.height / 2)) < 4);
+    await pagina.close();
+  });
+
+  test('sem JavaScript o botão não aparece e o site segue o sistema', async () => {
+    const contexto = await amb.navegador.newContext({ javaScriptEnabled: false, colorScheme: 'dark' });
+    const pagina = await contexto.newPage();
+    await pagina.goto(`${amb.base}/`);
+    assert.equal(await pagina.isVisible('[data-tema-botao]'), false);
+    assert.equal(await fundo(pagina), ESCURO);
+    await contexto.close();
+  });
+
+  // O tema escolhido usa um bloco de tokens próprio (tokens.css). Este teste garante que ele
+  // dá exatamente o mesmo resultado que o tema do sistema, elemento por elemento.
+  const cores = (pagina) =>
+    pagina.evaluate(() =>
+      [...document.querySelectorAll('body *')].map((el) => {
+        const c = getComputedStyle(el);
+        return [c.color, c.backgroundColor, c.backgroundImage, c.borderTopColor, c.fill, c.stroke].join('|');
+      }),
+    );
+
+  for (const [escolhido, sistemaOposto] of [
+    ['escuro', 'light'],
+    ['claro', 'dark'],
+  ]) {
+    test(`tema ${escolhido} escolhido é idêntico ao tema ${escolhido} do sistema`, async () => {
+      const doSistema = await amb.navegador.newContext({
+        colorScheme: escolhido === 'escuro' ? 'dark' : 'light',
+        reducedMotion: 'reduce',
+      });
+      const forcado = await amb.navegador.newContext({ colorScheme: sistemaOposto, reducedMotion: 'reduce' });
+      await forcado.addInitScript((t) => localStorage.setItem('tema', t), escolhido);
+      const a = await doSistema.newPage();
+      const b = await forcado.newPage();
+      for (const caminho of ['/', '/solucoes/dados-bi/', '/solucoes/capacidade-forecast/', '/sobre/', '/contato/']) {
+        await a.goto(amb.base + caminho);
+        await b.goto(amb.base + caminho);
+        const [ca, cb] = [await cores(a), await cores(b)];
+        assert.equal(ca.length, cb.length);
+        const diferentes = ca.flatMap((v, i) => (v === cb[i] ? [] : [i]));
+        assert.deepEqual(diferentes.slice(0, 5), [], `${caminho}: ${diferentes.length} elementos com cor diferente`);
+      }
+      await doSistema.close();
+      await forcado.close();
+    });
+  }
+});
+
 describe('proporção e alinhamento do hero', () => {
   // O desenho do isotipo ocupa 55% da largura do arquivo (22,5% de sobra de cada lado).
   const medir = (pagina) =>

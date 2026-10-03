@@ -229,16 +229,10 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
   }
 
   .hero-home__destaque {
-    background: linear-gradient(90deg, #da0b29, #782747);
+    background: linear-gradient(90deg, var(--destaque-inicio), var(--destaque-fim));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .hero-home__destaque {
-      background-image: linear-gradient(90deg, #ff5468, #e0698a);
-    }
   }
 
   .hero-home__lead {

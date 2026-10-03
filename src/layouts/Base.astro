@@ -24,8 +24,6 @@ const imagem = urlAbsoluta(ogImage);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Marca que o JavaScript está ligado antes do primeiro desenho: o menu do celular depende disso. -->
-    <script is:inline>document.documentElement.classList.add('js');</script>
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonica} />
@@ -34,6 +32,25 @@ const imagem = urlAbsoluta(ogImage);
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0d0d0f" media="(prefers-color-scheme: dark)" />
+    <!--
+      Antes do primeiro desenho: marca que o JavaScript está ligado (o menu do celular depende
+      disso) e aplica o tema escolhido no botão do cabeçalho, para a página não piscar no tema errado.
+    -->
+    <script is:inline>
+      (function () {
+        var raiz = document.documentElement;
+        raiz.classList.add('js');
+        try {
+          var tema = localStorage.getItem('tema');
+          if (tema === 'claro' || tema === 'escuro') {
+            raiz.setAttribute('data-tema', tema);
+            document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) {
+              m.setAttribute('content', tema === 'escuro' ? '#0d0d0f' : '#ffffff');
+            });
+          }
+        } catch (e) {}
+      })();
+    </script>
 
     <link rel="preload" href="/fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/saira-var.woff2" as="font" type="font/woff2" crossorigin />
