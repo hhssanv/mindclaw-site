@@ -22,8 +22,8 @@ const areas = (await solucoes()).map((s) => s.data.titulo);
   <section class="perfil" aria-labelledby="titulo-sobre">
     <div class="container perfil__interno">
       <div class="perfil__texto entrada">
-        <p class="eyebrow eyebrow--traco">Sobre</p>
-        <h1 id="titulo-sobre">{site.pessoa}</h1>
+        <p class="eyebrow eyebrow--traco perfil__eyebrow">Sobre</p>
+        <h1 id="titulo-sobre" class="perfil__nome">{site.pessoa}</h1>
         <p class="perfil__cargo">
           {site.trajetoria}{site.localizacao && <span> · {site.localizacao}</span>}
         </p>
@@ -47,7 +47,7 @@ const areas = (await solucoes()).map((s) => s.data.titulo);
         </div>
         {
           site.linkedin && (
-            <a class="link-seta" href={site.linkedin} rel="me noopener">
+            <a class="link-seta perfil__link" href={site.linkedin} rel="me noopener">
               Perfil no LinkedIn
               <Icone nome="seta" />
             </a>
@@ -84,7 +84,10 @@ const areas = (await solucoes()).map((s) => s.data.titulo);
             <div class="stack__area">
               <dt>{area.area}</dt>
               {area.itens.map((item) => (
-                <dd>{item}</dd>
+                <dd>
+                  {/* Palavras com hífen (e-mails) não quebram no hífen. */}
+                  {item.split(/(\S+-\S+)/).map((parte, i) => (i % 2 ? <span class="sem-quebra">{parte}</span> : parte))}
+                </dd>
               ))}
             </div>
           ))
@@ -176,18 +179,73 @@ const areas = (await solucoes()).map((s) => s.data.titulo);
     border-radius: var(--raio-3);
   }
 
-  @media (max-width: 860px) {
+  /* Tablet: mesma composição do desktop, com a foto no alto, ao lado do nome. */
+  @media (max-width: 1099px) {
     .perfil__interno {
-      grid-template-columns: 1fr;
+      align-items: start;
     }
 
     .perfil__foto {
-      order: -1;
-      width: 160px;
+      margin-top: 8px;
+    }
+  }
+
+  /*
+   * Celular: foto pequena ao lado do rótulo e do nome, como um cartão de perfil; o texto vem
+   * abaixo, na largura toda. Os filhos de .perfil__texto entram direto na grade.
+   */
+  @media (max-width: 699px) {
+    .perfil__interno {
+      grid-template-columns: auto minmax(0, 1fr);
+      grid-template-areas:
+        'foto eyebrow'
+        'foto nome'
+        'cargo cargo'
+        'prosa prosa'
+        'link link';
+      gap: 0 22px;
+      align-items: start;
+    }
+
+    .perfil__texto {
+      display: contents;
+    }
+
+    .perfil__foto {
+      grid-area: foto;
+      width: 96px;
+      margin: 0 0 0 6px;
     }
 
     .perfil__foto::before {
-      inset: 8px 8px -8px -8px;
+      inset: 6px 6px -6px -6px;
+    }
+
+    .perfil__eyebrow {
+      grid-area: eyebrow;
+      align-self: end;
+      margin-bottom: 8px;
+    }
+
+    .perfil__nome {
+      grid-area: nome;
+      font-size: var(--t-2xl);
+      line-height: 1.05;
+    }
+
+    .perfil__cargo {
+      grid-area: cargo;
+      margin-top: 28px;
+    }
+
+    .perfil__prosa {
+      grid-area: prosa;
+      margin-top: 16px;
+    }
+
+    .perfil__link {
+      grid-area: link;
+      margin-top: 20px;
     }
   }
 
@@ -221,6 +279,10 @@ const areas = (await solucoes()).map((s) => s.data.titulo);
     text-transform: uppercase;
   }
 
+  .sem-quebra {
+    white-space: nowrap;
+  }
+
   .stack dd {
     margin: 0;
     color: var(--tinta-media);
@@ -237,6 +299,17 @@ const areas = (await solucoes()).map((s) => s.data.titulo);
   @media (max-width: 560px) {
     .stack {
       grid-template-columns: 1fr;
+    }
+
+    /* Itens de cada área em duas colunas: a lista fica com metade da altura. */
+    .stack__area {
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 16px;
+      padding: 20px;
+    }
+
+    .stack dt {
+      grid-column: 1 / -1;
     }
   }
 

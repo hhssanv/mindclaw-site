@@ -223,9 +223,60 @@ const foraDoEscopo = [
     }
   }
 
+  /* Celular: ícone ao lado do título e "Ver a solução" vira só a seta, como na home.
+     O card inteiro continua sendo o link. */
   @media (max-width: 560px) {
     .grade {
       grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .grade > li {
+      grid-row: auto;
+      grid-template-rows: none;
+    }
+
+    .grade > li > :global(.sol) {
+      grid-row: auto;
+      grid-template-columns: 24px minmax(0, 1fr) 20px;
+      grid-template-rows: none;
+      align-items: start;
+      gap: 6px 14px;
+      padding: 20px 18px;
+    }
+
+    .grade > li > :global(.sol) :global(.sol__icone) {
+      grid-row: span 2;
+      width: 24px;
+      height: 24px;
+      margin: 2px 0 0;
+    }
+
+    .grade > li > :global(.sol) :global(.sol__titulo) {
+      grid-column: 2;
+      font-size: var(--t-md);
+    }
+
+    .grade > li > :global(.sol) :global(.sol__resumo) {
+      grid-column: 2 / -1;
+    }
+
+    .grade > li > :global(.sol) :global(.sol__ganhos) {
+      grid-column: 2 / -1;
+      margin-top: 4px;
+      padding-top: 12px;
+    }
+
+    .grade > li > :global(.sol) :global(.sol__ver) {
+      grid-column: 3;
+      grid-row: 1;
+      gap: 0;
+      margin: 2px 0 0;
+      font-size: 0;
+    }
+
+    .grade > .grade__contato {
+      padding: 20px 18px;
     }
   }
 

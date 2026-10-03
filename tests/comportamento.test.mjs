@@ -187,6 +187,62 @@ describe('menu do celular', () => {
   });
 });
 
+describe('proporção e alinhamento do hero', () => {
+  // O desenho do isotipo ocupa 55% da largura do arquivo (22,5% de sobra de cada lado).
+  const medir = (pagina) =>
+    pagina.evaluate(() => {
+      const caixa = (sel) => document.querySelector(sel).getBoundingClientRect();
+      const img = caixa('.hero-home__marca img');
+      return {
+        desenhoEsq: img.left + img.width * 0.225,
+        desenhoLarg: img.width * 0.55,
+        desenhoCentroY: img.top + img.height / 2,
+        imgEsq: img.left,
+        texto: caixa('.hero-home__titulo').left,
+        rotulo: caixa('.hero-home__eyebrow'),
+        lead: caixa('.hero-home__lead'),
+      };
+    });
+
+  for (const largura of [390, 500]) {
+    test(`celular (${largura}px): marca alinhada à margem do texto e ao lado do rótulo`, async () => {
+      const pagina = await amb.navegador.newPage({ viewport: { width: largura, height: 844 } });
+      await pagina.goto(`${amb.base}/`);
+      const m = await medir(pagina);
+      assert.ok(Math.abs(m.desenhoEsq - m.texto) <= 3, `desenho começa em ${m.desenhoEsq.toFixed(1)}, texto em ${m.texto}`);
+      const centroRotulo = m.rotulo.top + m.rotulo.height / 2;
+      assert.ok(Math.abs(m.desenhoCentroY - centroRotulo) <= 24, 'marca na mesma linha do rótulo');
+      assert.ok(m.rotulo.height <= 48, `rótulo em até duas linhas (${m.rotulo.height}px)`);
+      await pagina.close();
+    });
+  }
+
+  test('tablet (820px): isotipo à direita do texto, sem invadir a coluna', async () => {
+    const pagina = await amb.navegador.newPage({ viewport: { width: 820, height: 1000 } });
+    await pagina.goto(`${amb.base}/`);
+    const m = await medir(pagina);
+    assert.ok(m.imgEsq >= m.lead.right, `isotipo começa em ${m.imgEsq}, texto termina em ${m.lead.right}`);
+    assert.ok(m.desenhoLarg >= 120, `desenho com ${m.desenhoLarg.toFixed(0)}px de largura`);
+    await pagina.close();
+  });
+
+  // 293px é a largura do desenho inteiro (óculos incluídos); a parte vermelha, medida no
+  // exemplo enviado, fica com cerca de 254 × 459 px.
+  test('desktop (1366px): isotipo no tamanho combinado (desenho com cerca de 293px)', async () => {
+    const pagina = await amb.navegador.newPage({ viewport: { width: 1366, height: 900 } });
+    await pagina.goto(`${amb.base}/`);
+    await pagina.waitForTimeout(1200); // animação de entrada
+    const m = await medir(pagina);
+    assert.ok(Math.abs(m.desenhoLarg - 293) <= 10, `desenho com ${m.desenhoLarg.toFixed(0)}px`);
+    const linhas = await pagina.evaluate(() => {
+      const h1 = document.querySelector('.hero-home__titulo');
+      return Math.round(h1.getBoundingClientRect().height / parseFloat(getComputedStyle(h1).lineHeight));
+    });
+    assert.equal(linhas, 3, 'título em três linhas');
+    await pagina.close();
+  });
+});
+
 describe('gráficos', () => {
   test('tooltip do painel acompanha o foco do teclado', async () => {
     const pagina = await amb.navegador.newPage({ viewport: { width: 1366, height: 900 } });

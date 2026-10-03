@@ -30,10 +30,13 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
   <section class="hero-home" aria-labelledby="titulo-home">
     <div class="container hero-home__interno">
       <div class="hero-home__texto entrada">
-        <p class="eyebrow eyebrow--traco">
-          <span><span class="hero-home__eyebrow-nome">{site.pessoa} · </span>Tecnologia, dados e automação</span>
+        <p class="eyebrow eyebrow--traco hero-home__eyebrow">
+          <span
+            ><span class="hero-home__eyebrow-nome">{site.pessoa}</span><span class="hero-home__eyebrow-sep"> · </span
+            >Tecnologia, dados e automação</span
+          >
         </p>
-        <h1 id="titulo-home">
+        <h1 id="titulo-home" class="hero-home__titulo">
           Do trabalho manual à <span class="hero-home__destaque">operação automatizada e auditável.</span>
         </h1>
         <p class="lead hero-home__lead">
@@ -62,12 +65,12 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
           <source
             type="image/avif"
             srcset="/marca/isotipo-480.avif 480w, /marca/isotipo-960.avif 960w"
-            sizes="(max-width: 860px) 128px, 540px"
+            sizes="(max-width: 699px) 72px, (max-width: 1099px) 300px, 540px"
           />
           <img
             src="/marca/isotipo-480.webp"
             srcset="/marca/isotipo-480.webp 480w, /marca/isotipo-960.webp 960w"
-            sizes="(max-width: 860px) 128px, 540px"
+            sizes="(max-width: 699px) 72px, (max-width: 1099px) 300px, 540px"
             width="480"
             height="480"
             alt=""
@@ -258,8 +261,10 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
     text-decoration: none;
   }
 
+  /* O anel da foto (4px) fica fora da imagem: a margem alinha o anel à margem do texto. */
   .hero-home__credencial picture {
     flex: none;
+    margin-left: 4px;
   }
 
   .hero-home__credencial img {
@@ -289,7 +294,7 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
 
   /* O desenho do isotipo ocupa só metade da largura do arquivo: a escala (1,4) aumenta a marca
      sem mudar a coluna, que cresce com a tela só até o ponto em que o título continua em três
-     linhas. Em 1366 px o desenho fica com cerca de 254 × 459 px. */
+     linhas. Em 1366 px a parte vermelha do desenho fica com cerca de 254 × 459 px. */
   .hero-home__marca {
     position: relative;
     width: clamp(200px, 64vw - 452px, 380px);
@@ -316,35 +321,128 @@ const titulo = `${site.nome} · Automação, dados e IA aplicada`;
     }
   }
 
-  @media (max-width: 860px) {
+  /*
+   * Tablet (700 a 1099 px): o título ocupa a largura toda e, abaixo dele, o texto, o botão e a
+   * credencial ficam à esquerda, com o isotipo grande à direita. Os filhos de .hero-home__texto
+   * entram direto na grade (display: contents) para isso.
+   */
+  @media (max-width: 1099px) {
     .hero-home__interno {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr) clamp(200px, 30vw, 300px);
+      grid-template-areas:
+        'eyebrow eyebrow'
+        'titulo titulo'
+        'lead marca'
+        'acao marca'
+        'cred marca';
+      align-items: start;
+      gap: 0 clamp(24px, 4vw, 48px);
     }
 
-    /* Celular: a marca volta, pequena, acima do texto. */
+    .hero-home__texto {
+      display: contents;
+    }
+
+    .hero-home__eyebrow {
+      grid-area: eyebrow;
+      margin-bottom: 20px;
+    }
+
+    .hero-home__titulo {
+      grid-area: titulo;
+      margin-bottom: 28px;
+    }
+
+    .hero-home__lead {
+      grid-area: lead;
+    }
+
+    .hero-home__acao {
+      grid-area: acao;
+      margin-top: 28px;
+    }
+
+    .hero-home__credencial {
+      grid-area: cred;
+      margin-top: 32px;
+    }
+
     .hero-home__marca {
-      order: -1;
-      width: 128px;
-      margin: -12px 0 12px -14px;
+      grid-area: marca;
+      align-self: center;
+      width: 100%;
+    }
+
+    .hero-home__marca::before,
+    .hero-home__marca img {
+      transform: scale(1.15);
+    }
+  }
+
+  /*
+   * Celular (até 699 px): o isotipo vira uma marca pequena ao lado do rótulo, com o desenho
+   * alinhado à margem do texto (o arquivo tem 22,5% de sobra transparente de cada lado).
+   */
+  @media (max-width: 699px) {
+    .hero-home {
+      padding-top: 40px;
+    }
+
+    .hero-home__interno {
+      grid-template-columns: auto minmax(0, 1fr);
+      grid-template-areas:
+        'marca eyebrow'
+        'titulo titulo'
+        'lead lead'
+        'acao acao'
+        'cred cred';
+      align-items: center;
+      gap: 0 14px;
+    }
+
+    .hero-home__marca {
+      width: 72px;
+      margin: 0 -16px 24px;
+      animation: none;
     }
 
     .hero-home__marca::before {
-      inset: 12% 8% 6%;
-      transform: none;
+      display: none;
     }
 
     .hero-home__marca img {
       transform: none;
     }
 
-    .hero-home__interno {
-      gap: 0;
+    .hero-home__eyebrow {
+      align-self: center;
+      margin-bottom: 24px;
+      line-height: 1.5;
     }
-  }
 
-  @media (max-width: 480px) {
-    .hero-home__eyebrow-nome {
+    .hero-home__eyebrow::before {
       display: none;
+    }
+
+    .hero-home__eyebrow-nome {
+      display: block;
+      color: var(--tinta);
+    }
+
+    .hero-home__eyebrow-sep {
+      display: none;
+    }
+
+    .hero-home__titulo {
+      margin-bottom: 20px;
+    }
+
+    .hero-home__acao {
+      margin-top: 24px;
+    }
+
+    .hero-home__credencial {
+      margin-top: 28px;
     }
   }
 

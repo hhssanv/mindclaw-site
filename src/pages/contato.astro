@@ -290,7 +290,6 @@ const areas = await solucoes();
 
   .canal__valor {
     font-weight: 600;
-    overflow-wrap: anywhere;
   }
 
   .canais__nota {
@@ -390,6 +389,24 @@ const areas = await solucoes();
 
   @media (max-width: 900px) {
     .contato__interno {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Celular: e-mail um pouco menor para caber inteiro ao lado do Copiar; nas telas mais
+     estreitas, o Copiar desce para baixo do e-mail. */
+  @media (max-width: 480px) {
+    .canal-email .canal__valor {
+      font-size: var(--t-sm);
+    }
+
+    .copiar {
+      padding: 0 12px;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .canal-email {
       grid-template-columns: 1fr;
     }
   }

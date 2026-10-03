@@ -97,7 +97,7 @@ const diferencaAnual = n.previsaoAnual / n.orcamentoAnual - 1;
   <div class="painel__barra">
     <span class="painel__janela" aria-hidden="true"><i></i><i></i><i></i></span>
     <p id="painel-titulo" class="painel__titulo">
-      <strong>{n.empresa}</strong> · Painel executivo · {n.mesReferencia}
+      <strong>{n.empresa}</strong> · Painel executivo · <span class="painel__data">{n.mesReferencia}</span>
     </p>
     <span class="painel__selo">Empresa e dados fictícios</span>
   </div>
@@ -379,6 +379,11 @@ const diferencaAnual = n.previsaoAnual / n.orcamentoAnual - 1;
 
   .painel__titulo strong {
     color: var(--tinta);
+  }
+
+  .painel__titulo strong,
+  .painel__data {
+    white-space: nowrap;
   }
 
   .painel__selo {
