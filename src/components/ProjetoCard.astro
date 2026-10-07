@@ -1,54 +1,57 @@
 ---
 import Icone from './Icone.astro';
-import { hrefSolucao, type ProjetoEntry } from '../lib/conteudo';
+import type { MapaAreas, ProjetoEntry } from '../lib/conteudo';
+import { textos, type Idioma } from '../i18n';
 
 interface Props {
+  idioma: Idioma;
   projeto: ProjetoEntry;
-  /** Rótulos curtos das áreas, por id. */
-  areas: Map<string, string>;
+  /** Rótulo curto e endereço de cada área, por id. */
+  areas: MapaAreas;
   /** Versão curta para a home: sem atuação e sem tecnologias. */
   compacto?: boolean;
   nivel?: 2 | 3;
 }
 
-const { projeto, areas, compacto = false, nivel = 3 } = Astro.props;
+const { idioma, projeto, areas, compacto = false, nivel = 3 } = Astro.props;
+const t = textos[idioma].projetoCard;
 const d = projeto.data;
 const Titulo = `h${nivel}` as 'h2' | 'h3';
 ---
 
 <article class:list={['proj', compacto && 'proj--compacto']} id={compacto ? undefined : projeto.id}>
   <div class="proj__topo">
-    <ul class="proj__areas" role="list" aria-label="Áreas">
+    <ul class="proj__areas" role="list" aria-label={t.areas}>
       {
         d.areas.map((a) => (
           <li>
-            <a class="etiqueta proj__area" href={hrefSolucao(a)}>
-              {areas.get(a) ?? a}
+            <a class="etiqueta proj__area" href={areas.get(a)!.href}>
+              {areas.get(a)!.curto}
             </a>
           </li>
         ))
       }
     </ul>
-    {d.demonstracao && <span class="proj__demo">Modelo de demonstração</span>}
+    {d.demonstracao && <span class="proj__demo">{t.demonstracao}</span>}
   </div>
 
   <Titulo class="proj__titulo">{d.titulo}</Titulo>
 
   <dl class="proj__corpo">
     <div>
-      <dt>Contexto</dt>
+      <dt>{t.contexto}</dt>
       <dd>{d.contexto}</dd>
     </div>
     {
       !compacto && (
         <div>
-          <dt>Atuação</dt>
+          <dt>{t.atuacao}</dt>
           <dd>{d.atuacao}</dd>
         </div>
       )
     }
     <div class="proj__resultado">
-      <dt>Resultado</dt>
+      <dt>{t.resultado}</dt>
       <dd>{d.resultado}</dd>
     </div>
   </dl>
@@ -64,7 +67,7 @@ const Titulo = `h${nivel}` as 'h2' | 'h3';
 
   {
     !compacto && (
-      <ul class="proj__tecnologias" role="list" aria-label="Tecnologias e métodos">
+      <ul class="proj__tecnologias" role="list" aria-label={t.tecnologias}>
         {d.tecnologias.map((t) => (
           <li>{t}</li>
         ))}

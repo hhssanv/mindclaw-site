@@ -5,8 +5,16 @@
  * o total de horas fecha, mas o pico fica descoberto e sobra gente nas pontas.
  */
 import { LARGURAS } from '../lib/grafico';
+import { textos, type Idioma } from '../i18n';
 
-const horas = ['08h', '09h', '10h', '11h', '12h', '13h', '14h', '15h', '16h', '17h', '18h', '19h'];
+interface Props {
+  idioma: Idioma;
+}
+
+const { idioma } = Astro.props;
+const t = textos[idioma].capacidade;
+const primeiraHora = 8;
+const horas = Array.from({ length: 12 }, (_, i) => t.hora(primeiraHora + i));
 const necessidade = [6, 9, 13, 15, 11, 10, 12, 14, 12, 9, 7, 5];
 const escala = 10;
 const yMax = 16;
@@ -49,24 +57,19 @@ function montar(W: number) {
 }
 
 const variantes = LARGURAS.map(montar);
-const rotulo = (i: number) => {
-  const v = necessidade[i];
-  const d = v - escala;
-  const situacao = d > 0 ? `faltam ${d}` : d < 0 ? `sobram ${-d}` : 'escala exata';
-  return `${horas[i]}: necessidade de ${v} pessoas, ${escala} escaladas, ${situacao}`;
-};
+const rotulo = (i: number) => t.horaAria(horas[i], necessidade[i], escala, t.situacao(necessidade[i] - escala));
 ---
 
 <figure class="capacidade" aria-labelledby="capacidade-titulo">
   <div class="capacidade__topo">
     <div>
-      <p class="eyebrow">Ilustração com dados fictícios</p>
-      <h3 id="capacidade-titulo">Necessidade por hora contra escala pela média</h3>
+      <p class="eyebrow">{t.eyebrow}</p>
+      <h3 id="capacidade-titulo">{t.titulo}</h3>
     </div>
-    <ul class="legenda" role="list" aria-label="Legenda">
-      <li><span class="chave chave--barra" aria-hidden="true"></span>Necessidade (forecast)</li>
-      <li><span class="chave chave--falta" aria-hidden="true"></span>Falta de cobertura</li>
-      <li><span class="chave chave--linha" aria-hidden="true"></span>Escala pela média ({escala} pessoas)</li>
+    <ul class="legenda" role="list" aria-label={textos[idioma].geral.legenda}>
+      <li><span class="chave chave--barra" aria-hidden="true"></span>{t.necessidade}</li>
+      <li><span class="chave chave--falta" aria-hidden="true"></span>{t.falta}</li>
+      <li><span class="chave chave--linha" aria-hidden="true"></span>{t.escalaMedia(escala)}</li>
     </ul>
   </div>
 
@@ -77,7 +80,12 @@ const rotulo = (i: number) => {
           <svg
             viewBox={`0 0 ${g.W} ${g.H}`}
             role="group"
-            aria-label={`Ilustração: necessidade de pessoas por hora, das 8h às 19h, contra uma escala fixa de ${escala} pessoas. ${horasDescobertas} horas ficam descobertas no pico e sobra gente no início e no fim do dia.`}
+            aria-label={t.graficoAria({
+              inicio: t.horaFrase(primeiraHora),
+              fim: t.horaFrase(primeiraHora + horas.length - 1),
+              escala,
+              descobertas: horasDescobertas,
+            })}
           >
             {[0, 5, 10, 15].map((t) => (
               <g>
@@ -107,26 +115,29 @@ const rotulo = (i: number) => {
       ))
     }
   </div>
-  <p class="capacidade__dica" aria-live="polite" data-dica-saida>
-    Passe o cursor ou navegue pelas horas com o teclado para ver os números.
-  </p>
+  <p class="capacidade__dica" aria-live="polite" data-dica-saida>{t.dica}</p>
 
   <figcaption class="capacidade__leitura">
-    A escala pela média soma {escala * horas.length} horas-pessoa e a necessidade, {totalNecessidade}: no total quase
-    fecha. Mas {horasDescobertas} horas ficam descobertas no pico (faltam {pessoasFaltando} horas-pessoa) e sobram {
-      pessoasSobrando
-    } nas pontas do dia. O forecast por hora mostra onde mover gente antes de contratar ou pagar hora extra.
+    {
+      t.leitura({
+        escalaTotal: escala * horas.length,
+        necessidade: totalNecessidade,
+        descobertas: horasDescobertas,
+        faltam: pessoasFaltando,
+        sobram: pessoasSobrando,
+      })
+    }
   </figcaption>
 
   <details class="capacidade__tabela">
-    <summary>Ver os dados em tabela</summary>
+    <summary>{t.verTabela}</summary>
     <table>
       <thead>
         <tr>
-          <th scope="col">Hora</th>
-          <th scope="col">Necessidade</th>
-          <th scope="col">Escalados</th>
-          <th scope="col">Diferença</th>
+          <th scope="col">{t.colunas.hora}</th>
+          <th scope="col">{t.colunas.necessidade}</th>
+          <th scope="col">{t.colunas.escalados}</th>
+          <th scope="col">{t.colunas.diferenca}</th>
         </tr>
       </thead>
       <tbody>
@@ -168,8 +179,8 @@ const rotulo = (i: number) => {
 
 <style>
   .capacidade {
-    --serie-necessidade: #3d6bb3;
-    --serie-falta: #b42318;
+    --serie-necessidade: var(--grafico-azul);
+    --serie-falta: var(--grafico-falta);
     display: grid;
     gap: 12px;
     margin: 0;
@@ -177,13 +188,6 @@ const rotulo = (i: number) => {
     border: 1px solid var(--linha);
     border-radius: var(--raio-3);
     background: var(--fundo);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .capacidade {
-      --serie-necessidade: #5b8ad8;
-      --serie-falta: #ec5f55;
-    }
   }
 
   .capacidade__topo {

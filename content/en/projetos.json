@@ -1,0 +1,199 @@
+[
+  {
+    "id": "central-comunicacao",
+    "ordem": 1,
+    "titulo": "AI communication hub with human approval",
+    "areas": [
+      "ia-agentes",
+      "automacao"
+    ],
+    "destaque": true,
+    "contexto": "Conversations, requests and agreements from an entire messaging channel were stuck in the chat history, with no triage, no record and no way to find the context of an old decision.",
+    "atuacao": "Messages collected into a dedicated store, contextual history, triage with filters and tags, search for tasks and pending items, AI-suggested replies and manual approval before anything is sent.",
+    "resultado": "Communication organized in a single dashboard, with context that can be found and nothing sent without human confirmation.",
+    "tecnologias": [
+      "Linux",
+      "Node.js",
+      "LLMs",
+      "Local APIs",
+      "Authentication",
+      "Logs"
+    ],
+    "link": {
+      "href": "/en/solutions/ai-agents/#titulo-arquitetura",
+      "rotulo": "See the layered architecture"
+    }
+  },
+  {
+    "id": "planejamento-capacidade",
+    "ordem": 2,
+    "titulo": "Capacity planning and schedule validation",
+    "areas": [
+      "capacidade-forecast"
+    ],
+    "destaque": true,
+    "contexto": "The operation needed to size its team in line with real demand, without relying only on gut feeling or a simple average.",
+    "atuacao": "Analysis of months of volume by day and by hour, handling of atypical days, calculation of each slot’s weight, forecasting, sizing and schedule validation.",
+    "resultado": "Planning that can be justified and repeated, with forecast, capacity and schedule kept separate and the criteria documented.",
+    "tecnologias": [
+      "Excel",
+      "Power BI",
+      "Python",
+      "Time series",
+      "Workforce management"
+    ],
+    "link": {
+      "href": "/en/solutions/capacity-forecasting/#exemplo",
+      "rotulo": "See how the problem shows up"
+    }
+  },
+  {
+    "id": "conferencia-ocr",
+    "ordem": 3,
+    "titulo": "Automatic cross-system checks with OCR",
+    "areas": [
+      "automacao",
+      "ia-agentes"
+    ],
+    "destaque": true,
+    "contexto": "Decisions and identifiers shown in different systems, with no integration between them, had to be compared quickly to catch discrepancies.",
+    "atuacao": "Screen content captured with OCR, identifiers normalized and compared against rules, and inconsistencies flagged while the work is happening.",
+    "resultado": "Faster verification and an objective layer of checking, with discrepancy types classified to cut false alarms.",
+    "tecnologias": [
+      "OCR",
+      "Python",
+      "UI automation",
+      "Business rules"
+    ]
+  },
+  {
+    "id": "horas-extras",
+    "ordem": 4,
+    "titulo": "Analysis of overtime and payroll components",
+    "areas": [
+      "auditoria-rh",
+      "dados-bi"
+    ],
+    "contexto": "The origin of a consolidated overtime total had to be explained, and the amounts then broken down by person.",
+    "atuacao": "The total rebuilt from the individual entries, each component validated and the amounts distributed by employee in order of impact.",
+    "resultado": "An aggregate number turned into an auditable analysis, traceable from the grand total to pay items and individuals.",
+    "tecnologias": [
+      "Excel",
+      "Power Query",
+      "Python",
+      "Total reconciliation"
+    ]
+  },
+  {
+    "id": "reconciliacao-pessoas",
+    "ordem": 5,
+    "titulo": "Audit and reconciliation of people databases",
+    "areas": [
+      "auditoria-rh",
+      "automacao"
+    ],
+    "contexto": "Two operational databases differed in names and in which records were present, and there was no way to confirm that everyone was on both sides.",
+    "atuacao": "A full comparison of the lists, data normalization, exact and fuzzy name matching, and an audit file as the output.",
+    "resultado": "Real differences separated from spelling variations, less manual checking and a reusable basis for future audits.",
+    "tecnologias": [
+      "Excel",
+      "Python",
+      "pandas",
+      "openpyxl",
+      "Matching rules"
+    ]
+  },
+  {
+    "id": "governanca-acessos",
+    "ordem": 6,
+    "titulo": "Access and offboarding governance",
+    "areas": [
+      "seguranca-acessos"
+    ],
+    "contexto": "Accounts and permissions needed a review to reduce unnecessary access and operational risk.",
+    "atuacao": "An inventory of users, groups, permissions and usage, identification of inactive accounts and criteria for removal and review.",
+    "resultado": "Less exposure to stale access and a more controlled offboarding process, with the repetitive steps automated.",
+    "tecnologias": [
+      "Active Directory",
+      "GPO",
+      "Scripts",
+      "Logs",
+      "Inventory"
+    ]
+  },
+  {
+    "id": "reporting-executivo",
+    "ordem": 7,
+    "titulo": "Executive reporting model",
+    "areas": [
+      "dados-bi"
+    ],
+    "demonstracao": true,
+    "contexto": "A leadership report assembled by hand every month, with numbers of untraceable origin and deviations noticed only after the month had closed.",
+    "atuacao": "An Excel model with 9 source tables, an isolated calculation engine, 16 automatic alert rules and 11 reconciliation checks, feeding 12 report pages from a single control cell.",
+    "resultado": "No number typed in by hand: changing the reference month updates the entire report, and any leadership metric can be traced back to its source table.",
+    "tecnologias": [
+      "Advanced Excel",
+      "Named ranges",
+      "Driver-based forecasting",
+      "Total reconciliation"
+    ],
+    "link": {
+      "href": "/en/solutions/data-bi/#exemplo",
+      "rotulo": "See the example dashboard"
+    }
+  },
+  {
+    "id": "radar-tecnologia",
+    "ordem": 8,
+    "titulo": "Automated radar for technical updates",
+    "areas": [
+      "ia-agentes",
+      "automacao"
+    ],
+    "contexto": "Following several technology areas by hand meant too many sources and the risk of missing relevant updates.",
+    "atuacao": "A pipeline for collection, deduplication, classification, embeddings and relevance scoring, with daily and weekly reports written by a local model.",
+    "resultado": "Scattered monitoring turned into a structured technical intelligence process, isolated and validated before running on its own.",
+    "tecnologias": [
+      "Python",
+      "SQLite",
+      "RSS and APIs",
+      "Embeddings",
+      "Local model"
+    ]
+  },
+  {
+    "id": "publicacao-git",
+    "ordem": 9,
+    "titulo": "Publishing with Git, a test environment and a custom domain",
+    "areas": [
+      "infraestrutura"
+    ],
+    "contexto": "A website had to be developed and published safely, keeping every version and with no direct changes in production.",
+    "atuacao": "A repository with branches, pull requests, a test environment, static publishing and domain setup through DNS.",
+    "resultado": "Development, validation and production kept separate, with a change history and the ability to roll back.",
+    "tecnologias": [
+      "Git",
+      "GitHub",
+      "GitHub Pages",
+      "DNS"
+    ]
+  },
+  {
+    "id": "auditoria-seo",
+    "ordem": 10,
+    "titulo": "Technical SEO, semantics and accessibility audit",
+    "areas": [
+      "infraestrutura"
+    ],
+    "contexto": "A website had to be prepared for launch with better indexing, semantic structure and technical consistency.",
+    "atuacao": "Review of headings, metadata, robots.txt, sitemap, Search Console, indexability, alt text and semantic elements.",
+    "resultado": "Lower technical indexing risk, a better structure for search engines and assistive technologies, and a reusable launch checklist.",
+    "tecnologias": [
+      "Technical SEO",
+      "Semantic HTML",
+      "Accessibility",
+      "Search Console"
+    ]
+  }
+]

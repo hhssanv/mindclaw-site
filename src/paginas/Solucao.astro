@@ -1,0 +1,385 @@
+---
+import Base from '../layouts/Base.astro';
+import SecaoTitulo from '../components/SecaoTitulo.astro';
+import Nota from '../components/Nota.astro';
+import DiagramaCamadas from '../components/DiagramaCamadas.astro';
+import ProjetoCard from '../components/ProjetoCard.astro';
+import CTAContato from '../components/CTAContato.astro';
+import NavegacaoVizinhos from '../components/NavegacaoVizinhos.astro';
+import Icone from '../components/Icone.astro';
+import PainelExemplo from '../components/PainelExemplo.astro';
+import IlustracaoCapacidade from '../components/IlustracaoCapacidade.astro';
+import { hrefSolucao, rotaSolucao, type MapaAreas, type ProjetoEntry, type SolucaoEntry } from '../lib/conteudo';
+import { jsonLdBreadcrumb, jsonLdServico } from '../lib/jsonld';
+import { linkWhatsApp, mensagemWhatsApp, assuntoDe, imagemOg } from '../lib/site';
+import { rota, textos, type Alternativas, type Idioma } from '../i18n';
+
+/** Props montadas por caminhosSolucoes() em src/lib/conteudo.ts. */
+interface Props {
+  idioma: Idioma;
+  s: SolucaoEntry;
+  relacionados: ProjetoEntry[];
+  areas: MapaAreas;
+  alternativas: Alternativas;
+  anterior?: SolucaoEntry;
+  proximo?: SolucaoEntry;
+}
+
+const { idioma, s, relacionados, areas, alternativas, anterior, proximo } = Astro.props;
+const t = textos[idioma];
+const p = t.solucao;
+const d = s.data;
+const href = hrefSolucao(idioma, s);
+const item = (x?: SolucaoEntry) => (x ? { href: hrefSolucao(idioma, x), titulo: x.data.titulo } : undefined);
+---
+
+<Base
+  idioma={idioma}
+  alternativas={alternativas}
+  title={d.seo.title}
+  description={d.seo.description}
+  ogImage={imagemOg(idioma, rotaSolucao(s))}
+  jsonLd={[
+    jsonLdServico(idioma, s),
+    jsonLdBreadcrumb([
+      { nome: t.navegacao.inicio, href: rota(idioma, 'inicio') },
+      { nome: t.navegacao.solucoes, href: rota(idioma, 'solucoes') },
+      { nome: d.titulo, href },
+    ]),
+  ]}
+>
+  <section class="hero faixa" aria-labelledby="titulo-solucao">
+    <div class="container hero__interno entrada">
+      <div class="hero__texto">
+        <nav class="eyebrow hero__trilha" aria-label={p.trilha}>
+          <a href={rota(idioma, 'solucoes')}>{t.navegacao.solucoes}</a>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">{d.curto}</span>
+        </nav>
+        <h1 id="titulo-solucao">{d.titulo}</h1>
+        <p class="hero__chamada">{d.chamada}</p>
+        <div>
+          <a
+            class="botao"
+            href={linkWhatsApp(mensagemWhatsApp(idioma, assuntoDe(d.titulo)))}
+            target="_blank"
+            rel="noopener"
+          >
+            <Icone nome="conversa" />
+            {t.geral.conversarWhatsApp}
+            <span class="visualmente-oculto">{t.geral.novaAbaWhatsApp}</span>
+          </a>
+        </div>
+      </div>
+      <div class="hero__ganhos">
+        <p class="eyebrow">{p.ganhos}</p>
+        <ul role="list">
+          {
+            d.ganhos.map((g) => (
+              <li>
+                <Icone nome="check" />
+                <span>{g}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+    <span class="hero__traco traco" aria-hidden="true"></span>
+  </section>
+  <Nota idioma={idioma} texto={t.site.notaGanho} rotulo={t.site.rotuloNotaGanho} />
+
+  <section class="secao" aria-labelledby="titulo-sinais">
+    <div class="container sinais">
+      <SecaoTitulo id="titulo-sinais" rotulo={p.sinaisRotulo} titulo={p.sinaisTitulo} />
+      <ul class="sinais__lista" role="list">
+        {d.sinais.map((sinal) => <li>{sinal}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="secao secao--superficie" aria-labelledby="titulo-entregas">
+    <div class="container">
+      <SecaoTitulo id="titulo-entregas" rotulo={p.entregasRotulo} titulo={p.entregasTitulo} />
+      <ul class:list={['entregas', d.entregas.length === 4 && 'entregas--quatro']} role="list">
+        {
+          d.entregas.map((e) => (
+            <li class="entrega">
+              <h3>{e.titulo}</h3>
+              <p>{e.texto}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="ferramentas">
+        <p class="eyebrow">{p.ferramentas}</p>
+        <ul class="ferramentas__lista" role="list">
+          {d.ferramentas.map((f) => <li class="etiqueta">{f}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  {
+    d.exemplo && (
+      <section class="secao" id="exemplo" aria-labelledby="titulo-exemplo">
+        <div class="container">
+          <SecaoTitulo id="titulo-exemplo" rotulo={p.exemploRotulo} titulo={d.exemplo.titulo} lead={d.exemplo.lead} />
+          {d.exemplo.tipo === 'painel-norvexa' ? <PainelExemplo idioma={idioma} /> : <IlustracaoCapacidade idioma={idioma} />}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    d.arquitetura && (
+      <DiagramaCamadas
+        idioma={idioma}
+        titulo={d.arquitetura.titulo}
+        lead={d.arquitetura.lead}
+        regra={d.arquitetura.regra}
+        camadas={d.arquitetura.camadas}
+      />
+    )
+  }
+
+  {
+    relacionados.length > 0 && (
+      <section class="secao" aria-labelledby="titulo-projetos">
+        <div class="container">
+          <SecaoTitulo
+            id="titulo-projetos"
+            rotulo={p.projetosRotulo}
+            titulo={p.projetosTitulo(relacionados.length)}
+            lead={p.projetosLead}
+          />
+          <div class="projetos">
+            {relacionados.map((x) => (
+              <ProjetoCard idioma={idioma} projeto={x} areas={areas} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <CTAContato
+    idioma={idioma}
+    titulo={p.ctaTitulo}
+    texto={p.ctaTexto}
+    assunto={assuntoDe(d.titulo)}
+    query={`?area=${s.id}`}
+  />
+
+  <NavegacaoVizinhos idioma={idioma} rotulo={p.outras} anterior={item(anterior)} proximo={item(proximo)} />
+</Base>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(40px, 5vw, 80px) clamp(40px, 5vw, 72px);
+  }
+
+  .hero__traco {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 3px;
+    border-radius: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__traco {
+      animation: traco 1100ms 200ms cubic-bezier(0.6, 0, 0.2, 1) both;
+    }
+  }
+
+  .hero__interno {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+    gap: 40px clamp(32px, 6vw, 96px);
+    align-items: center;
+  }
+
+  .hero__texto {
+    display: grid;
+    gap: 20px;
+  }
+
+  .hero__trilha {
+    display: flex;
+    gap: 10px;
+  }
+
+  .hero__trilha a {
+    color: var(--acento);
+    text-decoration: none;
+  }
+
+  .hero__trilha a:hover {
+    text-decoration: underline;
+  }
+
+  h1 {
+    max-width: 18ch;
+  }
+
+  .hero__chamada {
+    max-width: 58ch;
+    color: var(--tinta-media);
+    font-size: var(--t-lg);
+    line-height: 1.55;
+  }
+
+  .hero__ganhos {
+    display: grid;
+    gap: 16px;
+    padding: 26px 26px 28px;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-3);
+    background: var(--faixa-elevada);
+  }
+
+  .hero__ganhos ul {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+  }
+
+  .hero__ganhos li {
+    display: grid;
+    grid-template-columns: 18px 1fr;
+    gap: 12px;
+    color: var(--tinta);
+    font-size: var(--t-base);
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .hero__ganhos :global(svg) {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    color: var(--acento);
+  }
+
+  @media (max-width: 900px) {
+    .hero__interno {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Sinais */
+  .sinais {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 24px clamp(32px, 5vw, 72px);
+    align-items: start;
+  }
+
+  .sinais :global(.secao-titulo) {
+    margin-bottom: 0;
+  }
+
+  .sinais__lista {
+    display: grid;
+    margin: 0;
+    border-top: 1px solid var(--linha-forte);
+  }
+
+  .sinais__lista li {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--linha);
+    font-size: var(--t-md);
+    line-height: 1.5;
+  }
+
+  .sinais__lista li::before {
+    content: '';
+    width: 12px;
+    height: 2px;
+    margin-top: 0.75em;
+    background: var(--acento);
+  }
+
+  @media (max-width: 860px) {
+    .sinais {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Entregas */
+  .entregas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    gap: 16px;
+    margin: 0;
+  }
+
+  .entregas--quatro {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .entrega {
+    display: grid;
+    align-content: start;
+    gap: 8px;
+    padding: 24px;
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-2);
+    background: var(--fundo);
+  }
+
+  .entrega h3 {
+    font-size: var(--t-md);
+  }
+
+  .entrega p {
+    color: var(--tinta-media);
+    font-size: var(--t-sm);
+    line-height: 1.55;
+  }
+
+  @media (max-width: 1080px) {
+    .entregas--quatro {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 560px) {
+    .entregas--quatro {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .ferramentas {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 16px;
+    margin-top: 32px;
+  }
+
+  .ferramentas__lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+  }
+
+  .ferramentas__lista .etiqueta {
+    background: var(--fundo);
+    border: 1px solid var(--linha);
+  }
+
+  /* Projetos */
+  .projetos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr));
+    gap: 16px;
+  }
+</style>

@@ -1,8 +1,10 @@
 ---
 import Icone from './Icone.astro';
 import { linkWhatsApp, mensagemWhatsApp } from '../lib/site';
+import { rota, textos, type Idioma } from '../i18n';
 
 interface Props {
+  idioma: Idioma;
   titulo: string;
   texto: string;
   /** Assunto citado na mensagem inicial do WhatsApp (ex.: nome da solução). */
@@ -12,23 +14,24 @@ interface Props {
   id?: string;
 }
 
-const { titulo, texto, assunto, query = '', id = 'titulo-cta' } = Astro.props;
+const { idioma, titulo, texto, assunto, query = '', id = 'titulo-cta' } = Astro.props;
+const t = textos[idioma];
 ---
 
 <section class="cta faixa" aria-labelledby={id}>
   <div class="container cta__interno">
     <div>
-      <p class="eyebrow eyebrow--traco cta__rotulo">Contato</p>
+      <p class="eyebrow eyebrow--traco cta__rotulo">{t.cta.rotulo}</p>
       <h2 id={id}>{titulo}</h2>
       <p class="cta__texto">{texto}</p>
     </div>
     <div class="cta__acoes">
-      <a class="botao cta__botao" href={linkWhatsApp(mensagemWhatsApp(assunto))} target="_blank" rel="noopener">
+      <a class="botao cta__botao" href={linkWhatsApp(mensagemWhatsApp(idioma, assunto))} target="_blank" rel="noopener">
         <Icone nome="conversa" />
-        Conversar no WhatsApp
-        <span class="visualmente-oculto">(abre o WhatsApp em nova aba)</span>
+        {t.geral.conversarWhatsApp}
+        <span class="visualmente-oculto">{t.geral.novaAbaWhatsApp}</span>
       </a>
-      <a class="cta__alternativa" href={`/contato/${query}`}>Prefere e-mail? Outras formas de contato</a>
+      <a class="cta__alternativa" href={`${rota(idioma, 'contato')}${query}`}>{t.cta.alternativa}</a>
     </div>
   </div>
 </section>

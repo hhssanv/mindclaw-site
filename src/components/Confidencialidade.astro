@@ -1,44 +1,23 @@
 ---
 import SecaoTitulo from './SecaoTitulo.astro';
 import Icone from './Icone.astro';
+import { textos, type Idioma } from '../i18n';
 
 interface Props {
+  idioma: Idioma;
   id?: string;
 }
 
-const { id = 'titulo-confidencialidade' } = Astro.props;
-
-const compromissos = [
-  {
-    titulo: 'Nenhum nome de cliente',
-    texto: 'Não aparece em portfólio, projeto publicado, conversa com terceiros ou metadado de arquivo.',
-  },
-  {
-    titulo: 'Exemplos sempre fictícios',
-    texto: 'O que é mostrado em público usa dados sintéticos. Captura real não sai do projeto.',
-  },
-  {
-    titulo: 'O que é seu fica com você',
-    texto: 'Código, arquivos e credenciais ficam no seu ambiente e não são reaproveitados em outro cliente.',
-  },
-  {
-    titulo: 'Acordo antes do acesso',
-    texto: 'Um acordo de confidencialidade pode ser assinado antes de qualquer acesso a dados.',
-  },
-];
+const { idioma, id = 'titulo-confidencialidade' } = Astro.props;
+const t = textos[idioma].confidencialidade;
 ---
 
 <section class="secao secao--superficie" aria-labelledby={id}>
   <div class="container conf">
-    <SecaoTitulo
-      id={id}
-      rotulo="Confidencialidade"
-      titulo="Como o seu trabalho é tratado"
-      lead="Confidencialidade como método, não como cláusula. Os projetos deste site seguem a mesma regra aplicada a cada trabalho de cliente."
-    />
+    <SecaoTitulo id={id} rotulo={t.rotulo} titulo={t.titulo} lead={t.lead} />
     <ul class="conf__lista" role="list">
       {
-        compromissos.map((c) => (
+        t.compromissos.map((c) => (
           <li>
             <Icone nome="governanca" class="conf__icone" />
             <div>

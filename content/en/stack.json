@@ -1,0 +1,56 @@
+[
+  {
+    "id": "dados",
+    "ordem": 1,
+    "area": "Data and BI",
+    "itens": ["Advanced Excel", "Power Query", "Power BI and DAX", "Python, pandas and openpyxl", "SQL", "KPI modeling"]
+  },
+  {
+    "id": "automacao",
+    "ordem": 2,
+    "area": "Automation",
+    "itens": ["Python", "PowerShell", "VBA", "RPA and Selenium", "Scheduled jobs", "Email and file automation"]
+  },
+  {
+    "id": "ia",
+    "ordem": 3,
+    "area": "AI and knowledge",
+    "itens": ["LLMs and agents", "OCR", "RAG and embeddings", "Semantic search", "Classification and summarization", "Local models"]
+  },
+  {
+    "id": "infra",
+    "ordem": 4,
+    "area": "Infrastructure",
+    "itens": ["Windows Server", "Linux and systemd", "Active Directory and GPO", "DNS, VPN and SSH", "Backups", "Monitoring"]
+  },
+  {
+    "id": "seguranca",
+    "ordem": 5,
+    "area": "Security",
+    "itens": ["Hardening", "Firewall and web filtering", "DLP and encryption", "Endpoint", "Access reviews", "Logs and governance"]
+  },
+  {
+    "id": "redes",
+    "ordem": 6,
+    "area": "Networks",
+    "itens": ["Switches and patch panels", "Segmentation and VLANs", "MAC-based access control", "Connectivity diagnosis"]
+  },
+  {
+    "id": "versionamento",
+    "ordem": 7,
+    "area": "Development and version control",
+    "itens": ["Git and GitHub", "Branches and pull requests", "Test environment", "GitHub Pages and DNS"]
+  },
+  {
+    "id": "web",
+    "ordem": 8,
+    "area": "Technical web",
+    "itens": ["Technical SEO", "Semantic HTML", "Accessibility", "robots.txt, sitemap and Search Console"]
+  },
+  {
+    "id": "documentacao",
+    "ordem": 9,
+    "area": "Documentation and QA",
+    "itens": ["Procedures and manuals", "Audit reports", "Action plans", "Checklists and evidence", "Change control"]
+  }
+]

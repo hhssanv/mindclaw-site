@@ -1,0 +1,66 @@
+[
+  {
+    "id": "diagnostico",
+    "ordem": 1,
+    "nome": "Fixed-scope technical assessment",
+    "resultado": "You come away with a clear map of the problem, the risks and what is worth building, with timeline and scope defined before work starts.",
+    "entra": [
+      "A survey of the systems, data and processes involved",
+      "A map of dependencies and manual steps",
+      "A technical risk matrix",
+      "Prioritized recommendations, including what not to do"
+    ],
+    "naoEntra": [
+      "Implementing the recommendations",
+      "Buying or licensing software"
+    ]
+  },
+  {
+    "id": "construcao",
+    "ordem": 2,
+    "nome": "Building an automation or integration",
+    "resultado": "A manual process or a missing integration starts working, with human approval where it matters and a record of what happens.",
+    "entra": [
+      "Design of the solution and its layers",
+      "Building and testing with controlled data",
+      "Assisted rollout, with a fallback plan",
+      "Operational documentation"
+    ],
+    "naoEntra": [
+      "Changes to third-party systems without authorization",
+      "Ongoing operation after delivery (see ongoing support)"
+    ]
+  },
+  {
+    "id": "auditoria",
+    "ordem": 3,
+    "nome": "Environment audit and operational documentation",
+    "resultado": "What exists becomes known, documented and owned: systems, access, data and procedures.",
+    "entra": [
+      "An inventory of systems and access",
+      "A review of identities and permissions",
+      "Findings logged with an owner and a deadline",
+      "Documentation of critical procedures"
+    ],
+    "naoEntra": [
+      "Penetration testing",
+      "Certification audits or formal security assessments"
+    ]
+  },
+  {
+    "id": "acompanhamento",
+    "ordem": 4,
+    "nome": "Ongoing support",
+    "resultado": "What was built keeps working, evolving and documented, with someone following it closely.",
+    "entra": [
+      "Monitoring and adjustments",
+      "Incremental improvements within an agreed scope",
+      "Periodic review of access, rules and backups",
+      "Documentation updates"
+    ],
+    "naoEntra": [
+      "24/7 support",
+      "Direct support to end users"
+    ]
+  }
+]

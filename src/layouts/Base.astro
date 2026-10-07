@@ -2,9 +2,13 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { site, urlAbsoluta } from '../lib/site';
+import { site, urlAbsoluta, imagemOg } from '../lib/site';
+import { IDIOMAS, IDIOMA_PADRAO_BUSCA, idiomas, textos, type Alternativas, type Idioma } from '../i18n';
 
 interface Props {
+  idioma: Idioma;
+  /** Endereço desta página em cada idioma (hreflang, seletor de idioma e redirecionamento). */
+  alternativas: Alternativas;
   /** Título completo da aba (já no padrão definido para cada página). */
   title: string;
   description: string;
@@ -14,26 +18,95 @@ interface Props {
   noindex?: boolean;
 }
 
-const { title, description, ogImage = '/og/padrao.png', ogType = 'website', jsonLd = [], noindex = false } = Astro.props;
+const {
+  idioma,
+  alternativas,
+  title,
+  description,
+  ogImage = imagemOg(idioma),
+  ogType = 'website',
+  jsonLd = [],
+  noindex = false,
+} = Astro.props;
 const canonica = urlAbsoluta(Astro.url.pathname);
 const imagem = urlAbsoluta(ogImage);
+const outrosIdiomas = IDIOMAS.filter((i) => i !== idioma);
 ---
 
 <!doctype html>
-<html lang={site.idioma}>
+<html lang={idioma}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Marca que o JavaScript está ligado antes do primeiro desenho: o menu do celular depende disso. -->
-    <script is:inline>document.documentElement.classList.add('js');</script>
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonica} />
     {noindex && <meta name="robots" content="noindex" />}
+    {
+      !noindex && (
+        <>
+          {IDIOMAS.map((i) => (
+            <link rel="alternate" hreflang={i} href={urlAbsoluta(alternativas[i])} />
+          ))}
+          <link rel="alternate" hreflang="x-default" href={urlAbsoluta(alternativas[IDIOMA_PADRAO_BUSCA])} />
+        </>
+      )
+    }
 
     <meta name="color-scheme" content="light dark" />
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0d0d0f" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" data-cor="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0d0d0f" data-cor="#0d0d0f" media="(prefers-color-scheme: dark)" />
+
+    <!--
+      Antes do primeiro desenho: marca que o JavaScript está ligado (o menu do celular depende disso)
+      e aplica o tema escolhido no botão, se houver. Sem escolha, vale o tema do sistema, pelo CSS.
+    -->
+    <script is:inline>
+      (function () {
+        var raiz = document.documentElement;
+        raiz.classList.add('js');
+        try {
+          var tema = localStorage.getItem('tema');
+          if (tema === 'claro' || tema === 'escuro') raiz.setAttribute('data-tema', tema);
+        } catch (e) {}
+      })();
+    </script>
+
+    <!--
+      Idioma: quem chega ao site de fora (busca, link compartilhado, endereço digitado) vai para a
+      versão no idioma que escolheu no seletor ou, sem escolha, no primeiro idioma do navegador que o
+      site oferece. Navegação dentro do site nunca é redirecionada, e robôs (buscadores, testes
+      automatizados) sempre recebem a página pedida, para cada idioma ser indexado no próprio endereço.
+    -->
+    <script is:inline define:vars={{ idioma, alternativas }}>
+      (function () {
+        try {
+          if (navigator.webdriver || /bot|crawl|spider|slurp|lighthouse/i.test(navigator.userAgent)) return;
+          var destino;
+          if (idioma !== 'en' && location.pathname.indexOf('/en/') === 0) {
+            // Endereço /en/ que não existe: a página 404 em português leva à de inglês.
+            destino = alternativas.en;
+          } else {
+            if (document.referrer && new URL(document.referrer).origin === location.origin) return;
+            var preferido = null;
+            try {
+              preferido = localStorage.getItem('idioma');
+            } catch (e) {}
+            if (!alternativas[preferido]) {
+              preferido = null;
+              var lista = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language];
+              for (var i = 0; i < lista.length && !preferido; i++) {
+                var tag = String(lista[i] || '').toLowerCase();
+                preferido = tag.indexOf('pt') === 0 ? 'pt-BR' : tag.indexOf('en') === 0 ? 'en' : null;
+              }
+            }
+            if (!preferido || preferido === idioma) return;
+            destino = alternativas[preferido];
+          }
+          if (destino && destino !== location.pathname) location.replace(destino + location.search + location.hash);
+        } catch (e) {}
+      })();
+    </script>
 
     <link rel="preload" href="/fonts/inter-latin-var.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/saira-var.woff2" as="font" type="font/woff2" crossorigin />
@@ -44,7 +117,8 @@ const imagem = urlAbsoluta(ogImage);
 
     <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content={site.nome} />
-    <meta property="og:locale" content={site.locale} />
+    <meta property="og:locale" content={idiomas[idioma].locale} />
+    {outrosIdiomas.map((i) => <meta property="og:locale:alternate" content={idiomas[i].locale} />)}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonica} />
@@ -59,12 +133,12 @@ const imagem = urlAbsoluta(ogImage);
     {jsonLd.map((dados) => <script type="application/ld+json" set:html={JSON.stringify(dados)} />)}
   </head>
   <body>
-    <a class="pular-link" href="#conteudo">Pular para o conteúdo</a>
-    <Header />
+    <a class="pular-link" href="#conteudo">{textos[idioma].geral.pularConteudo}</a>
+    <Header idioma={idioma} alternativas={alternativas} />
     <main id="conteudo" tabindex="-1">
       <slot />
     </main>
-    <Footer />
+    <Footer idioma={idioma} />
   </body>
 </html>
 

@@ -1,15 +1,18 @@
 ---
 import Icone from './Icone.astro';
 import { hrefSolucao, type SolucaoEntry } from '../lib/conteudo';
+import { textos, type Idioma } from '../i18n';
 
 interface Props {
+  idioma: Idioma;
   solucao: SolucaoEntry;
   /** Mostra até três itens de "o que costuma melhorar". */
   ganhos?: boolean;
   nivel?: 2 | 3;
 }
 
-const { solucao, ganhos = false, nivel = 3 } = Astro.props;
+const { idioma, solucao, ganhos = false, nivel = 3 } = Astro.props;
+const t = textos[idioma].solucaoCard;
 const d = solucao.data;
 const Titulo = `h${nivel}` as 'h2' | 'h3';
 ---
@@ -17,12 +20,12 @@ const Titulo = `h${nivel}` as 'h2' | 'h3';
 <article class="sol">
   <Icone nome={d.icone} class="sol__icone" />
   <Titulo class="sol__titulo">
-    <a href={hrefSolucao(solucao.id)}>{d.titulo}</a>
+    <a href={hrefSolucao(idioma, solucao)}>{d.titulo}</a>
   </Titulo>
   <p class="sol__resumo">{d.resumo}</p>
   {
     ganhos && (
-      <ul class="sol__ganhos" role="list" aria-label="O que costuma melhorar">
+      <ul class="sol__ganhos" role="list" aria-label={t.ganhos}>
         {d.ganhos.slice(0, 3).map((g) => (
           <li>
             <Icone nome="check" />
@@ -33,7 +36,7 @@ const Titulo = `h${nivel}` as 'h2' | 'h3';
     )
   }
   <span class="link-seta sol__ver" aria-hidden="true">
-    Ver a solução
+    {t.ver}
     <Icone nome="seta" />
   </span>
 </article>

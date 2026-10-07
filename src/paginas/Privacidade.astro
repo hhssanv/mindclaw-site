@@ -1,0 +1,62 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../lib/site';
+import { alternativasDe, textos, type Idioma } from '../i18n';
+
+interface Props {
+  idioma: Idioma;
+}
+
+const { idioma } = Astro.props;
+const p = textos[idioma].privacidade;
+---
+
+<Base idioma={idioma} alternativas={alternativasDe('privacidade')} title={p.titulo(site.nome)} description={p.descricao}>
+  <article class="container privacidade">
+    <p class="eyebrow eyebrow--traco">{p.eyebrow}</p>
+    <h1>{p.h1}</h1>
+    <div class="prosa">
+      <p class="lead">{p.lead}</p>
+
+      {
+        p.secoes.map((secao) => (
+          <>
+            <h2>{secao.titulo}</h2>
+            <p>{secao.texto}</p>
+          </>
+        ))
+      }
+
+      <h2>{p.seusDadosTitulo}</h2>
+      <p>
+        {p.seusDadosTexto}
+        <a href={`mailto:${site.email}`}>{site.email}</a>.
+      </p>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .privacidade {
+    display: grid;
+    gap: 16px;
+    padding-block: clamp(48px, 6vw, 96px);
+  }
+
+  .prosa {
+    margin-top: 8px;
+  }
+
+  .prosa h2 {
+    margin-top: 2em;
+    font-size: var(--t-lg);
+  }
+
+  .prosa .lead {
+    color: var(--tinta-media);
+  }
+
+  .prosa a {
+    color: var(--acento);
+  }
+</style>

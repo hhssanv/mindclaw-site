@@ -6,27 +6,20 @@
  */
 import Icone from './Icone.astro';
 import { norvexa as n } from '../data/norvexa';
-import { moedaMi, pct, pctFino, variacao, num } from '../lib/formato';
+import { formato } from '../lib/formato';
 import { LARGURAS } from '../lib/grafico';
+import { textos, type Idioma } from '../i18n';
+
+interface Props {
+  idioma: Idioma;
+}
+
+const { idioma } = Astro.props;
+const t = textos[idioma].painel;
+const { moedaMi, milhoes, moeda, pct, pctFino, variacao, mesCurto, mesLongo, mesEAno } = formato(idioma);
 
 type Estado = 'ok' | 'atencao' | 'alerta';
-const rotuloEstado: Record<Estado, string> = { ok: 'No alvo', atencao: 'Atenção', alerta: 'Em risco' };
 const k = n.kpis;
-
-const kpis = [
-  { rotulo: 'Receita do mês', valor: moedaMi(k.receitaMes), nota: `${variacao(k.receitaMesVar)} sobre jul/2025`, estado: 'ok' as Estado },
-  { rotulo: 'Receita recorrente anual', valor: moedaMi(k.arr), nota: `${variacao(k.arrVar)} em 12 meses`, estado: 'ok' as Estado },
-  { rotulo: 'Margem bruta', valor: pct(k.margemBruta), nota: `meta ${pct(k.margemBrutaMeta)}`, estado: 'atencao' as Estado },
-  { rotulo: 'Churn de clientes (3 meses)', valor: pctFino(k.churn), nota: `teto ${pctFino(k.churnTeto)}`, estado: 'alerta' as Estado },
-];
-
-const atencao = [
-  { indicador: 'Margem EBITDA', atual: pct(k.margemEbitda), alvo: `meta ${pct(k.margemEbitdaMeta)}`, estado: 'alerta' as Estado },
-  { indicador: 'Churn de clientes', atual: pctFino(k.churn), alvo: `teto ${pctFino(k.churnTeto)}`, estado: 'alerta' as Estado },
-  { indicador: 'Taxa de ganho de propostas', atual: pct(k.winRate), alvo: `meta ${pct(k.winRateMeta)}`, estado: 'alerta' as Estado },
-  { indicador: 'Margem bruta', atual: pct(k.margemBruta), alvo: `meta ${pct(k.margemBrutaMeta)}`, estado: 'atencao' as Estado },
-  { indicador: 'Crescimento da receita no ano', atual: pct(k.crescimentoYtd), alvo: `meta ${pct(k.crescimentoMeta)}`, estado: 'ok' as Estado },
-];
 
 // ---------- Gráfico de linhas: realizado, previsão e orçamento ----------
 const serie = n.serie;
@@ -34,6 +27,27 @@ const yMin = 1_150_000;
 const yMax = 1_700_000;
 const ticks = [1_200_000, 1_400_000, 1_600_000];
 const iUltimoReal = serie.findLastIndex((p) => p.realizado !== null);
+const meses = serie.map((_, i) => mesCurto(i, n.ano));
+
+const kpis = [
+  {
+    rotulo: t.receitaMes,
+    valor: moedaMi(k.receitaMes),
+    nota: t.sobre(variacao(k.receitaMesVar), t.mesAno(meses[iUltimoReal], n.ano - 1)),
+    estado: 'ok' as Estado,
+  },
+  { rotulo: t.arr, valor: moedaMi(k.arr), nota: t.em12Meses(variacao(k.arrVar)), estado: 'ok' as Estado },
+  { rotulo: t.margemBruta, valor: pct(k.margemBruta), nota: t.meta(pct(k.margemBrutaMeta)), estado: 'atencao' as Estado },
+  { rotulo: t.churn3Meses, valor: pctFino(k.churn), nota: t.teto(pctFino(k.churnTeto)), estado: 'alerta' as Estado },
+];
+
+const atencao = [
+  { indicador: t.margemEbitda, atual: pct(k.margemEbitda), alvo: t.meta(pct(k.margemEbitdaMeta)), estado: 'alerta' as Estado },
+  { indicador: t.churn, atual: pctFino(k.churn), alvo: t.teto(pctFino(k.churnTeto)), estado: 'alerta' as Estado },
+  { indicador: t.taxaGanho, atual: pct(k.winRate), alvo: t.meta(pct(k.winRateMeta)), estado: 'alerta' as Estado },
+  { indicador: t.margemBruta, atual: pct(k.margemBruta), alvo: t.meta(pct(k.margemBrutaMeta)), estado: 'atencao' as Estado },
+  { indicador: t.crescimentoAno, atual: pct(k.crescimentoYtd), alvo: t.meta(pct(k.crescimentoMeta)), estado: 'ok' as Estado },
+];
 
 function montar(W: number) {
   // Rótulos diretos no fim das linhas só a partir de 600: abaixo disso a legenda basta.
@@ -72,46 +86,55 @@ function montar(W: number) {
 const variantes = LARGURAS.map(montar);
 
 const dadosTooltip = JSON.stringify(
-  serie.map((p) => ({
-    mes: p.mes,
+  serie.map((p, i) => ({
+    mes: meses[i],
     linhas: [
-      p.realizado !== null && ['realizado', 'Realizado', moedaMi(p.realizado)],
-      p.previsao !== null && ['previsao', 'Previsão', moedaMi(p.previsao)],
-      ['orcamento', 'Orçamento', moedaMi(p.orcamento)],
+      p.realizado !== null && ['realizado', t.realizado, moedaMi(p.realizado)],
+      p.previsao !== null && ['previsao', t.previsao, moedaMi(p.previsao)],
+      ['orcamento', t.orcamento, moedaMi(p.orcamento)],
     ].filter(Boolean),
   })),
 );
 
 const rotuloAria = (i: number) => {
   const p = serie[i];
-  const partes = [
-    p.realizado !== null ? `realizado ${moedaMi(p.realizado)}` : `previsão ${moedaMi(p.previsao!)}`,
-    `orçamento ${moedaMi(p.orcamento)}`,
-  ];
-  return `${p.mes}: ${partes.join(', ')}`;
+  return t.pontoAria(
+    meses[i],
+    p.realizado !== null ? moedaMi(p.realizado) : null,
+    p.previsao !== null ? moedaMi(p.previsao) : null,
+    moedaMi(p.orcamento),
+  );
 };
 const diferencaAnual = n.previsaoAnual / n.orcamentoAnual - 1;
+const ultimo = serie.length - 1;
+const ariaGrafico = t.graficoAria({
+  ano: n.ano,
+  real: t.intervalo(mesLongo(0, n.ano), mesLongo(iUltimoReal, n.ano)),
+  prev: t.intervalo(mesLongo(iUltimoReal + 1, n.ano), mesLongo(ultimo, n.ano)),
+  previsto: moedaMi(n.previsaoAnual),
+  orcado: moedaMi(n.orcamentoAnual),
+});
 ---
 
 <figure class="painel" aria-labelledby="painel-titulo">
   <div class="painel__barra">
     <span class="painel__janela" aria-hidden="true"><i></i><i></i><i></i></span>
     <p id="painel-titulo" class="painel__titulo">
-      <strong>{n.empresa}</strong> · Painel executivo · {n.mesReferencia}
+      <strong>{n.empresa}</strong> · {t.painelExecutivo} · {mesEAno(iUltimoReal, n.ano)}
     </p>
-    <span class="painel__selo">Empresa e dados fictícios</span>
+    <span class="painel__selo">{t.selo}</span>
   </div>
 
   <div class="painel__corpo">
     <dl class="painel__kpis">
       {
-        kpis.map((t) => (
+        kpis.map((kpi) => (
           <div class="kpi">
-            <dt>{t.rotulo}</dt>
-            <dd class="kpi__valor">{t.valor}</dd>
+            <dt>{kpi.rotulo}</dt>
+            <dd class="kpi__valor">{kpi.valor}</dd>
             <dd class="kpi__nota">
-              <span class:list={['estado', `estado--${t.estado}`]}>{rotuloEstado[t.estado]}</span>
-              <span>{t.nota}</span>
+              <span class:list={['estado', `estado--${kpi.estado}`]}>{t.estados[kpi.estado]}</span>
+              <span>{kpi.nota}</span>
             </dd>
           </div>
         ))
@@ -121,11 +144,11 @@ const diferencaAnual = n.previsaoAnual / n.orcamentoAnual - 1;
     <div class="painel__grade">
       <div class="painel__bloco painel__grafico" data-grafico data-pontos={dadosTooltip}>
         <div class="painel__bloco-topo">
-          <h3>Receita mensal de 2026, em US$</h3>
-          <ul class="legenda" role="list" aria-label="Legenda">
-            <li><span class="chave chave--realizado" aria-hidden="true"></span>Realizado</li>
-            <li><span class="chave chave--previsao" aria-hidden="true"></span>Previsão</li>
-            <li><span class="chave chave--orcamento" aria-hidden="true"></span>Orçamento</li>
+          <h3>{t.graficoTitulo(n.ano)}</h3>
+          <ul class="legenda" role="list" aria-label={textos[idioma].geral.legenda}>
+            <li><span class="chave chave--realizado" aria-hidden="true"></span>{t.realizado}</li>
+            <li><span class="chave chave--previsao" aria-hidden="true"></span>{t.previsao}</li>
+            <li><span class="chave chave--orcamento" aria-hidden="true"></span>{t.orcamento}</li>
           </ul>
         </div>
 
@@ -133,7 +156,7 @@ const diferencaAnual = n.previsaoAnual / n.orcamentoAnual - 1;
           {
             variantes.map((g) => (
               <div class="grafico" data-w={g.W}>
-                <svg viewBox={`0 0 ${g.W} ${g.H}`} role="group" aria-label={`Receita mensal de 2026: realizado de janeiro a julho, previsão de agosto a dezembro e orçamento do ano. Ano projetado em ${moedaMi(n.previsaoAnual)} contra ${moedaMi(n.orcamentoAnual)} no orçamento.`}>
+                <svg viewBox={`0 0 ${g.W} ${g.H}`} role="group" aria-label={ariaGrafico}>
                   <rect
                     class="grafico__previsao-fundo"
                     x={g.x(iUltimoReal)}
@@ -141,19 +164,19 @@ const diferencaAnual = n.previsaoAnual / n.orcamentoAnual - 1;
                     width={g.x(serie.length - 1) - g.x(iUltimoReal) + g.passo / 2}
                     height={g.H - g.m.t - g.m.b}
                   />
-                  <text aria-hidden="true" class="grafico__marca" x={g.x(iUltimoReal) + 6} y={g.m.t - 8}>previsão →</text>
-                  {ticks.map((t) => (
+                  <text aria-hidden="true" class="grafico__marca" x={g.x(iUltimoReal) + 6} y={g.m.t - 8}>{t.marcaPrevisao}</text>
+                  {ticks.map((tick) => (
                     <g>
-                      <line class="grafico__grade" x1={g.m.l} x2={g.W - g.m.r} y1={g.y(t)} y2={g.y(t)} />
-                      <text aria-hidden="true" class="grafico__eixo" x={g.m.l - 8} y={g.y(t) + 4} text-anchor="end">
-                        {(t / 1_000_000).toLocaleString('pt-BR', { minimumFractionDigits: 1 })} mi
+                      <line class="grafico__grade" x1={g.m.l} x2={g.W - g.m.r} y1={g.y(tick)} y2={g.y(tick)} />
+                      <text aria-hidden="true" class="grafico__eixo" x={g.m.l - 8} y={g.y(tick) + 4} text-anchor="end">
+                        {milhoes(tick, 1)}
                       </text>
                     </g>
                   ))}
-                  {serie.map((p, i) =>
+                  {meses.map((mes, i) =>
                     i % g.pularMeses === 0 ? (
                       <text aria-hidden="true" class="grafico__eixo" x={g.x(i)} y={g.H - 8} text-anchor="middle">
-                        {p.mes}
+                        {mes}
                       </text>
                     ) : null,
                   )}
@@ -165,10 +188,10 @@ const diferencaAnual = n.previsaoAnual / n.orcamentoAnual - 1;
                   {g.rotulos && (
                     <>
                       <text aria-hidden="true" class="grafico__rotulo" x={g.fimOrc[0] + 10} y={g.fimOrc[1] + 4}>
-                        Orçamento {moedaMi(serie[serie.length - 1].orcamento).replace('US$ ', '')}
+                        {t.orcamento} {milhoes(serie[ultimo].orcamento)}
                       </text>
                       <text aria-hidden="true" class="grafico__rotulo" x={g.fimPrev[0] + 10} y={g.fimPrev[1] + 4}>
-                        Previsão {moedaMi(serie[serie.length - 1].previsao!).replace('US$ ', '')}
+                        {t.previsao} {milhoes(serie[ultimo].previsao!)}
                       </text>
                     </>
                   )}
@@ -193,15 +216,13 @@ const diferencaAnual = n.previsaoAnual / n.orcamentoAnual - 1;
         </div>
         <div class="tooltip" role="status" aria-live="polite" hidden data-tooltip></div>
         <p class="painel__resumo">
-          Ano projetado: <strong>{moedaMi(n.previsaoAnual)}</strong> contra {moedaMi(n.orcamentoAnual)} no orçamento ({
-            variacao(diferencaAnual)
-          }).
+          {t.resumoAntes}<strong>{moedaMi(n.previsaoAnual)}</strong>{t.resumoDepois(moedaMi(n.orcamentoAnual), variacao(diferencaAnual))}
         </p>
       </div>
 
       <div class="painel__bloco painel__atencao">
         <div class="painel__bloco-topo">
-          <h3>Atenção da gestão</h3>
+          <h3>{t.atencaoTitulo}</h3>
         </div>
         <ul role="list">
           {
@@ -211,7 +232,7 @@ const diferencaAnual = n.previsaoAnual / n.orcamentoAnual - 1;
                 <span class="atencao__valores">
                   <strong>{a.atual}</strong> · {a.alvo}
                 </span>
-                <span class:list={['estado', `estado--${a.estado}`]}>{rotuloEstado[a.estado]}</span>
+                <span class:list={['estado', `estado--${a.estado}`]}>{t.estados[a.estado]}</span>
               </li>
             ))
           }
@@ -222,34 +243,32 @@ const diferencaAnual = n.previsaoAnual / n.orcamentoAnual - 1;
     <p class="painel__rodape">
       <span class="painel__validacao">
         <Icone nome="check" />
-        {n.checagens.passando} de {n.checagens.total} checagens de reconciliação passando
+        {t.checagens(n.checagens.passando, n.checagens.total)}
       </span>
-      <span>
-        {`${n.regras.total} regras de alerta automáticas: ${n.regras.noAlvo} no alvo, ${n.regras.atencao} em atenção, ${n.regras.acao} exigindo ação`}
-      </span>
+      <span>{t.regras(n.regras.total, n.regras.noAlvo, n.regras.atencao, n.regras.acao)}</span>
     </p>
   </div>
 
   <details class="painel__tabela">
-    <summary>Ver os dados do gráfico em tabela</summary>
+    <summary>{t.verTabela}</summary>
     <div class="painel__tabela-rolagem">
       <table>
         <thead>
           <tr>
-            <th scope="col">Mês</th>
-            <th scope="col">Realizado</th>
-            <th scope="col">Previsão</th>
-            <th scope="col">Orçamento</th>
+            <th scope="col">{t.mes}</th>
+            <th scope="col">{t.realizado}</th>
+            <th scope="col">{t.previsao}</th>
+            <th scope="col">{t.orcamento}</th>
           </tr>
         </thead>
         <tbody>
           {
-            serie.map((p) => (
+            serie.map((p, i) => (
               <tr>
-                <th scope="row">{p.mes}</th>
-                <td>{p.realizado !== null ? `US$ ${num(p.realizado)}` : '—'}</td>
-                <td>{p.previsao !== null ? `US$ ${num(p.previsao)}` : '—'}</td>
-                <td>US$ {num(p.orcamento)}</td>
+                <th scope="row">{meses[i]}</th>
+                <td>{p.realizado !== null ? moeda(p.realizado) : '—'}</td>
+                <td>{p.previsao !== null ? moeda(p.previsao) : '—'}</td>
+                <td>{moeda(p.orcamento)}</td>
               </tr>
             ))
           }
@@ -259,7 +278,7 @@ const diferencaAnual = n.previsaoAnual / n.orcamentoAnual - 1;
   </details>
 
   <figcaption class="painel__legenda">
-    {`Painel recriado a partir de um modelo de demonstração com 12 páginas de relatório e 9 tabelas de origem. A empresa ${n.empresa} não existe; clientes, pessoas e valores são sintéticos.`}
+    {t.legendaFigura(n.empresa)}
   </figcaption>
 </figure>
 
@@ -325,21 +344,14 @@ const diferencaAnual = n.previsaoAnual / n.orcamentoAnual - 1;
 
 <style>
   .painel {
-    --serie-realizado: #da0b29;
-    --serie-orcamento: #3d6bb3;
+    --serie-realizado: var(--grafico-vermelho);
+    --serie-orcamento: var(--grafico-azul);
     margin: 0;
     border: 1px solid var(--linha);
     border-radius: var(--raio-3);
     background: var(--fundo);
     box-shadow: var(--sombra);
     overflow: hidden;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .painel {
-      --serie-realizado: #ef3f56;
-      --serie-orcamento: #5b8ad8;
-    }
   }
 
   .painel__barra {
