@@ -192,7 +192,7 @@ const textos = {
     lead: 'Processos complexos, sistemas desconectados e trabalho manual transformados em automações, integrações e sistemas inteligentes, com aprovação humana onde importa e registro de tudo o que acontece.',
     verSolucoes: 'Ver as soluções',
     solucoesRotulo: 'Soluções',
-    solucoesTitulo: 'Onde dá para ajudar',
+    solucoesTitulo: 'Onde a operação costuma travar',
     solucoesLead: 'Áreas descritas pelo problema que resolvem. Muitos problemas atravessam mais de uma delas.',
     todasSolucoes: 'Todas as soluções',
     naoEncontrou: 'Não encontrou a sua área?',
@@ -201,7 +201,7 @@ const textos = {
     resultadoRotulo: 'Resultado',
     resultadoTitulo: 'Ganho medido na sua operação, não prometido no site',
     resultadoTexto:
-      'Capacity e forecast podem reduzir custo de forma expressiva em uma operação e pouco em outra. Depende do volume, da estrutura e da maturidade dos dados. Por isso nenhum percentual pronto aparece aqui.',
+      'Em qualquer área, o ganho depende do ponto de partida: quanto mais trabalho manual, retrabalho e informação desencontrada houver, maior costuma ser o resultado. Por isso nenhum percentual pronto aparece aqui.',
     medicao: [
       { titulo: 'Diagnóstico primeiro', texto: 'A situação atual é medida antes de qualquer proposta.' },
       { titulo: 'Critério antes de começar', texto: 'O que conta como sucesso fica escrito no escopo.' },
@@ -224,7 +224,7 @@ const textos = {
     descricao:
       'Capacity e forecast, folha e RH, BI, automação, IA aplicada, segurança e infraestrutura: o problema que cada área resolve e o que costuma melhorar.',
     eyebrow: 'Soluções',
-    h1: 'Onde dá para ajudar',
+    h1: 'Onde a operação costuma travar',
     lead: 'Sete áreas, descritas pelo problema que resolvem e pelo que costuma melhorar. Muitos problemas atravessam mais de uma delas, e é aí que um perfil que conecta infraestrutura, dados, automação e segurança faz diferença.',
     areasAria: 'Áreas de atuação',
     naoEncontrou: 'Não encontrou a sua área?',

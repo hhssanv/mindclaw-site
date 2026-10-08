@@ -182,7 +182,7 @@ const textos: Textos = {
     lead: 'Complex processes, disconnected systems and manual work turned into automations, integrations and intelligent systems, with human approval where it matters and a record of everything that happens.',
     verSolucoes: 'See the solutions',
     solucoesRotulo: 'Solutions',
-    solucoesTitulo: 'Where help makes a difference',
+    solucoesTitulo: 'Where operations usually get stuck',
     solucoesLead: 'Areas described by the problem they solve. Many problems cut across more than one.',
     todasSolucoes: 'All solutions',
     naoEncontrou: 'Don’t see your area?',
@@ -191,7 +191,7 @@ const textos: Textos = {
     resultadoRotulo: 'Results',
     resultadoTitulo: 'Gains measured in your operation, not promised on a website',
     resultadoTexto:
-      'Capacity planning and forecasting can cut costs sharply in one operation and only slightly in another. It depends on volume, structure and data maturity. That is why no ready-made percentage appears here.',
+      'In any area, the gain depends on the starting point: the more manual work, rework and mismatched information there is, the bigger the result tends to be. That is why no ready-made percentage appears here.',
     medicao: [
       { titulo: 'Assessment first', texto: 'The current situation is measured before any proposal.' },
       { titulo: 'Criteria before starting', texto: 'What counts as success is written into the scope.' },
@@ -214,7 +214,7 @@ const textos: Textos = {
     descricao:
       'Capacity and forecasting, payroll and HR, BI, automation, applied AI, security and infrastructure: the problem each area solves and what usually improves.',
     eyebrow: 'Solutions',
-    h1: 'Where help makes a difference',
+    h1: 'Where operations usually get stuck',
     lead: 'Seven areas, described by the problem they solve and what usually improves. Many problems cut across more than one, and that is where a profile connecting infrastructure, data, automation and security makes a difference.',
     areasAria: 'Areas of work',
     naoEncontrou: 'Don’t see your area?',
