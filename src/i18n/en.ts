@@ -9,9 +9,9 @@ const textos: Textos = {
     posicionamento:
       'Complex processes, disconnected systems and manual work turned into automations, integrations, intelligent systems and auditable operations.',
     descricao:
-      'Capacity planning, BI, automation, applied AI, security and infrastructure for operations that rely on manual work, with human control and a record of everything.',
+      'Applied AI, automation, BI, capacity planning, security and infrastructure for operations that rely on manual work, with human control and a record of everything.',
     trajetoria: 'More than a decade in corporate environments',
-    areasResumo: 'Infrastructure, data, automation, security and applied AI',
+    areasResumo: 'Applied AI, automation, data, security and infrastructure',
     confidencialidade:
       'No client names, real data or implementation details are published here. Your project gets the same treatment.',
     notaGanho:
@@ -197,9 +197,9 @@ const textos: Textos = {
       { titulo: 'Criteria before starting', texto: 'What counts as success is written into the scope.' },
       { titulo: 'Gains measured on your data', texto: 'The result is compared against the operation’s own data.' },
     ],
-    projetosRotulo: 'Projects',
-    projetosTitulo: 'Real work, described without exposing anyone',
-    projetosLead: 'Anonymized projects: context, outcome and the area they fit into.',
+    projetosRotulo: 'Portfolio',
+    projetosTitulo: 'Projects in operation, with no sensitive data',
+    projetosLead: 'Real cases, described by the problem they solved: the context, the outcome and the area of each one.',
     todosProjetos: 'All projects',
     formaRotulo: 'How it works',
     formaTitulo: 'Way of working',
@@ -212,7 +212,7 @@ const textos: Textos = {
   solucoes: {
     titulo: (nome: string) => `Solutions · ${nome}`,
     descricao:
-      'Capacity and forecasting, payroll and HR, BI, automation, applied AI, security and infrastructure: the problem each area solves and what usually improves.',
+      'Applied AI, automation, BI, capacity and forecasting, payroll and HR, security and infrastructure: the problem each area solves and what usually improves.',
     eyebrow: 'Solutions',
     h1: 'Where operations usually get stuck',
     lead: 'Seven areas, described by the problem they solve and what usually improves. Many problems cut across more than one, and that is where a profile connecting infrastructure, data, automation and security makes a difference.',
@@ -273,7 +273,7 @@ const textos: Textos = {
   projetos: {
     titulo: (nome: string) => `Projects · ${nome}`,
     descricao:
-      'Capacity, BI, automation, applied AI, security and infrastructure projects, described anonymously: context, approach, outcome and technologies.',
+      'Applied AI, automation, BI, capacity, security and infrastructure projects, described anonymously: context, approach, outcome and technologies.',
     eyebrow: 'Portfolio',
     h1: 'Projects',
     lead: 'Work described anonymously and grouped by type of problem: the context, what was done, the outcome and the technologies. No client names and no implementation details. The only demo model is labeled as such.',

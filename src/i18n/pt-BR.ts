@@ -8,10 +8,10 @@ const textos = {
     posicionamento:
       'Processos complexos, sistemas desconectados e trabalho manual transformados em automações, integrações, sistemas inteligentes e operações auditáveis.',
     descricao:
-      'Capacity, BI, automação, IA aplicada, segurança e infraestrutura para operações que dependem de trabalho manual, com controle humano e registro de tudo.',
+      'IA aplicada, automação, BI, capacity, segurança e infraestrutura para operações que dependem de trabalho manual, com controle humano e registro de tudo.',
     /** Linha de credencial, vinda do dossiê profissional. */
     trajetoria: 'Mais de uma década em ambientes corporativos',
-    areasResumo: 'Infraestrutura, dados, automação, segurança e IA aplicada',
+    areasResumo: 'IA aplicada, automação, dados, segurança e infraestrutura',
     confidencialidade:
       'Nenhum nome de cliente, dado real ou detalhe de implementação é publicado aqui. O seu projeto recebe o mesmo tratamento.',
     /**
@@ -207,9 +207,9 @@ const textos = {
       { titulo: 'Critério antes de começar', texto: 'O que conta como sucesso fica escrito no escopo.' },
       { titulo: 'Ganho medido na sua base', texto: 'O resultado é comparado com os dados da própria operação.' },
     ],
-    projetosRotulo: 'Projetos',
-    projetosTitulo: 'Trabalho real, descrito sem expor ninguém',
-    projetosLead: 'Projetos anonimizados: contexto, resultado e a área em que se encaixam.',
+    projetosRotulo: 'Portfólio',
+    projetosTitulo: 'Projetos em operação, sem dados sensíveis',
+    projetosLead: 'Casos reais, descritos pelo problema que resolveram: o contexto, o resultado e a área de cada um.',
     todosProjetos: 'Todos os projetos',
     formaRotulo: 'Como funciona',
     formaTitulo: 'Forma de trabalhar',
@@ -222,7 +222,7 @@ const textos = {
   solucoes: {
     titulo: (nome: string) => `Soluções · ${nome}`,
     descricao:
-      'Capacity e forecast, folha e RH, BI, automação, IA aplicada, segurança e infraestrutura: o problema que cada área resolve e o que costuma melhorar.',
+      'IA aplicada, automação, BI, capacity e forecast, folha e RH, segurança e infraestrutura: o problema que cada área resolve e o que costuma melhorar.',
     eyebrow: 'Soluções',
     h1: 'Onde a operação costuma travar',
     lead: 'Sete áreas, descritas pelo problema que resolvem e pelo que costuma melhorar. Muitos problemas atravessam mais de uma delas, e é aí que um perfil que conecta infraestrutura, dados, automação e segurança faz diferença.',
@@ -282,7 +282,7 @@ const textos = {
   projetos: {
     titulo: (nome: string) => `Projetos · ${nome}`,
     descricao:
-      'Projetos de capacity, BI, automação, IA aplicada, segurança e infraestrutura, descritos de forma anonimizada: contexto, atuação, resultado e tecnologias.',
+      'Projetos de IA aplicada, automação, BI, capacity, segurança e infraestrutura, descritos de forma anonimizada: contexto, atuação, resultado e tecnologias.',
     eyebrow: 'Portfólio',
     h1: 'Projetos',
     lead: 'Trabalhos descritos de forma anonimizada, agrupados pelo tipo de problema: o contexto, o que foi feito, o resultado e as tecnologias. Sem nome de cliente e sem detalhe de implementação. O único modelo de demonstração está identificado.',

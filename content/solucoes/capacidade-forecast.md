@@ -1,6 +1,6 @@
 ---
 slug: capacidade-forecast
-ordem: 1
+ordem: 4
 titulo: Planejamento de capacidade e forecast
 curto: Capacity e forecast
 icone: planejamento

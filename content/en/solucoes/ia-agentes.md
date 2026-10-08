@@ -1,6 +1,6 @@
 ---
 slug: ai-agents
-ordem: 5
+ordem: 1
 titulo: Applied AI and agents
 curto: AI & agents
 icone: ia

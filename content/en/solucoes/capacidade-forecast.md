@@ -1,6 +1,6 @@
 ---
 slug: capacity-forecasting
-ordem: 1
+ordem: 4
 titulo: Capacity planning and forecasting
 curto: Capacity & forecasting
 icone: planejamento
