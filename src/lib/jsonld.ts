@@ -15,7 +15,7 @@ export function jsonLdPessoa(idioma: Idioma, areas: string[]) {
     alternateName: site.nome,
     url: site.url,
     email: `mailto:${site.email}`,
-    image: urlAbsoluta('/marca/hans-spiller-480.webp'),
+    image: urlAbsoluta('/marca/hans-spiller-retrato-480.webp'),
     description: `${t.trajetoria}. ${t.posicionamento}`,
     knowsAbout: areas,
     ...(site.linkedin ? { sameAs: [site.linkedin] } : {}),

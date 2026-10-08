@@ -38,7 +38,8 @@
   /* Marca */
   --marca-vermelho: #ff001e;
   --marca-vinho: #782747;
-  --marca-gradiente: linear-gradient(90deg, var(--marca-vermelho) 0%, var(--marca-vinho) 100%);
+  /* Vermelho sólido da assinatura de e-mail: traços e linhas de marca. */
+  --marca-linha: #da0b29;
 
   /* Superfícies */
   --fundo: #ffffff;
@@ -56,7 +57,7 @@
   --acento: #da0b29;
   --acento-forte: #a8102a;
   --botao: #da0b29;
-  --botao-hover: #b30d28;
+  --botao-hover: #ef1a39;
   --botao-texto: #ffffff;
 
   /* Faixa escura (hero de case, CTA, rodapé) */
@@ -111,6 +112,7 @@
   --secao: clamp(64px, 8vw, 112px);
   --titulo-secao: clamp(32px, 4vw, 56px);
   --raio-1: 6px;
+  --raio-botao: 8px;
   --raio-2: 10px;
   --raio-3: 14px;
   --sombra: 0 1px 2px rgb(20 20 20 / 0.04), 0 8px 24px rgb(20 20 20 / 0.06);
@@ -139,7 +141,6 @@
     --acento: #ff5468;
     --acento-forte: #ff8593;
     --botao: #da0b29;
-    --botao-hover: #ef1a39;
 
     --faixa: #151518;
     --faixa-elevada: #1f1f23;
@@ -153,7 +154,7 @@
     --ok-fundo: #0c2619;
 
     --destaque-texto: none;
-    --destaque-cor: #d60c2a;
+    --destaque-cor: var(--botao);
 
     --grafico-vermelho: #ef3f56;
     --grafico-azul: #5b8ad8;
@@ -182,7 +183,6 @@
   --acento: #ff5468;
   --acento-forte: #ff8593;
   --botao: #da0b29;
-  --botao-hover: #ef1a39;
 
   --faixa: #151518;
   --faixa-elevada: #1f1f23;
@@ -196,7 +196,7 @@
   --ok-fundo: #0c2619;
 
   --destaque-texto: none;
-  --destaque-cor: #d60c2a;
+  --destaque-cor: var(--botao);
 
   --grafico-vermelho: #ef3f56;
   --grafico-azul: #5b8ad8;

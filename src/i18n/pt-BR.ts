@@ -308,7 +308,8 @@ const textos = {
       'A abordagem é prática e orientada a evidência: localizar o gargalo real, reduzir trabalho manual, proteger os pontos críticos e deixar rastreabilidade. Mudanças são pequenas e reversíveis em ambiente crítico, e a validação humana permanece onde o risco exige.',
     ],
     linkedin: 'Perfil no LinkedIn',
-    fotoAlt: 'Hans Spiller, de cabelo e barba ruivos e camiseta preta, em frente a uma estante.',
+    fotoAlt:
+      'Hans Spiller, de cabelo e barba ruivos e camiseta preta, olhando para o lado, diante de um fundo escuro com formas angulares em vermelho e azul.',
     stackRotulo: 'Stack',
     stackTitulo: 'Tecnologias e conhecimentos por área',
     formaRotulo: 'Forma de trabalhar',

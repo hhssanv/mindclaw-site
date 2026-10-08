@@ -52,15 +52,15 @@ const areas = (await solucoes(idioma)).map((s) => s.data.titulo);
         <picture>
           <source
             type="image/avif"
-            srcset="/marca/hans-spiller-480.avif 480w, /marca/hans-spiller-960.avif 960w"
+            srcset="/marca/hans-spiller-retrato-480.avif 480w, /marca/hans-spiller-retrato-960.avif 960w"
             sizes="(max-width: 860px) 160px, 340px"
           />
           <img
-            src="/marca/hans-spiller-480.webp"
-            srcset="/marca/hans-spiller-480.webp 480w, /marca/hans-spiller-960.webp 960w"
+            src="/marca/hans-spiller-retrato-480.webp"
+            srcset="/marca/hans-spiller-retrato-480.webp 480w, /marca/hans-spiller-retrato-960.webp 960w"
             sizes="(max-width: 860px) 160px, 340px"
             width="480"
-            height="480"
+            height="640"
             fetchpriority="high"
             alt={p.fotoAlt}
           />
@@ -142,23 +142,14 @@ const areas = (await solucoes(idioma)).map((s) => s.data.titulo);
     line-height: 1.65;
   }
 
+  /* Retrato 3:4; o arquivo já vem recortado nessa proporção. */
   .perfil__foto {
-    position: relative;
     width: clamp(220px, 26vw, 340px);
     margin: 0;
   }
 
-  /* Moldura deslocada no degradê da marca: liga a foto ao isotipo sem competir com ela. */
-  .perfil__foto::before {
-    content: '';
-    position: absolute;
-    inset: 14px 14px -14px -14px;
-    border-radius: var(--raio-3);
-    background: linear-gradient(135deg, var(--marca-vermelho), var(--marca-vinho));
-  }
-
   .perfil__foto img {
-    position: relative;
+    aspect-ratio: 3 / 4;
     border-radius: var(--raio-3);
   }
 
@@ -170,10 +161,6 @@ const areas = (await solucoes(idioma)).map((s) => s.data.titulo);
     .perfil__foto {
       order: -1;
       width: 160px;
-    }
-
-    .perfil__foto::before {
-      inset: 8px 8px -8px -8px;
     }
   }
 
@@ -198,10 +185,9 @@ const areas = (await solucoes(idioma)).map((s) => s.data.titulo);
 
   .stack dt {
     margin-bottom: 8px;
-    color: var(--tinta);
-    font-family: var(--fonte-display);
+    color: var(--acento);
+    font-family: var(--fonte);
     font-size: var(--t-rotulo);
-    font-stretch: 112.5%;
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -245,7 +231,7 @@ const areas = (await solucoes(idioma)).map((s) => s.data.titulo);
 
   .forma__numero {
     grid-row: 1 / span 2;
-    color: var(--tinta-fraca);
+    color: var(--acento);
     font-size: var(--t-sm);
     padding-top: 3px;
   }

@@ -55,7 +55,7 @@ const ativo = (href: string) => caminho === href || caminho.startsWith(href);
         {contato.rotulo}
       </a>
       <a class="topo__whatsapp" href={linkWhatsApp(mensagemWhatsApp(idioma))} target="_blank" rel="noopener">
-        <Icone nome="conversa" />
+        <Icone nome="whatsapp" />
         {t.geral.conversarWhatsApp}
         <span class="visualmente-oculto">{t.geral.novaAbaWhatsApp}</span>
       </a>
@@ -308,12 +308,11 @@ const ativo = (href: string) => caminho === href || caminho.startsWith(href);
     min-height: 44px;
     padding: 8px 10px;
     border: 0;
-    border-radius: var(--raio-1);
+    border-radius: var(--raio-botao);
     background: transparent;
     color: var(--tinta-media);
-    font-family: var(--fonte-display);
+    font-family: var(--fonte);
     font-size: var(--t-sm);
-    font-stretch: 112.5%;
     font-weight: 600;
     letter-spacing: 0.08em;
     line-height: 1;
@@ -434,9 +433,7 @@ const ativo = (href: string) => caminho === href || caminho.startsWith(href);
       min-height: 52px;
       border: 1px solid var(--linha-forte);
       color: var(--tinta);
-      font-family: var(--fonte);
       font-size: var(--t-sm);
-      font-stretch: 100%;
       letter-spacing: 0;
     }
 
@@ -466,12 +463,11 @@ const ativo = (href: string) => caminho === href || caminho.startsWith(href);
       margin-right: -10px;
       padding: 8px 10px;
       border: 0;
-      border-radius: var(--raio-1);
+      border-radius: var(--raio-botao);
       background: transparent;
       color: var(--tinta);
-      font-family: var(--fonte-display);
+      font-family: var(--fonte);
       font-size: var(--t-sm);
-      font-stretch: 112.5%;
       font-weight: 600;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -573,7 +569,7 @@ const ativo = (href: string) => caminho === href || caminho.startsWith(href);
       gap: 10px;
       min-height: 52px;
       border: 1px solid var(--linha-forte);
-      border-radius: var(--raio-1);
+      border-radius: var(--raio-botao);
       color: var(--tinta);
       font-weight: 600;
       text-decoration: none;
