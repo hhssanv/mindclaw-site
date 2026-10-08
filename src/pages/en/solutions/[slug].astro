@@ -1,0 +1,10 @@
+---
+import type { InferGetStaticPropsType } from 'astro';
+import Solucao from '../../../paginas/Solucao.astro';
+import { caminhosSolucoes } from '../../../lib/conteudo';
+
+export const getStaticPaths = () => caminhosSolucoes('en');
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+---
+
+<Solucao {...(Astro.props as Props)} />

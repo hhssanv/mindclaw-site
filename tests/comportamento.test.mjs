@@ -1,4 +1,4 @@
-/** Comportamento: filtro de projetos, formulário de contato, WhatsApp, cópia de e-mail e gráficos. */
+/** Comportamento: filtro de projetos, formulário de contato, WhatsApp, cópia de e-mail e gráficos, nos dois idiomas. */
 import { after, before, describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { ambiente } from './apoio/navegador.mjs';
@@ -241,4 +241,82 @@ describe('gráficos', () => {
       await pagina.close();
     });
   }
+});
+
+describe('em inglês', () => {
+  test('o formulário valida e monta a mensagem em inglês', async () => {
+    const pagina = await amb.navegador.newPage();
+    await pagina.goto(`${amb.base}/en/contact/?area=dados-bi`);
+    assert.equal(await pagina.inputValue('#tipo'), 'Data, BI and dashboards', 'área pré-selecionada pelo mesmo id');
+    await pagina.evaluate(() => {
+      window.__aberto = null;
+      window.open = (url) => {
+        window.__aberto = url;
+        return null;
+      };
+    });
+    await pagina.click('button[data-canal="whatsapp"]');
+    assert.equal(await pagina.textContent('#descricao-erro'), 'Describe the problem in a few lines.');
+
+    await pagina.fill('#nome', 'Ana');
+    await pagina.fill('#retorno', 'Example Ltd');
+    await pagina.fill('#descricao', 'Two reports that should match.');
+    await pagina.click('button[data-canal="whatsapp"]');
+    const texto = new URL(await pagina.evaluate(() => window.__aberto)).searchParams.get('text');
+    assert.equal(texto, 'Name: Ana\nContact: Example Ltd\nArea: Data, BI and dashboards\n\nTwo reports that should match.');
+    assert.equal(await pagina.getAttribute('form', 'data-assunto'), 'Website contact', 'assunto do e-mail');
+    await pagina.close();
+  });
+
+  test('o botão de conversa de cada solução leva o assunto em inglês', async () => {
+    const pagina = await amb.navegador.newPage();
+    await pagina.goto(`${amb.base}/en/solutions/capacity-forecasting/`);
+    const hrefs = await pagina.$$eval(`main a[href^="${WHATSAPP}"]`, (as) => as.map((a) => a.href));
+    assert.ok(hrefs.length >= 2);
+    for (const href of hrefs) {
+      assert.equal(
+        new URL(href).searchParams.get('text'),
+        'Hi Hans! I found your website and would like to talk about capacity planning and forecasting.',
+      );
+    }
+    await pagina.close();
+  });
+
+  test('filtro de projetos anuncia o total em inglês', async () => {
+    const pagina = await amb.navegador.newPage();
+    await pagina.goto(`${amb.base}/en/projects/`);
+    await pagina.click('button[data-area="seguranca-acessos"]');
+    assert.equal(await pagina.textContent('[data-filtro-status]'), '1 project shown');
+    await pagina.click('button[data-area=""]');
+    assert.match((await pagina.textContent('[data-filtro-status]')) ?? '', /^\d+ projects shown$/);
+    await pagina.close();
+  });
+
+  test('copiar o e-mail anuncia em inglês', async () => {
+    const contexto = await amb.navegador.newContext({ permissions: ['clipboard-read', 'clipboard-write'] });
+    const pagina = await contexto.newPage();
+    await pagina.goto(`${amb.base}/en/contact/`);
+    await pagina.click('[data-copiar]');
+    // A cópia é assíncrona: espera o anúncio antes de conferir.
+    await pagina.waitForFunction(() => document.querySelector('[data-copiar-status]')?.textContent);
+    assert.equal(await pagina.evaluate(() => navigator.clipboard.readText()), 'hans@hansmindclaw.com');
+    assert.equal(await pagina.textContent('[data-copiar-rotulo]'), 'Copied');
+    assert.equal(await pagina.textContent('[data-copiar-status]'), 'Email address copied.');
+    await contexto.close();
+  });
+
+  test('gráficos com rótulos e números em inglês', async () => {
+    const pagina = await amb.navegador.newPage({ viewport: { width: 1366, height: 900 } });
+    await pagina.goto(`${amb.base}/en/solutions/data-bi/`);
+    await pagina.locator('.graficos > [data-w]:visible .grafico__zona').first().focus();
+    const tooltip = (await pagina.textContent('[data-tooltip]')) ?? '';
+    assert.match(tooltip, /Jan/);
+    assert.match(tooltip, /\$1\.22MActual/);
+    assert.match(tooltip, /Budget/);
+
+    await pagina.goto(`${amb.base}/en/solutions/capacity-forecasting/`);
+    await pagina.locator('.graficos > [data-w]:visible .hora').nth(3).focus();
+    assert.equal(await pagina.textContent('[data-dica-saida]'), '11am: 15 people needed, 10 scheduled, 5 short');
+    await pagina.close();
+  });
 });

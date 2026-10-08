@@ -1,0 +1,55 @@
+---
+import Base from '../layouts/Base.astro';
+import Icone from '../components/Icone.astro';
+import { site } from '../lib/site';
+import { alternativasDe, rota, textos, type Idioma } from '../i18n';
+
+/**
+ * O GitHub Pages serve só o /404.html da raiz, para qualquer endereço que não existe.
+ * Quem pede um endereço /en/ ou prefere inglês é levado à versão em inglês (/en/404/)
+ * pelo script de idioma do <head> (Base.astro).
+ */
+interface Props {
+  idioma: Idioma;
+}
+
+const { idioma } = Astro.props;
+const p = textos[idioma].naoEncontrada;
+---
+
+<Base
+  idioma={idioma}
+  alternativas={alternativasDe('naoEncontrada')}
+  title={p.titulo(site.nome)}
+  description={p.descricao}
+  noindex
+>
+  <section class="container nao-encontrada">
+    <p class="eyebrow eyebrow--acento">{p.eyebrow}</p>
+    <h1>{p.h1}</h1>
+    <p class="lead">{p.lead}</p>
+    <div class="acoes">
+      <a class="botao" href={rota(idioma, 'solucoes')}>
+        {p.verSolucoes}
+        <Icone nome="seta" />
+      </a>
+      <a class="botao botao--secundario" href={rota(idioma, 'inicio')}>{p.voltar}</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nao-encontrada {
+    display: grid;
+    gap: 18px;
+    justify-items: start;
+    padding-block: clamp(72px, 12vw, 160px);
+  }
+
+  .acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+  }
+</style>

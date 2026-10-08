@@ -2,6 +2,19 @@
 import Logo from './Logo.astro';
 import Icone from './Icone.astro';
 import { site, linkWhatsApp, mensagemWhatsApp } from '../lib/site';
+import { IDIOMAS, idiomas, linkContato, navegacao, rota, textos, type Alternativas, type Idioma } from '../i18n';
+
+interface Props {
+  idioma: Idioma;
+  /** Endereço desta página em cada idioma: o seletor de idioma leva para a mesma página. */
+  alternativas: Alternativas;
+}
+
+const { idioma, alternativas } = Astro.props;
+const t = textos[idioma];
+const nav = navegacao(idioma);
+const contato = linkContato(idioma);
+const outrosIdiomas = IDIOMAS.filter((i) => i !== idioma);
 
 const caminho = Astro.url.pathname;
 const ativo = (href: string) => caminho === href || caminho.startsWith(href);
@@ -9,7 +22,7 @@ const ativo = (href: string) => caminho === href || caminho.startsWith(href);
 
 <header class="topo" data-topo>
   <div class="container topo__interno">
-    <a class="topo__marca" href="/" aria-label={`${site.nome}, página inicial`}>
+    <a class="topo__marca" href={rota(idioma, 'inicio')} aria-label={t.topo.inicioAria(site.nome)}>
       <Logo id="topo" class="topo__logo" />
     </a>
 
@@ -19,15 +32,15 @@ const ativo = (href: string) => caminho === href || caminho.startsWith(href);
         <Icone nome="menu" class="topo__menu-abrir" />
         <Icone nome="fechar" class="topo__menu-fechar" />
       </span>
-      Menu
+      {t.topo.menu}
     </button>
 
     <!-- No desktop este bloco some do layout (display: contents) e os filhos ocupam as áreas da grade. -->
     <div class="topo__painel" id="menu-principal" data-menu-painel>
-      <nav class="topo__nav" aria-label="Principal">
+      <nav class="topo__nav" aria-label={t.topo.navPrincipal}>
         <ul role="list">
           {
-            site.navegacao.map((item) => (
+            nav.map((item) => (
               <li>
                 <a href={item.href} aria-current={ativo(item.href) ? 'page' : undefined}>
                   {item.rotulo}
@@ -38,24 +51,108 @@ const ativo = (href: string) => caminho === href || caminho.startsWith(href);
           }
         </ul>
       </nav>
-      <a
-        class="botao topo__contato"
-        href={site.contato.href}
-        aria-current={ativo(site.contato.href) ? 'page' : undefined}
-      >
-        {site.contato.rotulo}
+      <a class="botao topo__contato" href={contato.href} aria-current={ativo(contato.href) ? 'page' : undefined}>
+        {contato.rotulo}
       </a>
-      <a class="topo__whatsapp" href={linkWhatsApp(mensagemWhatsApp())} target="_blank" rel="noopener">
+      <a class="topo__whatsapp" href={linkWhatsApp(mensagemWhatsApp(idioma))} target="_blank" rel="noopener">
         <Icone nome="conversa" />
-        Conversar no WhatsApp
-        <span class="visualmente-oculto">(abre o WhatsApp em nova aba)</span>
+        {t.geral.conversarWhatsApp}
+        <span class="visualmente-oculto">{t.geral.novaAbaWhatsApp}</span>
       </a>
       <a class="topo__email" href={`mailto:${site.email}`}>{site.email}</a>
+
+      <!-- Idioma e tema. Cada controle mostra para onde leva: "EN" leva ao inglês, a lua ao tema escuro. -->
+      <div class="topo__prefs" role="group" aria-label={t.topo.preferencias}>
+        {
+          outrosIdiomas.map((i) => (
+            <a class="pref" href={alternativas[i]} hreflang={i} lang={i} data-idioma={i}>
+              <Icone nome="globo" class="pref__globo" />
+              <span class="pref__curto" aria-hidden="true">
+                {idiomas[i].curto}
+              </span>
+              <span class="pref__rotulo">{idiomas[i].nome}</span>
+            </a>
+          ))
+        }
+        <button
+          type="button"
+          class="pref pref--tema"
+          data-tema-botao
+          data-anuncio-escuro={t.topo.temaEscuroAtivado}
+          data-anuncio-claro={t.topo.temaClaroAtivado}
+        >
+          <Icone nome="lua" class="so-no-claro" />
+          <Icone nome="sol" class="so-no-escuro" />
+          <span class="pref__rotulo so-no-claro">{t.topo.temaEscuro}</span>
+          <span class="pref__rotulo so-no-escuro">{t.topo.temaClaro}</span>
+        </button>
+      </div>
+      <p class="visualmente-oculto" aria-live="polite" data-tema-status></p>
     </div>
   </div>
 </header>
 
 <script>
+  // Tema: o botão alterna entre claro e escuro e guarda a escolha. Se a escolha coincidir com
+  // o tema do sistema, ela é apagada e o site volta a acompanhar o sistema. O tema guardado é
+  // aplicado antes do primeiro desenho pelo script do <head> (Base.astro).
+  type Tema = 'claro' | 'escuro';
+  const raiz = document.documentElement;
+  const botaoTema = document.querySelector<HTMLButtonElement>('[data-tema-botao]');
+  const statusTema = document.querySelector<HTMLElement>('[data-tema-status]');
+  const sistemaEscuro = window.matchMedia('(prefers-color-scheme: dark)');
+  const coresDaBarra = [...document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')];
+
+  const temaDoSistema = (): Tema => (sistemaEscuro.matches ? 'escuro' : 'claro');
+  const temaAtual = (): Tema => (raiz.dataset.tema as Tema | undefined) ?? temaDoSistema();
+
+  // A cor da barra do navegador segue o tema escolhido; sem escolha, cada meta volta à sua cor.
+  const corDe = (tema: Tema) => coresDaBarra.find((m) => m.media.includes(tema === 'escuro' ? 'dark' : 'light'))?.dataset.cor;
+  const sincronizarBarra = () => {
+    const escolhido = raiz.dataset.tema as Tema | undefined;
+    for (const meta of coresDaBarra) meta.content = (escolhido && corDe(escolhido)) || meta.dataset.cor || meta.content;
+  };
+
+  const aplicarTema = (tema: Tema | null) => {
+    // Sem transições durante a troca: a página muda inteira de uma vez.
+    raiz.classList.add('trocando-tema');
+    if (tema) raiz.dataset.tema = tema;
+    else delete raiz.dataset.tema;
+    sincronizarBarra();
+    void getComputedStyle(raiz).color;
+    raiz.classList.remove('trocando-tema');
+  };
+
+  botaoTema?.addEventListener('click', () => {
+    const novo: Tema = temaAtual() === 'escuro' ? 'claro' : 'escuro';
+    const escolha = novo === temaDoSistema() ? null : novo;
+    aplicarTema(escolha);
+    try {
+      if (escolha) localStorage.setItem('tema', escolha);
+      else localStorage.removeItem('tema');
+    } catch {
+      // Armazenamento bloqueado: o tema vale só para esta página.
+    }
+    if (statusTema) statusTema.textContent = (novo === 'escuro' ? botaoTema.dataset.anuncioEscuro : botaoTema.dataset.anuncioClaro) ?? '';
+  });
+
+  // Tema trocado em outra aba do site: esta acompanha.
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'tema') aplicarTema(e.newValue === 'claro' || e.newValue === 'escuro' ? e.newValue : null);
+  });
+  sincronizarBarra();
+
+  // Idioma: a escolha feita no seletor vale para as próximas visitas (ver o script do <head> em Base.astro).
+  for (const link of document.querySelectorAll<HTMLAnchorElement>('[data-idioma]')) {
+    link.addEventListener('click', () => {
+      try {
+        localStorage.setItem('idioma', link.dataset.idioma ?? '');
+      } catch {
+        // Sem armazenamento, a escolha vale enquanto a pessoa navega pelo site (ver Base.astro).
+      }
+    });
+  }
+
   // Menu do celular: botão de abrir e fechar (padrão disclosure), Esc fecha e devolve o foco,
   // o resto da página fica inerte enquanto o menu cobre a tela, e voltar ao desktop fecha.
   const topo = document.querySelector<HTMLElement>('[data-topo]');
@@ -111,8 +208,8 @@ const ativo = (href: string) => caminho === href || caminho.startsWith(href);
 
   .topo__interno {
     display: grid;
-    grid-template-columns: auto 1fr auto;
-    grid-template-areas: 'marca nav contato';
+    grid-template-columns: auto 1fr auto auto;
+    grid-template-areas: 'marca nav contato prefs';
     align-items: center;
     gap: 8px 24px;
     min-height: 80px;
@@ -191,9 +288,94 @@ const ativo = (href: string) => caminho === href || caminho.startsWith(href);
     display: none;
   }
 
+  /* Idioma e tema: botões discretos à direita do Contato. */
+  .topo__prefs {
+    grid-area: prefs;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-left: -12px;
+    margin-right: -10px;
+  }
+
+  .pref {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: var(--raio-1);
+    background: transparent;
+    color: var(--tinta-media);
+    font-family: var(--fonte-display);
+    font-size: var(--t-sm);
+    font-stretch: 112.5%;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color var(--transicao), background-color var(--transicao);
+  }
+
+  .pref:hover {
+    background: var(--superficie);
+    color: var(--tinta);
+  }
+
+  .pref :global(svg) {
+    flex: none;
+    width: 20px;
+    height: 20px;
+  }
+
+  /* No desktop o nome completo fica só para leitores de tela; o globo só aparece no menu do celular. */
+  .pref__rotulo {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .topo__prefs :global(.pref__globo) {
+    display: none;
+  }
+
+  /* O tema depende de JavaScript; sem ele, vale o do sistema e o botão não aparece. */
+  .pref--tema {
+    display: none;
+  }
+
+  :global(.js) .pref--tema {
+    display: inline-flex;
+  }
+
   @media (max-width: 1023px) {
     .topo__marca :global(.topo__logo) {
       width: 144px;
+    }
+
+    .topo__interno {
+      column-gap: 16px;
+    }
+
+    .topo__nav a {
+      padding-inline: 10px;
+    }
+
+    .topo__contato {
+      padding-inline: 14px;
+    }
+
+    .topo__prefs {
+      margin-left: -6px;
     }
   }
 
@@ -203,9 +385,14 @@ const ativo = (href: string) => caminho === href || caminho.startsWith(href);
       grid-template-columns: 1fr auto;
       grid-template-areas:
         'marca contato'
-        'nav nav';
+        'nav prefs';
       gap: 0 16px;
       min-height: 64px;
+    }
+
+    .topo__prefs {
+      margin: 0 -10px 0 0;
+      border-top: 1px solid var(--linha);
     }
 
     .topo__marca :global(.topo__logo) {
@@ -231,6 +418,43 @@ const ativo = (href: string) => caminho === href || caminho.startsWith(href);
   @media (max-width: 720px) {
     :global(.js) .topo__interno {
       grid-template-areas: 'marca menu';
+    }
+
+    :global(.js) .topo[data-aberto] .topo__prefs {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin: 4px 0 0;
+      padding-top: 16px;
+      border-top: 1px solid var(--linha);
+    }
+
+    :global(.js) .topo[data-aberto] .pref {
+      justify-content: center;
+      min-height: 52px;
+      border: 1px solid var(--linha-forte);
+      color: var(--tinta);
+      font-family: var(--fonte);
+      font-size: var(--t-sm);
+      font-stretch: 100%;
+      letter-spacing: 0;
+    }
+
+    :global(.js) .topo[data-aberto] .pref__curto {
+      display: none;
+    }
+
+    :global(.js) .topo[data-aberto] .pref__rotulo {
+      position: static;
+      width: auto;
+      height: auto;
+      margin: 0;
+      overflow: visible;
+      clip: auto;
+    }
+
+    :global(.js) .topo[data-aberto] .topo__prefs :global(.pref__globo) {
+      display: block;
     }
 
     :global(.js) .topo__menu {

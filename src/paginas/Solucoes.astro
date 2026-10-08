@@ -1,0 +1,345 @@
+---
+import Base from '../layouts/Base.astro';
+import SecaoTitulo from '../components/SecaoTitulo.astro';
+import SolucaoCard from '../components/SolucaoCard.astro';
+import Nota from '../components/Nota.astro';
+import Confidencialidade from '../components/Confidencialidade.astro';
+import CTAContato from '../components/CTAContato.astro';
+import Icone from '../components/Icone.astro';
+import { solucoes, servicos } from '../lib/conteudo';
+import { site } from '../lib/site';
+import { alternativasDe, rota, textos, type Idioma } from '../i18n';
+
+interface Props {
+  idioma: Idioma;
+}
+
+const { idioma } = Astro.props;
+const t = textos[idioma];
+const p = t.solucoes;
+const lista = await solucoes(idioma);
+const formas = await servicos(idioma);
+---
+
+<Base idioma={idioma} alternativas={alternativasDe('solucoes')} title={p.titulo(site.nome)} description={p.descricao}>
+  <section class="cabecalho" aria-labelledby="titulo-solucoes">
+    <div class="container entrada">
+      <p class="eyebrow eyebrow--traco">{p.eyebrow}</p>
+      <h1 id="titulo-solucoes">{p.h1}</h1>
+      <p class="lead">{p.lead}</p>
+    </div>
+  </section>
+
+  <section class="secao lista" aria-label={p.areasAria}>
+    <div class="container">
+      <ul class="grade" role="list">
+        {
+          lista.map((s) => (
+            <li>
+              <SolucaoCard idioma={idioma} solucao={s} ganhos nivel={2} />
+            </li>
+          ))
+        }
+        <li class="grade__contato">
+          <h2 class="grade__contato-titulo">{p.naoEncontrou}</h2>
+          <p>{p.naoEncontrouTexto}</p>
+          <a class="link-seta" href={rota(idioma, 'contato')}>
+            {p.conteProblema}
+            <Icone nome="seta" />
+          </a>
+        </li>
+      </ul>
+      <div class="nota">
+        <Nota idioma={idioma} texto={t.site.notaGanho} variante="bloco" rotulo={t.site.rotuloNotaGanho} />
+      </div>
+    </div>
+  </section>
+
+  <section class="secao secao--superficie" aria-labelledby="titulo-formas">
+    <div class="container">
+      <SecaoTitulo id="titulo-formas" rotulo={p.formasRotulo} titulo={p.formasTitulo} lead={p.formasLead} />
+      <ol class="formas" role="list">
+        {
+          formas.map((f) => (
+            <li class="forma" id={f.id}>
+              <div class="forma__cabeca">
+                <span class="forma__numero numeral" aria-hidden="true">
+                  {String(f.ordem).padStart(2, '0')}
+                </span>
+                <h3>{f.nome}</h3>
+                <p>{f.resultado}</p>
+              </div>
+              <div class="forma__listas">
+                <div>
+                  <p class="eyebrow">{p.entra}</p>
+                  <ul role="list" class="forma__entra">
+                    {f.entra.map((item) => (
+                      <li>
+                        <Icone nome="check" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <p class="eyebrow">{p.naoEntra}</p>
+                  <ul role="list" class="forma__nao-entra">
+                    {f.naoEntra.map((item) => (
+                      <li>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="secao" aria-labelledby="titulo-fora">
+    <div class="container fora">
+      <SecaoTitulo id="titulo-fora" rotulo={p.foraRotulo} titulo={p.foraTitulo} lead={p.foraLead} />
+      <ul class="fora__lista" role="list">
+        {
+          p.foraDoEscopo.map((item) => (
+            <li>
+              <h3>{item.titulo}</h3>
+              <p>{item.texto}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <Confidencialidade idioma={idioma} />
+
+  <CTAContato idioma={idioma} titulo={p.ctaTitulo} texto={p.ctaTexto} />
+</Base>
+
+<style>
+  .cabecalho {
+    padding-block: clamp(48px, 6vw, 88px) 0;
+  }
+
+  .cabecalho .container {
+    display: grid;
+    gap: 18px;
+  }
+
+  .cabecalho .lead {
+    max-width: 64ch;
+  }
+
+  .lista {
+    padding-top: clamp(32px, 4vw, 48px);
+  }
+
+  /* 7 áreas + 1 célula de contato: grade completa em 4, 2 ou 1 coluna, sem card órfão. */
+  .grade {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin: 0;
+  }
+
+  /* Subgrid: ícone, título, resumo, ganhos e link alinhados entre os cards da mesma linha. */
+  .grade > li {
+    display: grid;
+    grid-row: span 5;
+    grid-template-rows: subgrid;
+    row-gap: 0;
+  }
+
+  .grade > li > :global(.sol) {
+    grid-row: 1 / -1;
+    grid-template-rows: subgrid;
+  }
+
+  .grade__contato {
+    align-content: start;
+    gap: 10px;
+    padding: 26px 24px;
+    border: 1px dashed var(--linha-forte);
+    border-radius: var(--raio-3);
+  }
+
+  .grade > .grade__contato {
+    grid-template-rows: none;
+    row-gap: 10px;
+  }
+
+  .grade__contato-titulo {
+    font-size: var(--t-lg);
+    line-height: 1.2;
+  }
+
+  .grade__contato p {
+    color: var(--tinta-media);
+    font-size: var(--t-sm);
+    line-height: 1.55;
+  }
+
+  .grade__contato .link-seta {
+    margin-top: 6px;
+    font-size: var(--t-sm);
+  }
+
+  @media (max-width: 1080px) {
+    .grade {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 560px) {
+    .grade {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .nota {
+    margin-top: 24px;
+  }
+
+  .formas {
+    display: grid;
+    margin: 0;
+  }
+
+  .forma {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 24px clamp(32px, 5vw, 72px);
+    padding-block: clamp(28px, 3.5vw, 40px);
+    border-top: 1px solid var(--linha-forte);
+    scroll-margin-top: 96px;
+  }
+
+  .forma__cabeca {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+  }
+
+  .forma__numero {
+    color: var(--acento);
+    font-size: var(--t-sm);
+  }
+
+  .forma h3 {
+    font-family: var(--fonte-display);
+    font-size: var(--t-xl);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+
+  .forma__cabeca p {
+    color: var(--tinta-media);
+  }
+
+  .forma__listas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 32px;
+    align-content: start;
+  }
+
+  .forma__listas .eyebrow {
+    margin-bottom: 12px;
+  }
+
+  .forma__listas ul {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .forma__entra li {
+    display: grid;
+    grid-template-columns: 18px 1fr;
+    gap: 10px;
+    line-height: 1.45;
+  }
+
+  .forma__entra :global(svg) {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    color: var(--tinta-fraca);
+  }
+
+  .forma__nao-entra li {
+    position: relative;
+    padding-left: 28px;
+    color: var(--tinta-media);
+    line-height: 1.45;
+  }
+
+  .forma__nao-entra li::before {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 0.7em;
+    width: 12px;
+    height: 2px;
+    background: var(--tinta-fraca);
+  }
+
+  @media (max-width: 960px) {
+    .forma {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .forma__listas {
+      grid-template-columns: 1fr;
+    }
+  }
+  /* O que fica de fora */
+  .fora {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 24px clamp(32px, 5vw, 72px);
+    align-items: start;
+  }
+
+  .fora :global(.secao-titulo) {
+    margin-bottom: 0;
+  }
+
+  .fora__lista {
+    display: grid;
+    margin: 0;
+    border-top: 1px solid var(--linha-forte);
+  }
+
+  .fora__lista li {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 4px 0;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--linha);
+  }
+
+  .fora__lista li::before {
+    content: '';
+    grid-row: 1 / span 2;
+    width: 12px;
+    height: 2px;
+    margin-top: 0.75em;
+    background: var(--tinta-fraca);
+  }
+
+  .fora__lista p {
+    color: var(--tinta-media);
+  }
+
+  @media (max-width: 860px) {
+    .fora {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

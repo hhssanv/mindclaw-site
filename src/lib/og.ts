@@ -4,6 +4,8 @@ import { createRequire } from 'node:module';
 import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
 import type { Solucao } from './schema';
+import { solucoes, rotaSolucao } from './conteudo';
+import { textos, type Idioma } from '../i18n';
 
 /**
  * Imagens Open Graph (1200×630) geradas no build, no mesmo visual do hero.
@@ -67,7 +69,7 @@ async function renderizar(arvore: No): Promise<Buffer> {
   return new Resvg(svg, { fitTo: { mode: 'width', value: 1200 } }).render().asPng();
 }
 
-export async function ogSolucao(d: Solucao): Promise<Buffer> {
+export async function ogSolucao(idioma: Idioma, d: Solucao): Promise<Buffer> {
   const tamanhoTitulo = d.titulo.length > 36 ? 58 : 66;
   const arvore = h(
     'div',
@@ -97,7 +99,7 @@ export async function ogSolucao(d: Solucao): Promise<Buffer> {
           letterSpacing: 2,
           color: cor.media,
         },
-        'SOLUÇÃO',
+        textos[idioma].og.solucao,
       ),
     ),
     h(
@@ -131,7 +133,7 @@ export async function ogSolucao(d: Solucao): Promise<Buffer> {
   return renderizar(arvore);
 }
 
-export async function ogPadrao(): Promise<Buffer> {
+export async function ogPadrao(idioma: Idioma): Promise<Buffer> {
   const arvore = h(
     'div',
     {
@@ -152,7 +154,7 @@ export async function ogPadrao(): Promise<Buffer> {
       h(
         'div',
         { marginTop: 'auto', fontFamily: 'Saira', fontSize: 44, fontWeight: 700, lineHeight: 1.12, color: cor.tinta },
-        'Do trabalho manual à operação automatizada e auditável.',
+        textos[idioma].og.chamada,
       ),
       h(
         'div',
@@ -164,4 +166,18 @@ export async function ogPadrao(): Promise<Buffer> {
     barra(),
   );
   return renderizar(arvore);
+}
+
+/** Rotas das imagens de um idioma: uma por solução e a padrão (src/pages/og/). */
+export async function caminhosOg(idioma: Idioma) {
+  const areas = await solucoes(idioma);
+  return [
+    ...areas.map((s) => ({ params: { slug: rotaSolucao(s) }, props: { idioma, dados: s.data } })),
+    { params: { slug: 'padrao' }, props: { idioma, dados: undefined } },
+  ];
+}
+
+export async function respostaOg({ idioma, dados }: { idioma: Idioma; dados?: Solucao }) {
+  const png = dados ? await ogSolucao(idioma, dados) : await ogPadrao(idioma);
+  return new Response(new Uint8Array(png), { headers: { 'Content-Type': 'image/png' } });
 }

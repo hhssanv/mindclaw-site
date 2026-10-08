@@ -1,14 +1,16 @@
 ---
 import Icone from './Icone.astro';
+import { textos, type Idioma } from '../i18n';
 
 interface Props {
+  idioma: Idioma;
   texto: string;
   /** "faixa": faixa de largura total. "bloco": caixa dentro do conteúdo. */
   variante?: 'faixa' | 'bloco';
   rotulo?: string;
 }
 
-const { texto, variante = 'faixa', rotulo = 'Nota' } = Astro.props;
+const { idioma, texto, variante = 'faixa', rotulo = textos[idioma].geral.nota } = Astro.props;
 ---
 
 <div class:list={['disclaimer', `disclaimer--${variante}`]} role="note" aria-label={rotulo}>

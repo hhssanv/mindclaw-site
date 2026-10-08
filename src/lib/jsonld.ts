@@ -1,11 +1,13 @@
 import { site, urlAbsoluta } from './site';
 import { hrefSolucao, type SolucaoEntry } from './conteudo';
+import { textos, type Idioma } from '../i18n';
 
-/** Dados estruturados mínimos: Person, Service e BreadcrumbList. */
+/** Dados estruturados mínimos: Person, Service e BreadcrumbList, no idioma da página. */
 
 const autor = () => ({ '@type': 'Person', name: site.pessoa, url: site.url });
 
-export function jsonLdPessoa(areas: string[]) {
+export function jsonLdPessoa(idioma: Idioma, areas: string[]) {
+  const t = textos[idioma].site;
   return {
     '@context': 'https://schema.org',
     '@type': 'Person',
@@ -14,21 +16,22 @@ export function jsonLdPessoa(areas: string[]) {
     url: site.url,
     email: `mailto:${site.email}`,
     image: urlAbsoluta('/marca/hans-spiller-480.webp'),
-    description: `${site.trajetoria}. ${site.posicionamento}`,
+    description: `${t.trajetoria}. ${t.posicionamento}`,
     knowsAbout: areas,
     ...(site.linkedin ? { sameAs: [site.linkedin] } : {}),
   };
 }
 
-export function jsonLdServico(s: SolucaoEntry) {
+export function jsonLdServico(idioma: Idioma, s: SolucaoEntry) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Service',
     name: s.data.titulo,
     description: s.data.chamada,
     serviceType: s.data.titulo,
-    url: urlAbsoluta(hrefSolucao(s.id)),
-    areaServed: { '@type': 'Country', name: 'Brasil' },
+    url: urlAbsoluta(hrefSolucao(idioma, s)),
+    inLanguage: idioma,
+    areaServed: { '@type': 'Country', name: textos[idioma].site.pais },
     provider: autor(),
   };
 }

@@ -1,5 +1,6 @@
 ---
 import Icone from './Icone.astro';
+import { textos, type Idioma } from '../i18n';
 
 interface Item {
   href: string;
@@ -7,12 +8,14 @@ interface Item {
 }
 
 interface Props {
+  idioma: Idioma;
   anterior?: Item;
   proximo?: Item;
   rotulo: string;
 }
 
-const { anterior, proximo, rotulo } = Astro.props;
+const { idioma, anterior, proximo, rotulo } = Astro.props;
+const t = textos[idioma].vizinhos;
 ---
 
 {
@@ -22,7 +25,7 @@ const { anterior, proximo, rotulo } = Astro.props;
         <a class="vizinhos__link" href={anterior.href} rel="prev">
           <span class="vizinhos__rotulo eyebrow">
             <Icone nome="seta-esquerda" />
-            Anterior
+            {t.anterior}
           </span>
           <span class="vizinhos__titulo">{anterior.titulo}</span>
         </a>
@@ -30,7 +33,7 @@ const { anterior, proximo, rotulo } = Astro.props;
       {proximo && (
         <a class="vizinhos__link vizinhos__link--proximo" href={proximo.href} rel="next">
           <span class="vizinhos__rotulo eyebrow">
-            Próxima
+            {t.proxima}
             <Icone nome="seta" />
           </span>
           <span class="vizinhos__titulo">{proximo.titulo}</span>

@@ -121,6 +121,13 @@ textarea {
   color: inherit;
 }
 
+/* Ao trocar de tema pelo botão, nada anima: a página inteira muda de uma vez. */
+.trocando-tema *,
+.trocando-tema *::before,
+.trocando-tema *::after {
+  transition: none !important;
+}
+
 /* ---------- Utilitários ---------- */
 
 .container {
@@ -140,6 +147,15 @@ textarea {
 
 .secao--superficie {
   background: var(--superficie);
+}
+
+/* Só aparece em um dos temas (o valor vem de tokens.css): os ícones e rótulos do botão de tema. */
+.so-no-claro {
+  display: var(--so-no-claro);
+}
+
+.so-no-escuro {
+  display: var(--so-no-escuro);
 }
 
 .visualmente-oculto {

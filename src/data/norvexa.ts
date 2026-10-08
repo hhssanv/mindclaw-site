@@ -2,10 +2,11 @@
  * Números do modelo de demonstração (empresa fictícia Norvexa Systems).
  * Extraídos da planilha Demo1_Norvexa_Systems_Executive.xlsx, abas 01, 08 e 10.
  * Nenhum dado real: empresa, clientes e valores são sintéticos.
+ * A série vai de janeiro a dezembro de `ano`; os nomes dos meses saem no idioma da página.
  */
 export const norvexa = {
   "empresa": "Norvexa Systems",
-  "mesReferencia": "julho de 2026",
+  "ano": 2026,
   "kpis": {
     "receitaMes": 1426605,
     "receitaMesVar": 0.3934,
@@ -38,73 +39,61 @@ export const norvexa = {
   },
   "serie": [
     {
-      "mes": "jan",
       "realizado": 1219744,
       "previsao": null,
       "orcamento": 1288862
     },
     {
-      "mes": "fev",
       "realizado": 1353480,
       "previsao": null,
       "orcamento": 1328283
     },
     {
-      "mes": "mar",
       "realizado": 1292517,
       "previsao": null,
       "orcamento": 1370871
     },
     {
-      "mes": "abr",
       "realizado": 1358837,
       "previsao": null,
       "orcamento": 1396224
     },
     {
-      "mes": "mai",
       "realizado": 1405295,
       "previsao": null,
       "orcamento": 1433595
     },
     {
-      "mes": "jun",
       "realizado": 1360267,
       "previsao": null,
       "orcamento": 1471958
     },
     {
-      "mes": "jul",
       "realizado": 1426605,
       "previsao": null,
       "orcamento": 1485890
     },
     {
-      "mes": "ago",
       "realizado": null,
       "previsao": 1447673,
       "orcamento": 1529096
     },
     {
-      "mes": "set",
       "realizado": null,
       "previsao": 1473436,
       "orcamento": 1582819
     },
     {
-      "mes": "out",
       "realizado": null,
       "previsao": 1499027,
       "orcamento": 1623978
     },
     {
-      "mes": "nov",
       "realizado": null,
       "previsao": 1524448,
       "orcamento": 1657670
     },
     {
-      "mes": "dez",
       "realizado": null,
       "previsao": 1549699,
       "orcamento": 1664562

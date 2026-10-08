@@ -3,30 +3,37 @@ import Logo from './Logo.astro';
 import Icone from './Icone.astro';
 import { site, linkWhatsApp } from '../lib/site';
 import { solucoes, hrefSolucao } from '../lib/conteudo';
+import { linkContato, navegacao, rota, textos, type Idioma } from '../i18n';
 
-const areas = await solucoes();
+interface Props {
+  idioma: Idioma;
+}
+
+const { idioma } = Astro.props;
+const t = textos[idioma];
+const areas = await solucoes(idioma);
 const ano = new Date().getFullYear();
 
 const mapa = [
-  { rotulo: 'Início', href: '/' },
-  ...site.navegacao,
-  site.contato,
-  { rotulo: 'Privacidade', href: '/privacidade/' },
+  { rotulo: t.navegacao.inicio, href: rota(idioma, 'inicio') },
+  ...navegacao(idioma),
+  linkContato(idioma),
+  { rotulo: t.navegacao.privacidade, href: rota(idioma, 'privacidade') },
 ];
 ---
 
 <footer class="rodape faixa">
   <div class="container">
     <div class="rodape__topo">
-      <a class="rodape__marca" href="/" aria-label={`${site.nome}, página inicial`}>
+      <a class="rodape__marca" href={rota(idioma, 'inicio')} aria-label={t.topo.inicioAria(site.nome)}>
         <Logo id="rodape" class="rodape__logo" />
       </a>
-      <p class="rodape__posicionamento">{site.posicionamento}</p>
+      <p class="rodape__posicionamento">{t.site.posicionamento}</p>
     </div>
 
     <div class="rodape__colunas">
-      <nav class="rodape__mapa" aria-label="Mapa do site">
-        <h2 class="eyebrow">Mapa do site</h2>
+      <nav class="rodape__mapa" aria-label={t.rodape.mapa}>
+        <h2 class="eyebrow">{t.rodape.mapa}</h2>
         <ul role="list">
           {
             mapa.map((item) => (
@@ -38,13 +45,13 @@ const mapa = [
         </ul>
       </nav>
 
-      <nav aria-label="Soluções">
-        <h2 class="eyebrow">Soluções</h2>
+      <nav aria-label={t.rodape.solucoes}>
+        <h2 class="eyebrow">{t.rodape.solucoes}</h2>
         <ul role="list">
           {
             areas.map((a) => (
               <li>
-                <a href={hrefSolucao(a.id)}>{a.data.titulo}</a>
+                <a href={hrefSolucao(idioma, a)}>{a.data.titulo}</a>
               </li>
             ))
           }
@@ -52,7 +59,7 @@ const mapa = [
       </nav>
 
       <div>
-        <h2 class="eyebrow">Contato</h2>
+        <h2 class="eyebrow">{t.rodape.contato}</h2>
         <ul role="list" class="rodape__canais">
           <li>
             <a href={`mailto:${site.email}`}>
@@ -70,8 +77,8 @@ const mapa = [
       </div>
 
       <div class="rodape__nota">
-        <h2 class="eyebrow">Confidencialidade</h2>
-        <p>{site.confidencialidade}</p>
+        <h2 class="eyebrow">{t.rodape.confidencialidade}</h2>
+        <p>{t.site.confidencialidade}</p>
       </div>
     </div>
 

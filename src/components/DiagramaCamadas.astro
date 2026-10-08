@@ -1,6 +1,7 @@
 ---
 import SecaoTitulo from './SecaoTitulo.astro';
 import Icone from './Icone.astro';
+import { textos, type Idioma } from '../i18n';
 
 /**
  * Diagrama de camadas: cada item é uma camada do sistema, na ordem em que o dado passa,
@@ -8,6 +9,7 @@ import Icone from './Icone.astro';
  * arquitetura sem nenhum detalhe de implementação.
  */
 interface Props {
+  idioma: Idioma;
   titulo: string;
   lead: string;
   regra?: string;
@@ -16,7 +18,9 @@ interface Props {
   id?: string;
 }
 
-const { titulo, lead, regra, camadas, rotulo = 'Arquitetura', id = 'titulo-arquitetura' } = Astro.props;
+const { idioma, titulo, lead, regra, camadas, id = 'titulo-arquitetura' } = Astro.props;
+const t = textos[idioma].diagrama;
+const { rotulo = t.rotulo } = Astro.props;
 ---
 
 <section class="secao" aria-labelledby={id}>
@@ -26,7 +30,7 @@ const { titulo, lead, regra, camadas, rotulo = 'Arquitetura', id = 'titulo-arqui
     {
       regra && (
         <p class="fluxo__regra">
-          <span class="eyebrow eyebrow--acento">Regra que decide o desenho</span>
+          <span class="eyebrow eyebrow--acento">{t.regra}</span>
           <span>{regra}</span>
         </p>
       )
@@ -41,13 +45,13 @@ const { titulo, lead, regra, camadas, rotulo = 'Arquitetura', id = 'titulo-arqui
             </p>
             <h3 class="camada__nome">{camada}</h3>
             <p class="camada__responsabilidade">
-              <span class="visualmente-oculto">Responsabilidade: </span>
+              <span class="visualmente-oculto">{t.responsabilidade}</span>
               {responsabilidade}
             </p>
             <p class="camada__restricao">
               <span class="camada__restricao-rotulo eyebrow">
                 <Icone nome="trava" />
-                Restrição
+                {t.restricao}
               </span>
               <span>{restricao}</span>
             </p>

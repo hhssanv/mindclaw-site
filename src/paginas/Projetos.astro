@@ -1,0 +1,168 @@
+---
+import Base from '../layouts/Base.astro';
+import ProjetoCard from '../components/ProjetoCard.astro';
+import CTAContato from '../components/CTAContato.astro';
+import { solucoes, projetos, mapaAreas, validarConteudo } from '../lib/conteudo';
+import { site } from '../lib/site';
+import { alternativasDe, textos, type Idioma } from '../i18n';
+
+interface Props {
+  idioma: Idioma;
+}
+
+const { idioma } = Astro.props;
+const p = textos[idioma].projetos;
+
+await validarConteudo();
+const areas = await solucoes(idioma);
+const lista = await projetos(idioma);
+const rotulos = mapaAreas(idioma, areas);
+const areasComProjeto = areas.filter((a) => lista.some((x) => x.data.areas.includes(a.id)));
+---
+
+<Base idioma={idioma} alternativas={alternativasDe('projetos')} title={p.titulo(site.nome)} description={p.descricao}>
+  <section class="cabecalho" aria-labelledby="titulo-projetos">
+    <div class="container entrada">
+      <p class="eyebrow eyebrow--traco">{p.eyebrow}</p>
+      <h1 id="titulo-projetos">{p.h1}</h1>
+      <p class="lead">{p.lead}</p>
+    </div>
+  </section>
+
+  <section class="secao lista" aria-label={p.listaAria}>
+    <div class="container">
+      <div class="filtro" role="group" aria-label={p.filtroAria} data-filtro hidden>
+        <span class="eyebrow filtro__rotulo">{p.filtroRotulo}</span>
+        <button type="button" class="filtro__botao" aria-pressed="true" data-area="">{p.todas}</button>
+        {
+          areasComProjeto.map((a) => (
+            <button type="button" class="filtro__botao" aria-pressed="false" data-area={a.id}>
+              {a.data.curto}
+            </button>
+          ))
+        }
+      </div>
+      <p
+        class="visualmente-oculto"
+        aria-live="polite"
+        data-filtro-status
+        data-um={p.exibidoUm}
+        data-varios={p.exibidosVarios}
+      ></p>
+
+      <ul class="grade" role="list">
+        {
+          lista.map((x) => (
+            <li data-areas={x.data.areas.join(' ')}>
+              <ProjetoCard idioma={idioma} projeto={x} areas={rotulos} nivel={2} />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CTAContato idioma={idioma} titulo={p.ctaTitulo} texto={p.ctaTexto} />
+</Base>
+
+<script>
+  // Filtro: só esconde e mostra. Sem rota nova e sem estado em URL.
+  const filtro = document.querySelector<HTMLElement>('[data-filtro]');
+  const status = document.querySelector<HTMLElement>('[data-filtro-status]');
+  const itens = [...document.querySelectorAll<HTMLElement>('[data-areas]')];
+
+  if (filtro && status) {
+    filtro.hidden = false;
+    const botoes = [...filtro.querySelectorAll<HTMLButtonElement>('button[data-area]')];
+
+    filtro.addEventListener('click', (evento) => {
+      const botao = (evento.target as HTMLElement).closest<HTMLButtonElement>('button[data-area]');
+      if (!botao) return;
+      const area = botao.dataset.area ?? '';
+      botoes.forEach((b) => b.setAttribute('aria-pressed', String(b === botao)));
+
+      let visiveis = 0;
+      for (const item of itens) {
+        const mostra = !area || (item.dataset.areas ?? '').split(' ').includes(area);
+        item.hidden = !mostra;
+        if (mostra) visiveis++;
+      }
+      const modelo = (visiveis === 1 ? status.dataset.um : status.dataset.varios) ?? '{n}';
+      status.textContent = modelo.replace('{n}', String(visiveis));
+    });
+  }
+</script>
+
+<style>
+  .cabecalho {
+    padding-block: clamp(48px, 6vw, 88px) 0;
+  }
+
+  .cabecalho .container {
+    display: grid;
+    gap: 18px;
+  }
+
+  .cabecalho .lead {
+    max-width: 66ch;
+  }
+
+  .lista {
+    padding-top: clamp(32px, 4vw, 48px);
+  }
+
+  .filtro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+
+  .filtro[hidden] {
+    display: none;
+  }
+
+  .filtro__rotulo {
+    margin-right: 6px;
+  }
+
+  .filtro__botao {
+    min-height: 40px;
+    padding: 8px 16px;
+    border: 1px solid var(--linha-forte);
+    border-radius: 999px;
+    background: var(--fundo);
+    color: var(--tinta-media);
+    font-size: var(--t-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color var(--transicao), background-color var(--transicao), color var(--transicao);
+  }
+
+  .filtro__botao:hover {
+    border-color: var(--tinta-fraca);
+    color: var(--tinta);
+  }
+
+  .filtro__botao[aria-pressed='true'] {
+    border-color: var(--tinta);
+    background: var(--tinta);
+    color: var(--fundo);
+  }
+
+  .grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 460px), 1fr));
+    gap: 16px;
+    margin: 0;
+  }
+
+  .grade > li {
+    display: grid;
+  }
+
+  .grade > li[hidden] {
+    display: none;
+  }
+</style>

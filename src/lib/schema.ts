@@ -26,7 +26,11 @@ export const ICONES = [
 
 /** Uma área de atuação: o problema que resolve, o que é feito e o que costuma melhorar. */
 export const solucaoSchema = z.object({
-  slug: z.string().optional(),
+  /** Endereço da página (/solucoes/<slug>/). Sem ele, vale o nome do arquivo. */
+  slug: z
+    .string()
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'slug: só letras minúsculas sem acento, números e hífens')
+    .optional(),
   ordem: z.number().int(),
   titulo: texto('titulo'),
   /** Nome curto para etiquetas e filtros. */
