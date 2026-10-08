@@ -320,3 +320,39 @@ describe('em inglês', () => {
     await pagina.close();
   });
 });
+
+describe('cards de projeto', () => {
+  // Lado a lado, as partes dos cards (subgrid) começam na mesma altura, e as caixas de resultado têm o mesmo tamanho.
+  const partes = (pagina, seletor) =>
+    pagina.$$eval(seletor, (cards) => {
+      const visiveis = cards.filter((c) => c.offsetParent);
+      const topoDe = (c, s) => Math.round(c.querySelector(s)?.getBoundingClientRect().top ?? -1);
+      return visiveis.map((c) => ({
+        linha: Math.round(c.getBoundingClientRect().top),
+        titulo: topoDe(c, '.proj__titulo'),
+        resultado: topoDe(c, '.proj__resultado'),
+        altura: Math.round(c.querySelector('.proj__resultado').getBoundingClientRect().height),
+      }));
+    });
+
+  for (const [caminho, seletor, largura] of [
+    ['/', '.destaques .proj', 1366],
+    ['/', '.destaques .proj', 390],
+    ['/en/', '.destaques .proj', 1366],
+    ['/projetos/', '.grade .proj', 1366],
+  ]) {
+    test(`alinhados em ${caminho} a ${largura}px`, async () => {
+      const pagina = await amb.navegador.newPage({ viewport: { width: largura, height: 900 } });
+      await pagina.goto(amb.base + caminho);
+      const cards = await partes(pagina, seletor);
+      const linhas = Map.groupBy(cards, (c) => c.linha);
+      assert.ok([...linhas.values()].some((l) => l.length > 1), 'há cards lado a lado');
+      for (const [y, lado] of linhas) {
+        for (const campo of ['titulo', 'resultado', 'altura']) {
+          assert.equal(new Set(lado.map((c) => c[campo])).size, 1, `fileira em ${y}px: ${campo} igual`);
+        }
+      }
+      await pagina.close();
+    });
+  }
+});
