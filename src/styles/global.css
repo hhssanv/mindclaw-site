@@ -203,11 +203,10 @@ textarea {
   margin-top: 1em;
 }
 
-/* Rótulo técnico: Saira expandida em caixa alta, como o "MINDCLAW" do logo. */
+/* Rótulo técnico em caixa alta. Texto pequeno usa a fonte do texto corrido; Saira fica para os títulos. */
 .eyebrow {
-  font-family: var(--fonte-display);
+  font-family: var(--fonte);
   font-size: var(--t-rotulo);
-  font-stretch: 112.5%;
   font-weight: 600;
   letter-spacing: 0.12em;
   line-height: 1.4;
@@ -219,9 +218,9 @@ textarea {
   color: var(--acento);
 }
 
-/* Números de índice (01, 02…) e métricas. */
+/* Números de índice (01, 02…) e o domínio no rodapé. */
 .numeral {
-  font-family: var(--fonte-display);
+  font-family: var(--fonte);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
@@ -236,7 +235,7 @@ textarea {
   min-height: 48px;
   padding: 12px 22px;
   border: 1px solid transparent;
-  border-radius: var(--raio-1);
+  border-radius: var(--raio-botao);
   background: var(--botao);
   color: var(--botao-texto);
   font-size: var(--t-base);
@@ -327,9 +326,8 @@ textarea {
   border-radius: var(--raio-1);
   background: var(--superficie);
   color: var(--tinta-media);
-  font-family: var(--fonte-display);
+  font-family: var(--fonte);
   font-size: 0.75rem;
-  font-stretch: 112.5%;
   font-weight: 600;
   letter-spacing: 0.06em;
   line-height: 1.3;
@@ -425,13 +423,13 @@ textarea {
   }
 }
 
-/* Traço em degradê da marca, usado como assinatura visual. */
+/* Traço da marca, usado como assinatura visual. */
 .traco {
   display: block;
   width: 56px;
   height: 3px;
   border-radius: 2px;
-  background: var(--marca-gradiente);
+  background: var(--marca-linha);
   transform-origin: left center;
 }
 
@@ -448,7 +446,7 @@ textarea {
   width: 32px;
   height: 3px;
   border-radius: 2px;
-  background: var(--marca-gradiente);
+  background: var(--marca-linha);
 }
 
 /*

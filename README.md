@@ -40,7 +40,7 @@ src/styles/tokens.css          cores dos dois temas, tipografia e espaçamentos
 src/components/                componentes (PainelExemplo e IlustracaoCapacidade são os gráficos)
 src/paginas/                   o conteúdo de cada página, que recebe o idioma
 src/pages/                     só as rotas: cada arquivo chama uma página de src/paginas/ com o idioma
-public/marca/                  logo, isotipo e foto
+public/marca/                  logo, isotipo e foto (retrato 3:4 na página Sobre e avatar quadrado na home)
 tests/                         testes automatizados (node:test + Playwright + axe-core)
 ```
 
@@ -80,7 +80,7 @@ Acrescente o mesmo projeto, com o mesmo `id`, em `content/en/projetos.json`. Se 
 
 Sem escolha, o site segue o tema do sistema de quem visita. O botão do cabeçalho (lua ou sol, mostrando o tema para onde leva; no celular, dentro do menu) troca o tema e guarda a escolha no navegador; escolher de novo o tema do sistema apaga a escolha. A escolha é aplicada antes do primeiro desenho, então a página não pisca. Sem JavaScript o botão não aparece e vale o tema do sistema.
 
-Tudo o que muda entre os temas está em `src/styles/tokens.css`, inclusive as cores dos gráficos e do degradê do título da home. Os tokens escuros aparecem em dois blocos (um para o tema do sistema, outro para a escolha no botão) que precisam ser idênticos; um teste confere.
+Tudo o que muda entre os temas está em `src/styles/tokens.css`, inclusive as cores dos gráficos e do destaque do título da home (degradê no claro, vermelho sólido `#da0b29` no escuro). Os tokens escuros aparecem em dois blocos (um para o tema do sistema, outro para a escolha no botão) que precisam ser idênticos; um teste confere.
 
 Os únicos dados guardados no navegador são essas duas escolhas (tema e idioma), e a página de Privacidade diz isso.
 
@@ -125,12 +125,13 @@ Este repositório é público ou pode vir a ser. Nenhum arquivo de projeto, capt
 ## Decisões de implementação
 
 - **Organizado por área, não por estudo de caso.** O site mostra onde dá para ajudar e o que costuma melhorar, com projetos anonimizados curtos como prova. Passo a passo de implementação não é publicado.
-- **Duas fontes, as duas servidas pelo próprio site.** Saira (variável, recortada para latim, pesos 500–800 e larguras 100–112,5%, 53 KB) nos títulos, números e rótulos: o desenho quadrado dela é o mesmo do "Hans" e do "MINDCLAW" do logo. Inter (variável, 48 KB) no texto corrido. A escala tipográfica é fixa (13 · 15 · 17 · 19 · 22 · 28 · 40 · 56 px) e está em `src/styles/tokens.css`.
-- **Vermelho com parcimônia.** O acento aparece em ação (botões e links), nos números de destaque e nos elementos de marca. Índices, ícones e marcadores ficam em cinza.
-- **Cores do logo.** Tinta `#141414`, degradê `#ff001e → #782747` e o vermelho sólido `#da0b29` da assinatura de e-mail. Todos os pares de texto e fundo passam em WCAG AA nos temas claro e escuro.
+- **Duas fontes, as duas servidas pelo próprio site.** Saira (variável, recortada para latim, pesos 500–800 e larguras 100–112,5%, 53 KB) nos títulos e nos números grandes: o desenho quadrado dela é o mesmo do "Hans" e do "MINDCLAW" do logo. Inter (variável, 48 KB) no texto corrido e em todo texto pequeno (rótulos em caixa alta, números de índice, etiquetas, créditos do rodapé), sempre com o mesmo peso que o texto já tinha. A escala tipográfica é fixa (13 · 15 · 17 · 19 · 22 · 28 · 40 · 56 px) e está em `src/styles/tokens.css`.
+- **Vermelho com parcimônia.** O acento aparece em ação (botões e links), nos números de destaque e nos elementos de marca. Índices, ícones e marcadores ficam em cinza, com três exceções: os títulos da stack e os números dos princípios na página Sobre, e os escudos do bloco de confidencialidade.
+- **Cores do logo.** Tinta `#141414`, degradê `#ff001e → #782747` e o vermelho sólido `#da0b29` da assinatura de e-mail. Traços e linhas de marca (ao lado dos rótulos e na base do topo das soluções) usam só o vermelho sólido. Todos os pares de texto e fundo passam em WCAG AA nos temas claro e escuro.
+- **Botões.** Cantos de 8 px (`--raio-botao`) e o mesmo vermelho mais claro no hover (`#ef1a39`) nos dois temas.
 - **Menu no celular.** Até 720 px de largura, a navegação fica atrás do botão "Menu", que abre um painel com os links, o contato e o WhatsApp. Enquanto o painel está aberto, o resto da página fica inerte, e a tecla Esc fecha o menu. Uma linha de script no `<head>` marca que o JavaScript está ligado antes do primeiro desenho, então nada pula na tela. Sem JavaScript, a navegação aparece numa segunda linha do cabeçalho.
 - **Home enxuta no celular.** As áreas viram linhas compactas, os projetos em destaque viram um carrossel com rolagem lateral, e os princípios e o rodapé ficam mais densos. A home no celular ficou cerca de 20% mais curta, sem perder conteúdo.
-- **WhatsApp primeiro, e-mail como alternativa.** Cada botão de conversa abre o WhatsApp de quem está lendo com uma mensagem pronta que já cita a área. O formulário monta a mesma mensagem e oferece o e-mail como segunda opção, com botão para copiar o endereço (para quem usa webmail). Não há servidor, serviço de terceiros nem dado guardado.
+- **WhatsApp primeiro, e-mail como alternativa.** O ícone ao lado de toda menção ao WhatsApp é a logo dele (em `src/components/Icone.astro`, na cor e no tamanho dos outros ícones). Cada botão de conversa abre o WhatsApp de quem está lendo com uma mensagem pronta que já cita a área. O formulário monta a mesma mensagem e oferece o e-mail como segunda opção, com botão para copiar o endereço (para quem usa webmail). Não há servidor, serviço de terceiros nem dado guardado.
 - **Exemplos com dados fictícios.** O painel da Norvexa Systems (empresa que não existe) e a ilustração de capacidade mostram como fica uma entrega sem expor nenhum cliente. Os números do painel estão em `src/data/norvexa.ts`.
 - **Dois idiomas sem duplicar páginas.** Cada página é escrita uma vez em `src/paginas/` e recebe o idioma; `src/pages/` só define as rotas. O conteúdo em inglês é validado contra o português no build, e o texto em português continua idêntico ao de antes da tradução.
 - **Tema pelo sistema, com escolha opcional.** O botão mostra o tema para onde leva (lua leva ao escuro, sol ao claro), como o seletor de idioma mostra o idioma para onde leva. A escolha que coincide com o sistema é apagada, para o site voltar a acompanhar o sistema.

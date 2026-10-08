@@ -298,7 +298,8 @@ const textos: Textos = {
       'The approach is practical and evidence-driven: find the real bottleneck, reduce manual work, protect the critical points and leave a clear trail. In critical environments, changes are small and reversible, and human validation stays wherever the risk calls for it.',
     ],
     linkedin: 'LinkedIn profile',
-    fotoAlt: 'Hans Spiller, with red hair and beard and a black T-shirt, in front of a bookshelf.',
+    fotoAlt:
+      'Hans Spiller, with red hair and beard and a black T-shirt, looking to the side against a dark background with angular red and blue shapes.',
     stackRotulo: 'Stack',
     stackTitulo: 'Technologies and skills by area',
     formaRotulo: 'Way of working',

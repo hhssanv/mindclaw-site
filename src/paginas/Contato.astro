@@ -28,7 +28,7 @@ const areas = await solucoes(idioma);
           <ul role="list">
             <li>
               <a class="canal canal--principal" href={linkWhatsApp(mensagemWhatsApp(idioma))} target="_blank" rel="noopener">
-                <Icone nome="conversa" />
+                <Icone nome="whatsapp" />
                 <span>
                   <span class="canal__rotulo">{p.whatsappRotulo}</span>
                   <span class="canal__valor">{site.whatsapp.exibicao}</span>
@@ -109,7 +109,7 @@ const areas = await solucoes(idioma);
 
         <div class="form__acoes">
           <button class="botao" type="submit" data-canal="whatsapp">
-            <Icone nome="conversa" />
+            <Icone nome="whatsapp" />
             {p.enviarWhatsApp}
           </button>
           <button class="botao botao--secundario" type="submit" data-canal="email">
@@ -270,7 +270,7 @@ const areas = await solucoes(idioma);
     min-height: 44px;
     padding: 0 16px;
     border: 1px solid var(--linha);
-    border-radius: var(--raio-2);
+    border-radius: calc(var(--raio-2) + 2px);
     background: transparent;
     color: var(--tinta-media);
     font-size: var(--t-sm);
@@ -297,9 +297,8 @@ const areas = await solucoes(idioma);
 
   .canal__rotulo {
     color: var(--tinta-media);
-    font-family: var(--fonte-display);
+    font-family: var(--fonte);
     font-size: 0.75rem;
-    font-stretch: 112.5%;
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
