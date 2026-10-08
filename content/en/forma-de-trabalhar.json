@@ -3,48 +3,48 @@
     "id": "processo-real",
     "numero": 1,
     "nome": "The real process first",
-    "descricao": "Understand the process as it actually happens before automating or changing any technology."
+    "descricao": "Work is understood as it really happens day to day, not just as it looks on paper, before anything is automated."
   },
   {
     "id": "evidencia",
     "numero": 2,
     "nome": "Evidence before conclusions",
-    "descricao": "Separate symptom, likely cause and evidence, so decisions do not rest on perception alone."
+    "descricao": "Every decision rests on data, not impressions: the cause of a problem is confirmed before anything is fixed."
   },
   {
     "id": "riscos",
     "numero": 3,
     "nome": "Risks mapped",
-    "descricao": "Map dependencies and risks before any change."
+    "descricao": "Before anything changes, it is clear what could be affected and how the operation stays protected."
   },
   {
     "id": "reversivel",
     "numero": 4,
     "nome": "Small, reversible change",
-    "descricao": "Prefer small changes, with a backup and a way back, in critical environments."
+    "descricao": "Changes go in short steps, with a backup and a way back: the operation keeps running while the solution goes in."
   },
   {
     "id": "humano",
     "numero": 5,
     "nome": "Human validation where it matters",
-    "descricao": "Automate what is repetitive and keep human validation wherever the risk calls for it."
+    "descricao": "Repetitive work becomes automatic; decisions with real impact still go through a person."
   },
   {
     "id": "criterio",
     "numero": 6,
     "nome": "Objective success criteria",
-    "descricao": "Define metrics and criteria to confirm, with data, whether the solution worked."
+    "descricao": "What counts as success is agreed at the start and measured at the end, with the operation’s own numbers."
   },
   {
     "id": "documentacao",
     "numero": 7,
     "nome": "Documentation to carry on",
-    "descricao": "Document so that someone else can operate, audit or continue the work."
+    "descricao": "Everything is documented so the team can run, audit and evolve the solution without depending on whoever built it."
   },
   {
     "id": "melhoria",
     "numero": 8,
     "nome": "Incidents become improvements",
-    "descricao": "Turn incidents and one-off tasks into permanent improvements whenever possible."
+    "descricao": "Every failure or one-off request becomes a lasting fix, so the same problem does not come back."
   }
 ]

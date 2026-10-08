@@ -1,6 +1,6 @@
 ---
 slug: automation
-ordem: 4
+ordem: 2
 titulo: Process automation
 curto: Automation
 icone: automacao

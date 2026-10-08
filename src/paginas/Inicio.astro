@@ -37,7 +37,7 @@ const lista = await principios(idioma);
     <div class="container hero-home__interno">
       <div class="hero-home__texto entrada">
         <p class="eyebrow eyebrow--traco hero-home__eyebrow">
-          <span><span class="hero-home__eyebrow-nome">{site.pessoa} · </span>{p.eyebrow}</span>
+          <span>{p.eyebrow}</span>
         </p>
         <h1 id="titulo-home">
           {p.h1Antes}<span class="hero-home__destaque">{p.h1Destaque}</span>
@@ -321,12 +321,6 @@ const lista = await principios(idioma);
     }
   }
 
-  @media (max-width: 480px) {
-    .hero-home__eyebrow-nome {
-      display: none;
-    }
-  }
-
   /* Cabeçalho de seção com link à direita */
   .cabecalho-com-link {
     display: flex;
@@ -479,6 +473,7 @@ const lista = await principios(idioma);
 
   .resultado__passos li {
     display: grid;
+    align-content: start;
     gap: 8px;
     padding-top: 16px;
     border-top: 2px solid var(--acento);

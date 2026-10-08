@@ -17,6 +17,9 @@ const { idioma, projeto, areas, compacto = false, nivel = 3 } = Astro.props;
 const t = textos[idioma].projetoCard;
 const d = projeto.data;
 const Titulo = `h${nivel}` as 'h2' | 'h3';
+// Na página de solução, o link "ver o exemplo" de um projeto relacionado apontaria para a própria
+// página (o exemplo fica logo acima). Nesse caso ele não aparece.
+const link = d.link && d.link.href.split('#')[0] !== Astro.url.pathname ? d.link : undefined;
 ---
 
 <article class:list={['proj', compacto && 'proj--compacto']} id={compacto ? undefined : projeto.id}>
@@ -57,9 +60,9 @@ const Titulo = `h${nivel}` as 'h2' | 'h3';
   </dl>
 
   {
-    d.link && (
-      <a class="link-seta proj__link" href={d.link.href}>
-        {d.link.rotulo}
+    link && (
+      <a class="link-seta proj__link" href={link.href}>
+        {link.rotulo}
         <Icone nome="seta" />
       </a>
     )
@@ -77,15 +80,40 @@ const Titulo = `h${nivel}` as 'h2' | 'h3';
 </article>
 
 <style>
+  /*
+   * Lado a lado numa grade, os cards alinham as partes entre si (subgrid): etiquetas, título,
+   * contexto, atuação, resultado, link e tecnologias ocupam cada um uma linha da grade de quem
+   * os contém. Cada parte tem a sua linha mesmo quando falta (projeto sem link), e o espaço
+   * entre as partes vem de margens, para uma linha vazia não somar espaço. Fora de uma grade,
+   * o subgrid vira linhas automáticas e o card fica como antes.
+   */
   .proj {
     display: grid;
+    grid-row: span 7;
+    grid-template-rows: subgrid;
     align-content: start;
-    gap: 14px;
+    row-gap: 0;
     padding: clamp(22px, 2.6vw, 30px);
     border: 1px solid var(--linha);
     border-radius: var(--raio-3);
     background: var(--fundo);
     scroll-margin-top: 96px;
+  }
+
+  .proj--compacto {
+    grid-row: span 5;
+  }
+
+  .proj > * + * {
+    margin-top: 14px;
+  }
+
+  .proj__topo {
+    grid-row: 1;
+  }
+
+  .proj__titulo {
+    grid-row: 2;
   }
 
   .proj:target {
@@ -135,10 +163,21 @@ const Titulo = `h${nivel}` as 'h2' | 'h3';
     line-height: 1.15;
   }
 
+  /* Contexto, atuação e resultado: também em subgrid, uma linha cada. */
   .proj__corpo {
     display: grid;
-    gap: 12px;
-    margin: 0;
+    grid-row: 3 / span 3;
+    grid-template-rows: subgrid;
+    row-gap: 0;
+    margin-bottom: 0;
+  }
+
+  .proj--compacto .proj__corpo {
+    grid-row: 3 / span 2;
+  }
+
+  .proj__corpo > * + * {
+    margin-top: 12px;
   }
 
   .proj__corpo dt {
@@ -171,15 +210,21 @@ const Titulo = `h${nivel}` as 'h2' | 'h3';
   }
 
   .proj__link {
+    grid-row: 6;
     justify-self: start;
+    align-self: start;
     font-size: var(--t-sm);
   }
 
+  .proj--compacto .proj__link {
+    grid-row: 5;
+  }
+
   .proj__tecnologias {
+    grid-row: 7;
     display: flex;
     flex-wrap: wrap;
     gap: 4px 14px;
-    margin: 2px 0 0;
     padding-top: 14px;
     border-top: 1px solid var(--linha);
     color: var(--tinta-media);

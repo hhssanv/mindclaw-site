@@ -3,48 +3,48 @@
     "id": "processo-real",
     "numero": 1,
     "nome": "Processo real primeiro",
-    "descricao": "Entender o processo como ele acontece de fato antes de automatizar ou mudar qualquer tecnologia."
+    "descricao": "O trabalho é entendido como acontece no dia a dia, e não só como está no papel, antes de qualquer automação."
   },
   {
     "id": "evidencia",
     "numero": 2,
     "nome": "Evidência antes de conclusão",
-    "descricao": "Separar sintoma, causa provável e evidência, para não decidir com base só em percepção."
+    "descricao": "Cada decisão se apoia em dados, não em impressão: a causa do problema é confirmada antes de qualquer correção."
   },
   {
     "id": "riscos",
     "numero": 3,
     "nome": "Riscos mapeados",
-    "descricao": "Mapear dependências e riscos antes de qualquer mudança."
+    "descricao": "Antes de mudar algo, fica claro o que pode ser afetado e como a operação continua protegida."
   },
   {
     "id": "reversivel",
     "numero": 4,
     "nome": "Mudança pequena e reversível",
-    "descricao": "Preferir mudanças pequenas, com backup e caminho de volta, em ambientes críticos."
+    "descricao": "Mudanças em etapas curtas, com backup e caminho de volta: a operação segue rodando enquanto a solução entra."
   },
   {
     "id": "humano",
     "numero": 5,
     "nome": "Validação humana onde importa",
-    "descricao": "Automatizar o que é repetitivo e manter validação humana onde o risco exige."
+    "descricao": "O que é repetitivo fica automático; decisões com impacto real continuam passando por uma pessoa."
   },
   {
     "id": "criterio",
     "numero": 6,
     "nome": "Critério objetivo de sucesso",
-    "descricao": "Definir métricas e critérios para confirmar, com dados, se a solução funcionou."
+    "descricao": "O que conta como sucesso é combinado no início e medido no fim, com os números da própria operação."
   },
   {
     "id": "documentacao",
     "numero": 7,
     "nome": "Documentação para continuar",
-    "descricao": "Documentar de forma que outra pessoa consiga operar, auditar ou dar continuidade ao trabalho."
+    "descricao": "Tudo fica documentado para a equipe operar, auditar e evoluir a solução sem depender de quem a construiu."
   },
   {
     "id": "melhoria",
     "numero": 8,
     "nome": "Incidente vira melhoria",
-    "descricao": "Transformar incidentes e tarefas pontuais em melhoria permanente sempre que possível."
+    "descricao": "Cada falha ou demanda pontual vira um ajuste permanente, para o mesmo problema não voltar."
   }
 ]

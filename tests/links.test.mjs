@@ -1,6 +1,7 @@
 /**
  * Links internos: todo href/src/srcset que aponta para o próprio site precisa existir em
- * dist/, e toda âncora (#id) precisa existir na página de destino. Roda sem navegador.
+ * dist/, e toda âncora (#id) precisa existir na página de destino; card de projeto não leva
+ * à página em que está. Roda sem navegador.
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -48,5 +49,15 @@ for (const arquivo of arquivos) {
       if (ancora && destino.endsWith('.html') && !idsDe(destino).has(ancora)) quebrados.push(`${ref} (âncora não existe)`);
     }
     assert.deepEqual(quebrados, []);
+  });
+
+  // O "ver o exemplo" de um projeto relacionado não pode levar à página em que o card já está.
+  test(`cards de projeto não levam à própria página em ${nome}`, () => {
+    const html = readFileSync(arquivo, 'utf8');
+    const pagina = `/${nome.replace(/(^|\/)index\.html$/, '$1')}`;
+    const proprios = [...html.matchAll(/<a class="link-seta proj__link[^"]*" href="([^"#]*)[^"]*"/g)]
+      .map((m) => m[1])
+      .filter((caminho) => caminho === pagina);
+    assert.deepEqual(proprios, []);
   });
 }

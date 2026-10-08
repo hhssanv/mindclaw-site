@@ -1,6 +1,6 @@
 ---
 slug: auditoria-rh
-ordem: 2
+ordem: 5
 titulo: Auditoria de folha, ponto e dados de RH
 curto: Folha e RH
 icone: pessoas

@@ -158,8 +158,12 @@ const areasComProjeto = areas.filter((a) => lista.some((x) => x.data.areas.inclu
     margin: 0;
   }
 
+  /* O li repassa as linhas da grade ao card (subgrid), para os cards lado a lado se alinharem. */
   .grade > li {
     display: grid;
+    grid-row: span 7;
+    grid-template-rows: subgrid;
+    row-gap: 0;
   }
 
   .grade > li[hidden] {

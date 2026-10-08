@@ -1,6 +1,6 @@
 ---
 slug: hr-payroll-audit
-ordem: 2
+ordem: 5
 titulo: Payroll, timekeeping and HR data audit
 curto: Payroll & HR
 icone: pessoas
