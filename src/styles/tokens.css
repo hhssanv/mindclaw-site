@@ -76,8 +76,9 @@
   --ok: #067647;
   --ok-fundo: #ecfdf3;
 
-  /* Título da home em degradê */
+  /* Destaque do título da home: degradê no claro, vermelho sólido no escuro */
   --destaque-texto: linear-gradient(90deg, #da0b29, #782747);
+  --destaque-cor: transparent;
 
   /* Séries dos gráficos (conferidas para daltonismo nos dois temas) */
   --grafico-vermelho: #da0b29;
@@ -151,7 +152,8 @@
     --ok: #5fd99a;
     --ok-fundo: #0c2619;
 
-    --destaque-texto: linear-gradient(90deg, #ff5468, #e0698a);
+    --destaque-texto: none;
+    --destaque-cor: #d60c2a;
 
     --grafico-vermelho: #ef3f56;
     --grafico-azul: #5b8ad8;
@@ -193,7 +195,8 @@
   --ok: #5fd99a;
   --ok-fundo: #0c2619;
 
-  --destaque-texto: linear-gradient(90deg, #ff5468, #e0698a);
+  --destaque-texto: none;
+  --destaque-cor: #d60c2a;
 
   --grafico-vermelho: #ef3f56;
   --grafico-azul: #5b8ad8;
